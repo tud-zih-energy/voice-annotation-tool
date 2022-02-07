@@ -22,6 +22,7 @@ class Annotation:
         self.age = ""
         self.gender = ""
         self.accent = ""
+        self.modified = False
 
 class Project:
 
