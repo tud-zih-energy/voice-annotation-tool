@@ -1,0 +1,11 @@
+<RCC>
+  <qresource prefix="playback">
+    <file alias="icon">images/icon.svg</file>
+    <file alias="skip">images/next.svg</file>
+    <file alias="pause">images/pause.svg</file>
+    <file alias="back">images/previous.svg</file>
+    <file alias="play">images/start.svg</file>
+    <file alias="stop">images/stop.svg</file>
+    <file alias="volume">images/volume.svg</file>
+  </qresource>
+</RCC>

@@ -1,0 +1,19 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Environments
+.venv
+
+# UI Files
+*_ui.py
+
+# Resource Library
+resources_rc.py
+
+# Binary Translations
+*.qm
