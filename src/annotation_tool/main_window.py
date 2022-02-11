@@ -29,7 +29,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.settings_file = ""
         self.recent_projects = []
         self.shortcuts = []
-        self.choose_project_frame.load_recent_projects(self.recent_projects)
 
         # Layout
         self.verticalLayout.addWidget(self.opened_project_frame)
@@ -79,12 +78,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             for recent in data["recent_projects"]:
                 if os.path.exists(recent):
                     self.recent_projects.append(recent)
+            self.choose_project_frame.load_recent_projects(self.recent_projects)
+
             self.shortcuts = data["shortcuts"]
-        self.opened_project_frame.apply_shortcuts(self.shortcuts)
-        self.shortcut_settings_dialog.load_buttons(
-                self.opened_project_frame.playbackButtons)
-        self.shortcut_settings_dialog.load_existing(self.menuEdit)
-        self.shortcut_settings_dialog.load_existing(self.menuFile)
+            self.opened_project_frame.apply_shortcuts(self.shortcuts)
+            self.shortcut_settings_dialog.load_buttons(
+                    self.opened_project_frame.playbackButtons)
+            self.shortcut_settings_dialog.load_existing(self.menuEdit)
+            self.shortcut_settings_dialog.load_existing(self.menuFile)
 
     def save_settings(self):
         """
