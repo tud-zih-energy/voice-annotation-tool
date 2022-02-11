@@ -50,10 +50,11 @@ class Project:
         with open(self.project_file) as file:
             data = json.load(file)
             self.modified_annotations = data["modified_annotations"]
-            self.set_audio_folder(str(Path(self.project_file).joinpath(
-                    data.get("audio_folder")).resolve()))
             self.set_tsv_file(str(Path(self.project_file).joinpath(
                     data.get("tsv_file")).resolve()))
+            self.set_audio_folder(str(Path(self.project_file).joinpath(
+                    data.get("audio_folder")).resolve()))
+
 
     def set_audio_folder(self, to : str):
         """
@@ -145,7 +146,10 @@ class Project:
                         value = int(value)
                     setattr(annotation, self.TSV_HEADER_MEMBERS[segmentNum],
                            value) 
+                if len(self.annotations) in self.modified_annotations:
+                    annotation.modified = True
                 self.annotations.append(annotation)
+                
         print("loaded csv")
 
     def delete(self):
