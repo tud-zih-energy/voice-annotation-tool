@@ -9,7 +9,7 @@ import os
 from PySide6.QtGui import QBrush, QIcon
 from PySide6.QtCore import QEvent, QSize, Slot, QTime, Qt, QUrl
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QAudioDecoder
-from PySide6.QtWidgets import QFrame, QListWidgetItem, QPushButton, QFileDialog, QMessageBox
+from PySide6.QtWidgets import QFrame, QListWidgetItem, QFileDialog, QMessageBox
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
 from .project import Project
 
