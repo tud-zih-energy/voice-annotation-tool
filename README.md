@@ -7,7 +7,8 @@ This program allows annotation of a list of audio files and exporting it in a si
 Install the package system-wide:
 
 ```bash
-pip3 install .
+git clone https://github.com/tud-zih-energy/voice-annotation-tool.git
+pip3 install voice-annotation-tool
 ```
 
 ## Usage
