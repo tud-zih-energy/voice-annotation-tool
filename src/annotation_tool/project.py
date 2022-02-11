@@ -25,7 +25,6 @@ class Annotation:
         self.modified = False
 
 class Project:
-
     # An ordered list of the members of an annotation that are read and written
     # to and from a tsv file.
     TSV_HEADER_MEMBERS = ["client_id", "file", "text", "up_votes", "down_votes",
@@ -36,7 +35,7 @@ class Project:
         self.audio_folder = ""
         self.project_file = file
         self.annotations = []
-        self.modified_annotations : List[int] = []
+        self.modified_annotations = {}
         self.files = []
         self.load()
 
@@ -54,7 +53,6 @@ class Project:
                     data.get("tsv_file")).resolve()))
             self.set_audio_folder(str(Path(self.project_file).joinpath(
                     data.get("audio_folder")).resolve()))
-
 
     def set_audio_folder(self, to : str):
         """
@@ -79,9 +77,9 @@ class Project:
         """Changes the text of the given annotation."""
         annotation = self.annotations[index]
         if not annotation.modified:
-            self.modified_annotations.append(index)
+            self.modified_annotations[annotation.file] = True
         if not text:
-            self.modified_annotations.remove(index)
+            self.modified_annotations[annotation.file] = False
         annotation.modified = bool(text)
         annotation.text = text
 
@@ -90,7 +88,6 @@ class Project:
         for annotationNum in range(len(self.annotations)):
             if self.annotations[annotationNum].file == file:
                 return annotationNum
-
 
     def save(self):
         """
@@ -142,13 +139,16 @@ class Project:
                 segments = line.replace("\n", "").split("\t")
                 for segmentNum in range(len(self.TSV_HEADER_MEMBERS)):
                     value = segments[segmentNum]
-                    if getattr(annotation, self.TSV_HEADER_MEMBERS[segmentNum]) is int:
+                    if getattr(annotation,
+                            self.TSV_HEADER_MEMBERS[segmentNum]) is int:
                         value = int(value)
                     setattr(annotation, self.TSV_HEADER_MEMBERS[segmentNum],
                            value) 
-                if len(self.annotations) in self.modified_annotations:
-                    annotation.modified = True
-                self.annotations.append(annotation)
+                if os.path.exists(os.path.join(self.audio_folder,
+                        annotation.file)):
+                    if annotation.file in self.modified_annotations:
+                        annotation.modified = True
+                    self.annotations.append(annotation)
                 
         print("loaded csv")
 
@@ -158,3 +158,8 @@ class Project:
             os.remove(self.tsv_file)
         os.remove(self.project_file)
  
+    def delete_annotation(self, index : int):
+        """Delete a stored annotation and the audio file on disk."""
+        annotation : Annotation = self.annotations[index]
+        os.remove(os.path.join(self.audio_folder, annotation.file))
+        self.annotations.remove(annotation)

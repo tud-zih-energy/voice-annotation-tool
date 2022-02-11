@@ -60,37 +60,37 @@
         <translation>Erstelle Projekt</translation>
     </message>
     <message>
-        <location filename="../src/ui/create_project_dialog.ui" line="34"/>
+        <location filename="../src/ui/create_project_dialog.ui" line="68"/>
         <source>Audio Folder</source>
         <translation>Audio Ordner</translation>
     </message>
     <message>
-        <location filename="../src/ui/create_project_dialog.ui" line="41"/>
+        <location filename="../src/ui/create_project_dialog.ui" line="37"/>
         <source>&amp;Open...</source>
         <translation>&amp;Öffnen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/create_project_dialog.ui" line="61"/>
+        <location filename="../src/ui/create_project_dialog.ui" line="77"/>
         <source>Open...</source>
         <translation>Öffnen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/create_project_dialog.ui" line="81"/>
+        <location filename="../src/ui/create_project_dialog.ui" line="44"/>
         <source>Project File</source>
         <translation>Projektdatei</translation>
     </message>
     <message>
-        <location filename="../src/ui/create_project_dialog.ui" line="88"/>
+        <location filename="../src/ui/create_project_dialog.ui" line="51"/>
         <source>Select...</source>
         <translation>Auswählen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/create_project_dialog.ui" line="52"/>
+        <location filename="../src/ui/create_project_dialog.ui" line="58"/>
         <source>TSV File</source>
         <translation>TSV-Datei</translation>
     </message>
     <message>
-        <location filename="../src/ui/create_project_dialog.ui" line="68"/>
+        <location filename="../src/ui/create_project_dialog.ui" line="84"/>
         <source>Create...</source>
         <translation>Erstellen...</translation>
     </message>
@@ -98,73 +98,79 @@
 <context>
     <name>Main</name>
     <message>
-        <location filename="../src/annotation_tool/main.py" line="142"/>
-        <location filename="../src/annotation_tool/main.py" line="184"/>
+        <location filename="../src/annotation_tool/main.py" line="144"/>
+        <location filename="../src/annotation_tool/main.py" line="187"/>
+        <location filename="../src/annotation_tool/main.py" line="253"/>
         <source>Warning</source>
         <translation>Warnung</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/main.py" line="143"/>
+        <location filename="../src/annotation_tool/main.py" line="145"/>
         <source>The audio folder doesn&apos;t exist. Choose another one?</source>
         <translation>Der Audioordner existiert nicht. Einen anderen auswählen?</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/main.py" line="147"/>
+        <location filename="../src/annotation_tool/main.py" line="149"/>
         <source>Open Audio Folder</source>
         <translation>Audioordner Öffnen</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/main.py" line="162"/>
+        <location filename="../src/annotation_tool/main.py" line="165"/>
         <source>Open Project</source>
         <translation>Projekt Öffnen</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/main.py" line="163"/>
-        <location filename="../src/annotation_tool/main.py" line="176"/>
+        <location filename="../src/annotation_tool/main.py" line="166"/>
+        <location filename="../src/annotation_tool/main.py" line="179"/>
         <source>Project Files (*.json)</source>
         <translation>Projektdateien (*.json)</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/main.py" line="176"/>
+        <location filename="../src/annotation_tool/main.py" line="179"/>
         <source>Save Project</source>
         <translation>Projekt Speichern</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/main.py" line="185"/>
+        <location filename="../src/annotation_tool/main.py" line="188"/>
         <source>Delete the TSV and project file?</source>
         <translation>TSV und Projektdatei löschen?</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/main.py" line="206"/>
+        <location filename="../src/annotation_tool/main.py" line="209"/>
         <source>Import CSV</source>
         <translation>CSV Importieren</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/main.py" line="207"/>
-        <location filename="../src/annotation_tool/main.py" line="218"/>
+        <location filename="../src/annotation_tool/main.py" line="210"/>
+        <location filename="../src/annotation_tool/main.py" line="221"/>
         <source>CSV Files (*.csv)</source>
         <translation>CSV-Dateien (*.csv)</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/main.py" line="217"/>
+        <location filename="../src/annotation_tool/main.py" line="220"/>
         <source>Export CSV</source>
         <translation>CSV Exportieren</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/main.py" line="227"/>
+        <location filename="../src/annotation_tool/main.py" line="230"/>
         <source>Import Json</source>
         <translation>Json Importieren</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/main.py" line="228"/>
-        <location filename="../src/annotation_tool/main.py" line="240"/>
+        <location filename="../src/annotation_tool/main.py" line="231"/>
+        <location filename="../src/annotation_tool/main.py" line="243"/>
         <source>Json Files (*.json)</source>
         <translation>Json-Dateien (*.json)</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/main.py" line="239"/>
+        <location filename="../src/annotation_tool/main.py" line="242"/>
         <source>Export Json</source>
         <translation>Json Exportieren</translation>
+    </message>
+    <message>
+        <location filename="../src/annotation_tool/main.py" line="254"/>
+        <source>Really delete selected annotations and audio files?</source>
+        <translation>Wirklich die ausgewählten Annotationen und die dazugehörigen Audiodateien löschen?</translation>
     </message>
 </context>
 <context>
@@ -185,97 +191,112 @@
         <translation>&amp;Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="61"/>
+        <location filename="../src/ui/main.ui" line="62"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="72"/>
+        <location filename="../src/ui/main.ui" line="73"/>
         <source>&amp;Open Project...</source>
         <translation>Projekt &amp;Öffnen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="80"/>
+        <location filename="../src/ui/main.ui" line="81"/>
         <source>&amp;Quit</source>
         <translation>&amp;Beenden</translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="91"/>
+        <location filename="../src/ui/main.ui" line="92"/>
         <source>&amp;Save Project</source>
         <translation>Projekt &amp;Speichern</translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="102"/>
+        <location filename="../src/ui/main.ui" line="103"/>
         <source>Save Project &amp;As...</source>
         <translation>Projekt Speichern &amp;Unter...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="110"/>
+        <location filename="../src/ui/main.ui" line="111"/>
         <source>&amp;New Project...</source>
         <translation>&amp;Neues Projekt...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="118"/>
+        <location filename="../src/ui/main.ui" line="119"/>
         <source>Configure &amp;Shortcuts...</source>
         <translation>Tastenkürzel &amp;Konfigurieren...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="142"/>
+        <location filename="../src/ui/main.ui" line="143"/>
         <source>Import CS&amp;V</source>
         <translation>CS&amp;V Importieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="150"/>
+        <location filename="../src/ui/main.ui" line="151"/>
         <source>Import Js&amp;on</source>
         <translation>Js&amp;on Importieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="158"/>
+        <location filename="../src/ui/main.ui" line="159"/>
         <source>Export &amp;CSV</source>
         <translation>&amp;CSV Exportieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="166"/>
+        <location filename="../src/ui/main.ui" line="167"/>
         <source>Export &amp;Json</source>
         <translation>&amp;Json Exportieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="171"/>
+        <location filename="../src/ui/main.ui" line="175"/>
         <source>&amp;Delete Project...</source>
         <translation>Projekt &amp;Löschen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="123"/>
+        <location filename="../src/ui/main.ui" line="180"/>
+        <source>&amp;Delete Selected</source>
+        <translation>Ausgewählte &amp;Löschen</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main.ui" line="183"/>
+        <source>Delete the selected annotations including the audio files.</source>
+        <translation>Die ausgewählten Annotationen und die dazugehörigen Audiodateien löschen.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main.ui" line="186"/>
+        <source>Del</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/ui/main.ui" line="124"/>
         <source>&amp;About</source>
         <translation>&amp;Über</translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="131"/>
+        <location filename="../src/ui/main.ui" line="132"/>
         <source>About &amp;QT</source>
         <translation>Über &amp;QT</translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="75"/>
+        <location filename="../src/ui/main.ui" line="76"/>
         <source>Ctrl+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="83"/>
+        <location filename="../src/ui/main.ui" line="84"/>
         <source>Ctrl+Q</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="94"/>
+        <location filename="../src/ui/main.ui" line="95"/>
         <source>Ctrl+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="105"/>
+        <location filename="../src/ui/main.ui" line="106"/>
         <source>Ctrl+Shift+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ui/main.ui" line="113"/>
+        <location filename="../src/ui/main.ui" line="114"/>
         <source>Ctrl+N</source>
         <translation></translation>
     </message>
@@ -283,18 +304,18 @@
 <context>
     <name>OpenedProjectFrame</name>
     <message>
-        <location filename="../src/annotation_tool/opened_project_frame.py" line="68"/>
+        <location filename="../src/annotation_tool/opened_project_frame.py" line="73"/>
         <location filename="../src/ui/opened_project_frame.ui" line="77"/>
         <source>[Multiple]</source>
         <translation>[Mehrere]</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/opened_project_frame.py" line="156"/>
+        <location filename="../src/annotation_tool/opened_project_frame.py" line="161"/>
         <source>No samples found in the audio folder: {folder}</source>
         <translation>Keine Samples in dem Audioordner gefunden: {folder}</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/opened_project_frame.py" line="189"/>
+        <location filename="../src/annotation_tool/opened_project_frame.py" line="201"/>
         <source>Error playing audio: {error}</source>
         <translation>Fehler beim abspielen: {error}</translation>
     </message>
@@ -405,12 +426,12 @@
 <context>
     <name>app</name>
     <message>
-        <location filename="../src/annotation_tool/main.py" line="262"/>
+        <location filename="../src/annotation_tool/main.py" line="273"/>
         <source>Utility to annotate short voice samples</source>
         <translation>Werkzeug zur Annotation von kurzen Sprachproben</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/main.py" line="263"/>
+        <location filename="../src/annotation_tool/main.py" line="274"/>
         <source>Project file to open.</source>
         <translation>Zu öffnende Projektdatei.</translation>
     </message>

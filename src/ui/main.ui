@@ -55,6 +55,7 @@
     <addaction name="actionImportCSV"/>
     <addaction name="actionExportJson"/>
     <addaction name="actionImportJson"/>
+    <addaction name="actionDeleteSelected"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -172,6 +173,17 @@
    </property>
    <property name="text">
     <string>&amp;Delete Project...</string>
+   </property>
+  </action>
+  <action name="actionDeleteSelected">
+   <property name="text">
+    <string>&amp;Delete Selected</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete the selected annotations including the audio files.</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
    </property>
   </action>
  </widget>

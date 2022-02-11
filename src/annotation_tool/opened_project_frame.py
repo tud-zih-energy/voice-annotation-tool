@@ -7,7 +7,7 @@ edit the annotation.
 
 import os
 from PySide6.QtGui import QBrush, QIcon
-from PySide6.QtCore import QSize, Slot, QTime, Qt, QUrl
+from PySide6.QtCore import QEvent, QSize, Slot, QTime, Qt, QUrl
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QAudioDecoder
 from PySide6.QtWidgets import QFrame, QListWidgetItem, QPushButton, QFileDialog, QMessageBox
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
@@ -59,6 +59,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
                 self.stopButton, self.nextButton]
         self.buttonTooltips = []
 
+        self.fileList.installEventFilter(self)
         self.stopButton.pressed.connect(self.player.stop)
         self.timeSlider.valueChanged.connect(self.player.setPosition)
         self.volumeSlider.valueChanged.connect(self.volume_changed)
@@ -185,6 +186,12 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.annotationEdit.blockSignals(False)
         self.player.setSource(QUrl.fromLocalFile(os.path.join(self.project.audio_folder,
                 annotation.file)))
+
+    def delete_selected(self):
+        """Delete the selected annotations and audio files."""
+        for selected in self.fileList.selectedIndexes()[::-1]:
+            self.fileList.takeItem(selected.row())
+            self.project.delete_annotation(selected.row())
 
     @Slot()
     def playerError(self, error, string):

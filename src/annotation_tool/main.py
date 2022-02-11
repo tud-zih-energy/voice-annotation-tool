@@ -61,6 +61,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.actionExportJson.triggered.connect(self.exportJson)
         self.actionImportCSV.triggered.connect(self.importCSV)
         self.actionExportCSV.triggered.connect(self.exportCSV)
+        self.actionDeleteSelected.triggered.connect(self.deleteSelected)
         self.actionConfigureShortcuts.triggered.connect(self.configure_shortcuts)
 
         self.project_actions = [
@@ -71,6 +72,7 @@ class Main(QMainWindow, Ui_MainWindow):
             self.actionSaveProject,
             self.actionSaveProjectAs,
             self.actionDeleteProject,
+            self.actionDeleteSelected,
         ]
 
         # Create the data directory.
@@ -212,7 +214,7 @@ class Main(QMainWindow, Ui_MainWindow):
                 for row in reader:
                     self.project.annotate(self.project.get_by_file(row[0]),
                             row[1])
-        
+
     @Slot()
     def exportCSV(self):
         path, _ = QFileDialog.getSaveFileName(self, self.tr("Export CSV"), "",
@@ -245,6 +247,14 @@ class Main(QMainWindow, Ui_MainWindow):
                 for annotation in self.project.annotations:
                     data.append({annotation.file: annotation.text})
                 json.dump(data, file)
+
+    @Slot()
+    def deleteSelected(self):
+        if QMessageBox.warning(self, self.tr("Warning"), self.tr(
+                "Really delete selected annotations and audio files?"),
+                QMessageBox.StandardButton.Ok,
+                QMessageBox.Cancel) == QMessageBox.Ok:
+            self.opened_project_frame.delete_selected()
 
     @Slot()
     def configure_shortcuts(self):
