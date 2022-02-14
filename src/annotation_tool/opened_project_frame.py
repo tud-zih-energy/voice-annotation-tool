@@ -7,8 +7,8 @@ edit the annotation.
 
 import os
 from PySide6.QtGui import QBrush, QIcon
-from PySide6.QtCore import QEvent, QSize, Slot, QTime, Qt, QUrl
-from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QAudioDecoder
+from PySide6.QtCore import QSize, Slot, QTime, Qt, QUrl
+from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PySide6.QtWidgets import QFrame, QListWidgetItem, QFileDialog, QMessageBox
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
 from .project import Project
@@ -86,9 +86,8 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         """
         Sets a member of the metadata of all selected files to a give value.
         """
-        for selected in self.fileList.selectedIndexes():
-            annotation = self.project.annotations[selected.row()]
-            setattr(annotation, member, value)
+        for selected in self.fileList.selectedItems():
+            setattr(selected.data(0), member, value)
         self.update_metadata_header()
 
     def get_multiple_profile_value(self, member) -> object:
@@ -97,9 +96,8 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         equal, MIXED_VALUES otherwise.
         """
         value = None
-        for selected in self.fileList.selectedIndexes():
-            annotation = self.project.annotations[selected.row()]
-            this = getattr(annotation, member)
+        for selected in self.fileList.selectedItems():
+            this = getattr(selected.data(0), member)
             if value == None:
                 value = this
             elif this != value:
@@ -108,7 +106,9 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
 
     def update_metadata_header(self):
         """Loads the profile metadata of the selected files into the GUI."""
-        members = {"age": None, "accent": None, "gender": None, "client_id": None}
+        members = {
+            "age": None, "accent": None, "gender": None, "client_id": None
+        }
         for member in members:
             members[member] = self.get_multiple_profile_value(member)
         if members["age"] == None:
@@ -146,6 +146,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.fileList.clear()
         for annotation in self.project.annotations:
             item = QListWidgetItem(annotation.file)
+            item.setData(0, annotation)
             if annotation.modified:
                 item.setBackground(QBrush(Qt.GlobalColor.green))
             self.fileList.addItem(item)
