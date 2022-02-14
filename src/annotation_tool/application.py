@@ -3,7 +3,8 @@ The application that handles the initial program state and initialization of
 the GUI.
 """
 
-import os, sys
+import sys
+from pathlib import Path
 from PySide6.QtCore import QCommandLineParser, QLocale, QStandardPaths, QTranslator
 from PySide6.QtGui import QScreen
 from PySide6.QtWidgets import QApplication
@@ -12,15 +13,15 @@ from .project import Project
 
 def get_data_dir():
     """Returns the directory where application data is stored."""
-    return os.path.join(os.path.dirname(QStandardPaths.standardLocations(
-        QStandardPaths.AppDataLocation)[0]), "annotation_tool")
+    return Path(QStandardPaths.standardLocations(
+        QStandardPaths.AppDataLocation)[0]).joinpath("annotation_tool")
 
 def get_settings_file():
     """
     Returns the json file which stores a list of recently used projects and the
     shortcuts.
     """
-    return os.path.join(get_data_dir(), "settings.json")
+    return get_data_dir().joinpath("settings.json")
 
 class Application(QApplication):
     def __init__(self, args) -> None:
@@ -38,6 +39,7 @@ class Application(QApplication):
         self.installTranslator(translator)
 
         main_window = MainWindow()
+        print(get_settings_file())
         main_window.load_settings(get_settings_file())
         main_window.actionAboutQT.triggered.connect(self.aboutQt)
 
