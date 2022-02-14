@@ -198,7 +198,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             with open(path, "w", newline='') as file:
                 writer = csv.writer(file, delimiter=';')
                 for annotation in self.project.annotations:
-                    writer.writerow([annotation.file, annotation.text])
+                    writer.writerow([annotation.path, annotation.text])
 
     @Slot()
     def importJson(self):
@@ -220,7 +220,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             with open(path, "w") as file:
                 data = []
                 for annotation in self.project.annotations:
-                    data.append({annotation.file: annotation.text})
+                    data.append({annotation.path: annotation.text})
                 json.dump(data, file)
 
     @Slot()

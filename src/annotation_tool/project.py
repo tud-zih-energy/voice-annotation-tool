@@ -14,12 +14,12 @@ class Annotation:
 
     # An ordered list of the members of an annotation that are read and written
     # to and from a tsv file.
-    TSV_HEADER_MEMBERS = ["client_id", "file", "text", "up_votes", "down_votes",
+    TSV_HEADER_MEMBERS = ["client_id", "path", "text", "up_votes", "down_votes",
             "age", "gender", "accent"]
 
     def __init__(self, dict=None):
         self.client_id = "0"
-        self.file = ""
+        self.path = ""
         self.text = ""
         self.up_votes = 0
         self.down_votes = 0
@@ -83,13 +83,13 @@ class Project:
             return
         existing = {}
         for annotation in self.annotations:
-            existing[annotation.file] = True
+            existing[annotation.path] = True
         for audio_file in os.listdir(self.audio_folder):
             if os.path.splitext(audio_file)[1] in [".mp3", ".ogg", ".mp4",
                     ".webm", ".avi", ".mkv", ".wav"]:
                 if not audio_file in existing:
                     annotation = Annotation()
-                    annotation.file = audio_file
+                    annotation.path = audio_file
                     self.annotations.append(annotation)
         print("loaded audio folder")
     
@@ -97,16 +97,16 @@ class Project:
         """Changes the text of the given annotation."""
         annotation = self.annotations[index]
         if not annotation.modified:
-            self.modified_annotations.append(annotation.file)
+            self.modified_annotations.append(annotation.path)
         if not text:
-            self.modified_annotations.remove(annotation.file)
+            self.modified_annotations.remove(annotation.path)
         annotation.modified = bool(text)
         annotation.text = text
 
     def get_by_file(self, file : str):
         """Returns the annotation of the given file."""
         for annotationNum in range(len(self.annotations)):
-            if self.annotations[annotationNum].file == file:
+            if self.annotations[annotationNum].path == file:
                 return annotationNum
 
     def save(self):
@@ -151,8 +151,8 @@ class Project:
             for row in reader:
                 annotation = Annotation(row)
                 if os.path.exists(os.path.join(self.audio_folder,
-                        annotation.file)):
-                    if annotation.file in self.modified_annotations:
+                        annotation.path)):
+                    if annotation.path in self.modified_annotations:
                         annotation.modified = True
                     self.annotations.append(annotation)
         print("loaded csv")
@@ -166,5 +166,5 @@ class Project:
     def delete_annotation(self, index : int):
         """Delete a stored annotation and the audio file on disk."""
         annotation : Annotation = self.annotations[index]
-        os.remove(os.path.join(self.audio_folder, annotation.file))
+        os.remove(os.path.join(self.audio_folder, annotation.path))
         self.annotations.remove(annotation)
