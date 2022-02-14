@@ -43,7 +43,6 @@ class Application(QApplication):
         self.installTranslator(translator)
 
         main_window = MainWindow()
-        print(get_settings_file())
         main_window.load_settings(get_settings_file())
         main_window.actionAboutQT.triggered.connect(self.aboutQt)
 
