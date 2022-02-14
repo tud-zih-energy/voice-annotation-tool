@@ -13,8 +13,12 @@ from .project import Project
 
 def get_data_dir():
     """Returns the directory where application data is stored."""
-    return Path(QStandardPaths.standardLocations(
+    data_dir = Path(QStandardPaths.standardLocations(
         QStandardPaths.AppDataLocation)[0]).joinpath("annotation_tool")
+    if not data_dir.exists():
+        data_dir.mkdir(parents=True)
+    return data_dir
+
 
 def get_settings_file():
     """
