@@ -6,7 +6,6 @@ the GUI.
 import sys
 from pathlib import Path
 from PySide6.QtCore import QCommandLineParser, QLocale, QStandardPaths, QTranslator
-from PySide6.QtGui import QScreen
 from PySide6.QtWidgets import QApplication
 from .main_window import MainWindow
 from .project import Project
@@ -45,11 +44,6 @@ class Application(QApplication):
         main_window = MainWindow()
         main_window.load_settings(get_settings_file())
         main_window.actionAboutQT.triggered.connect(self.aboutQt)
-
-        center = QScreen.availableGeometry(QApplication.primaryScreen()).center()
-        geo = main_window.frameGeometry()
-        geo.moveCenter(center)
-        main_window.move(geo.topLeft())
 
         sys.excepthook = main_window.excepthook
 
