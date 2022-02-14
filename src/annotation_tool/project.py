@@ -5,15 +5,20 @@ Handles loading and saving projects as well as loading the samples from the
 audio folder.
 """
 
-import os
 from typing import List
+import os, csv
 from pathlib import Path
 import json
 
 class Annotation:
     """Stores the annotated properties for one sample."""
 
-    def __init__(self):
+    # An ordered list of the members of an annotation that are read and written
+    # to and from a tsv file.
+    TSV_HEADER_MEMBERS = ["client_id", "file", "text", "up_votes", "down_votes",
+            "age", "gender", "accent"]
+
+    def __init__(self, dict):
         self.client_id = "0"
         self.file = ""
         self.text = ""
@@ -24,12 +29,27 @@ class Annotation:
         self.accent = ""
         self.modified = False
 
-class Project:
-    # An ordered list of the members of an annotation that are read and written
-    # to and from a tsv file.
-    TSV_HEADER_MEMBERS = ["client_id", "file", "text", "up_votes", "down_votes",
-            "age", "gender", "accent"]
+        if dict is not None:
+            self.from_dict(dict)
+    
+    def to_dict(self):
+        """
+        Returns a dictionary ready to be written to a csv file by a DictWriter.
+        """
+        properties = {}
+        for key in self.TSV_HEADER_MEMBERS:
+            properties[key] = str(getattr(self, key)).replace("\n", "\\r")
+        return properties
 
+    def from_dict(self, dict):
+        """Loads an annotation from a loaded csv row."""
+        for header in self.TSV_HEADER_MEMBERS:
+            value = dict[header]
+            if getattr(self, header) is int:
+                value = int(value)
+            setattr(self, header, value) 
+
+class Project:
     def __init__(self, file):
         self.tsv_file = ""
         self.audio_folder = ""
@@ -113,14 +133,11 @@ class Project:
         """
         Exports the project's annotations to its tab separated value (tsv) file.
         """
-        with open(self.tsv_file, "w") as file:
-            file.write("client_id\tpath\tsentence\tup_votes\tdown_votes\tage\tgender\taccent\n")
+        with open(self.tsv_file, "w", newline='', ) as file:
+            writer = csv.DictWriter(file, Annotation.TSV_HEADER_MEMBERS,
+                    delimiter='\t')
             for annotation in self.annotations:
-                properties = []
-                for key in self.TSV_HEADER_MEMBERS:
-                    properties.append(
-                            str(getattr(annotation, key)).replace("\n", "\\r"))
-                file.write("\t".join(properties) + "\n")
+                writer.writerow(annotation.to_dict())
 
     def set_tsv_file(self, to : str):
         """
@@ -129,27 +146,15 @@ class Project:
         self.tsv_file = to
         if not os.path.exists(self.tsv_file):
             return
-        with open(self.tsv_file) as file:
-            first = True
-            for line in file:
-                if first:
-                    first = False
-                    continue
-                annotation = Annotation()
-                segments = line.replace("\n", "").split("\t")
-                for segmentNum in range(len(self.TSV_HEADER_MEMBERS)):
-                    value = segments[segmentNum]
-                    if getattr(annotation,
-                            self.TSV_HEADER_MEMBERS[segmentNum]) is int:
-                        value = int(value)
-                    setattr(annotation, self.TSV_HEADER_MEMBERS[segmentNum],
-                           value) 
+        with open(to, newline='') as file:
+            reader = csv.DictReader(file, delimiter='\t')
+            for row in reader:
+                annotation = Annotation(row)
                 if os.path.exists(os.path.join(self.audio_folder,
                         annotation.file)):
                     if annotation.file in self.modified_annotations:
                         annotation.modified = True
                     self.annotations.append(annotation)
-                
         print("loaded csv")
 
     def delete(self):
