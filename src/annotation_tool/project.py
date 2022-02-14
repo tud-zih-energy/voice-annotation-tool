@@ -5,7 +5,6 @@ Handles loading and saving projects as well as loading the samples from the
 audio folder.
 """
 
-from typing import List
 import os, csv
 from pathlib import Path
 import json
@@ -18,7 +17,7 @@ class Annotation:
     TSV_HEADER_MEMBERS = ["client_id", "file", "text", "up_votes", "down_votes",
             "age", "gender", "accent"]
 
-    def __init__(self, dict):
+    def __init__(self, dict=None):
         self.client_id = "0"
         self.file = ""
         self.text = ""
