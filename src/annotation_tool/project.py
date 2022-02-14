@@ -35,7 +35,7 @@ class Project:
         self.audio_folder = ""
         self.project_file = file
         self.annotations = []
-        self.modified_annotations = {}
+        self.modified_annotations = []
         self.files = []
         self.load()
 
@@ -78,9 +78,9 @@ class Project:
         """Changes the text of the given annotation."""
         annotation = self.annotations[index]
         if not annotation.modified:
-            self.modified_annotations[annotation.file] = True
+            self.modified_annotations.append(annotation.file)
         if not text:
-            self.modified_annotations[annotation.file] = False
+            self.modified_annotations.remove(annotation.file)
         annotation.modified = bool(text)
         annotation.text = text
 
