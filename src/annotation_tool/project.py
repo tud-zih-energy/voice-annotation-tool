@@ -49,10 +49,11 @@ class Project:
         with open(self.project_file) as file:
             data = json.load(file)
             self.modified_annotations = data["modified_annotations"]
+            self.audio_folder = str(Path(self.project_file).joinpath(
+                    data.get("audio_folder")).resolve())
             self.set_tsv_file(str(Path(self.project_file).joinpath(
                     data.get("tsv_file")).resolve()))
-            self.set_audio_folder(str(Path(self.project_file).joinpath(
-                    data.get("audio_folder")).resolve()))
+            self.set_audio_folder(self.audio_folder)
 
     def set_audio_folder(self, to : str):
         """
