@@ -62,6 +62,8 @@ class AnnotationListModel(QAbstractListModel):
             return annotation.path
         elif role == Qt.BackgroundRole:
             return QBrush(Qt.GlobalColor.green) if annotation.modified else QBrush()
+        elif role == Qt.UserRole:
+            return annotation
 
     def removeRow(self, row: int, parent: QModelIndex) -> bool:
         if not self._data or row < 0 or row > self.rowCount():
@@ -113,7 +115,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         Sets a member of the metadata of all selected files to a give value.
         """
         for selected in self.fileList.selectedIndexes():
-            setattr(self.project.annotations[selected.row()], member, value)
+            setattr(selected.data(Qt.UserRole), member, value)
         self.fileList.model().layoutChanged.emit()
         self.update_metadata_header()
 
@@ -124,7 +126,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         """
         value = None
         for selected in self.fileList.selectionModel().selectedIndexes():
-            this = getattr(self.project.annotations[selected.row()], member)
+            this = getattr(selected.data(Qt.UserRole), member)
             if value == None:
                 value = this
             elif this != value:
@@ -174,9 +176,8 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.fileList.selectionModel().selectionChanged.connect(self.selection_changed)
         self.current_item = -1
         self.set_annotation_length(-1)
-        if len(self.project.annotations):
-            self.set_current_sound(0)
-        else:
+        self.fileList.setCurrentIndex(self.fileList.model().index(0,0))
+        if not len(self.project.annotations):
             message = QMessageBox()
             message.setText(self.tr(
                 "No samples found in the audio folder: {folder}"
@@ -195,18 +196,6 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
                 self.project.annotations[self.current_item].path)))
         decoder.durationChanged.connect(self.set_annotation_length)
         decoder.start()
-
-    def set_current_sound(self, to : int):
-        """Sets the index of the current sample."""
-        self.fileList.setCurrentIndex(self.fileList.model().index(to, 0))
-        self.previousButton.setEnabled(to > 0)
-        self.nextButton.setEnabled(to < len(self.project.annotations) - 1)
-        annotation = self.project.annotations[to]
-        self.annotationEdit.blockSignals(True)
-        self.annotationEdit.setText(annotation.text)
-        self.annotationEdit.blockSignals(False)
-        self.player.setSource(QUrl.fromLocalFile(os.path.join(self.project.audio_folder,
-                annotation.path)))
 
     def delete_selected(self):
         """Delete the selected annotations and audio files."""
@@ -262,7 +251,14 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
 
     @Slot()
     def annotation_selected(self, index : QModelIndex):
-        self.set_current_sound(index.row())
+        self.previousButton.setEnabled(index.row() > 0)
+        self.nextButton.setEnabled(index.row() < len(self.project.annotations) - 1)
+        annotation = index.data(Qt.UserRole)
+        self.annotationEdit.blockSignals(True)
+        self.annotationEdit.setText(annotation.text)
+        self.annotationEdit.blockSignals(False)
+        self.player.setSource(QUrl.fromLocalFile(os.path.join(self.project.audio_folder,
+                annotation.path)))
 
     @Slot()
     def import_profile_pressed(self):
@@ -290,11 +286,13 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
 
     @Slot()
     def previous_pressed(self):
-        self.set_current_sound(self.fileList.currentIndex().row() - 1)
+        self.fileList.setCurrentIndex(self.fileList.model().index(
+                self.fileList.currentIndex().row() - 1, 0))
 
     @Slot()
     def next_pressed(self):
-        self.set_current_sound(self.fileList.currentIndex().row() + 1)
+        self.fileList.setCurrentIndex(self.fileList.model().index(
+                self.fileList.currentIndex().row() + 1, 0))
 
     @Slot()
     def volume_changed(self, to):
