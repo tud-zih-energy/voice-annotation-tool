@@ -183,45 +183,37 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def importCSV(self):
         path, _ = QFileDialog.getOpenFileName(self, self.tr("Import CSV"), "",
                 self.tr("CSV Files (*.csv)"))
-        if path:
-            with open(path, newline='') as file:
-                reader = csv.reader(file, delimiter=';')
-                for row in reader:
-                    self.project.annotate(self.project.get_by_file(row[0]),
-                            row[1])
+        if not path:
+            return
+        with open(path, newline='') as file:
+            self.project.importCSV(file)
 
     @Slot()
     def exportCSV(self):
         path, _ = QFileDialog.getSaveFileName(self, self.tr("Export CSV"), "",
                 self.tr("CSV Files (*.csv)"))
-        if path:
-            with open(path, "w", newline='') as file:
-                writer = csv.writer(file, delimiter=';')
-                for annotation in self.project.annotations:
-                    writer.writerow([annotation.path, annotation.text])
+        if not path:
+            return
+        with open(path, "w", newline='') as file:
+            self.project.exportCSV(file)
 
     @Slot()
     def importJson(self):
         path, _ = QFileDialog.getOpenFileName(self, self.tr("Import Json"), "",
                 self.tr("Json Files (*.json)"))
-        if path:
-            with open(path) as file:
-                data = json.load(file)
-                for row in data:
-                    for filename in row:
-                        self.project.annotate(self.project.get_by_file(filename),
-                                row[filename])
+        if not path:
+            return
+        with open(path) as file:
+            self.project.importJson(file)
 
     @Slot()
     def exportJson(self):
         path, _ = QFileDialog.getSaveFileName(self, self.tr("Export Json"), "",
                 self.tr("Json Files (*.json)"))
-        if path:
-            with open(path, "w") as file:
-                data = []
-                for annotation in self.project.annotations:
-                    data.append({annotation.path: annotation.text})
-                json.dump(data, file)
+        if not path:
+            return
+        with open(path, "w") as file:
+            self.project.exportJson(file)
 
     @Slot()
     def deleteSelected(self):
