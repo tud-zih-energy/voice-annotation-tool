@@ -6,8 +6,9 @@ edit the annotation.
 """
 
 import os
+from itertools import islice
 from PySide6.QtGui import QBrush, QIcon
-from PySide6.QtCore import QSize, Slot, QTime, Qt, QUrl
+from PySide6.QtCore import QAbstractListModel, QModelIndex, QSize, Slot, QTime, Qt, QUrl
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QAudioDecoder
 from PySide6.QtWidgets import QFrame, QListWidgetItem, QFileDialog, QMessageBox
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
@@ -45,13 +46,38 @@ AGE_STRINGS = [
 
 GENDERS = ["", "male", "female", "other"]
 
+class AnnotationListModel(QAbstractListModel):
+    def __init__(self, data, parent=None):
+        super().__init__(parent)
+        self._data = data
+    
+    def rowCount(self, parent=QModelIndex()) -> int:
+        if self._data is None:
+            return 0
+        return len(self._data.annotations)
+
+    def data(self, index: QModelIndex, role: int):
+        annotation = self._data.annotations[index.row()]
+        if role == Qt.DisplayRole:
+            return annotation.path
+        elif role == Qt.BackgroundRole:
+            return QBrush(Qt.GlobalColor.green) if annotation.modified else QBrush()
+
+    def removeRow(self, row: int, parent: QModelIndex) -> bool:
+        if not self._data or row < 0 or row > self.rowCount():
+            return False
+        self._data.annotations.remove(row)
+        return True
+
+    def index(self, row: int, column: int = 0, parent=QModelIndex()) -> QModelIndex:
+        return self.createIndex(row, column)
+
 class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
 
         self.project : Project
-        self.current_annotation = 0
         self.output = QAudioOutput()
         self.player = QMediaPlayer()
         self.player.setAudioOutput(self.output)
@@ -86,8 +112,9 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         """
         Sets a member of the metadata of all selected files to a give value.
         """
-        for selected in self.fileList.selectedItems():
-            setattr(selected.data(0), member, value)
+        for selected in self.fileList.selectedIndexes():
+            setattr(self.project.annotations[selected.row()], member, value)
+        self.fileList.model().layoutChanged.emit()
         self.update_metadata_header()
 
     def get_multiple_profile_value(self, member) -> object:
@@ -96,8 +123,8 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         equal, MIXED_VALUES otherwise.
         """
         value = None
-        for selected in self.fileList.selectedItems():
-            this = getattr(selected.data(0), member)
+        for selected in self.fileList.selectionModel().selectedIndexes():
+            this = getattr(self.project.annotations[selected.row()], member)
             if value == None:
                 value = this
             elif this != value:
@@ -143,14 +170,8 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def load_project(self, project : Project):
         """Loads the project's samples and annotations."""
         self.project = project
-        self.fileList.clear()
-        for annotation in self.project.annotations:
-            item = QListWidgetItem(annotation.path)
-            item.setData(0, annotation)
-            if annotation.modified:
-                item.setBackground(QBrush(Qt.GlobalColor.green))
-            self.fileList.addItem(item)
-        print("created list")
+        self.fileList.setModel(AnnotationListModel(self.project))
+        self.fileList.selectionModel().selectionChanged.connect(self.selection_changed)
         self.current_item = -1
         self.set_annotation_length(-1)
         if len(self.project.annotations):
@@ -177,8 +198,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
 
     def set_current_sound(self, to : int):
         """Sets the index of the current sample."""
-        self.fileList.setCurrentItem(self.fileList.item(to))
-        self.current_annotation = to
+        self.fileList.setCurrentIndex(self.fileList.model().index(to, 0))
         self.previousButton.setEnabled(to > 0)
         self.nextButton.setEnabled(to < len(self.project.annotations) - 1)
         annotation = self.project.annotations[to]
@@ -190,9 +210,9 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
 
     def delete_selected(self):
         """Delete the selected annotations and audio files."""
-        for selected in self.fileList.selectedIndexes()[::-1]:
-            self.fileList.takeItem(selected.row())
+        for selected in self.fileList.selectionModel().selectedIndexes()[::-1]:
             self.project.delete_annotation(selected.row())
+        self.fileList.model().layoutChanged.emit()
 
     @Slot()
     def playerError(self, error, string):
@@ -233,16 +253,16 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     @Slot()
     def text_changed(self):
         text = self.annotationEdit.toPlainText()
-        self.project.annotate(self.current_annotation, text)
-        if len(self.project.annotations) < 5000:
-            # Apparently changing the brush rerenders the entire list, so it's
-            # not feasible with many annotations.
-            self.fileList.item(self.current_annotation).setBackground(
-                    QBrush(Qt.GlobalColor.green) if text else QBrush())
+        self.project.annotate(self.fileList.currentIndex().row(), text)
+        self.fileList.model().layoutChanged.emit()
 
     @Slot()
-    def file_selection_changed(self):
+    def selection_changed(self, selected, deselected):
         self.update_metadata_header()
+
+    @Slot()
+    def annotation_selected(self, index : QModelIndex):
+        self.set_current_sound(index.row())
 
     @Slot()
     def import_profile_pressed(self):
@@ -270,15 +290,11 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
 
     @Slot()
     def previous_pressed(self):
-        self.set_current_sound(self.current_annotation - 1)
+        self.set_current_sound(self.fileList.currentIndex().row() - 1)
 
     @Slot()
     def next_pressed(self):
-        self.set_current_sound(self.current_annotation + 1)
-
-    @Slot()
-    def sound_selected(self, num):
-        self.set_current_sound(num)
+        self.set_current_sound(self.fileList.currentIndex().row() + 1)
 
     @Slot()
     def volume_changed(self, to):
