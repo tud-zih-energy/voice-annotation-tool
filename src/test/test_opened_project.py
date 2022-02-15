@@ -6,7 +6,7 @@ def test_annotation_list():
     project = Project("")
     data = {
         "client_id": "0",
-        "file": "",
+        "path": "",
         "text": "",
         "up_votes": 0,
         "down_votes": 0,
