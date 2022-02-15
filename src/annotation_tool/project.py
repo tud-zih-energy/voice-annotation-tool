@@ -136,6 +136,7 @@ class Project:
         with open(self.tsv_file, "w", newline='', ) as file:
             writer = csv.DictWriter(file, Annotation.TSV_HEADER_MEMBERS,
                     delimiter='\t')
+            writer.writeheader()
             for annotation in self.annotations:
                 writer.writerow(annotation.to_dict())
 
