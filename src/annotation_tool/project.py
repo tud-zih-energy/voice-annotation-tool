@@ -169,3 +169,25 @@ class Project:
         annotation : Annotation = self.annotations[index]
         os.remove(os.path.join(self.audio_folder, annotation.path))
         self.annotations.remove(annotation)
+
+    def importCSV(self, infile):
+        reader = csv.reader(infile, delimiter=';')
+        for row in reader:
+            self.annotate(self.get_by_file(row[0]), row[1])
+
+    def exportCSV(self, outfile):
+        writer = csv.writer(outfile, delimiter=';')
+        for annotation in self.annotations:
+            writer.writerow([annotation.file, annotation.text])
+
+    def importJson(self, infile):
+        data = json.load(infile)
+        for row in data:
+            for filename in row:
+                self.annotate(self.get_by_file(filename), row[filename])
+
+    def exportJson(self, outfile):
+        data = []
+        for annotation in self.annotations:
+            data.append({annotation.file: annotation.text})
+        json.dump(data, outfile)
