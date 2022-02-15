@@ -145,7 +145,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.project = project
         self.fileList.clear()
         for annotation in self.project.annotations:
-            item = QListWidgetItem(annotation.file)
+            item = QListWidgetItem(annotation.path)
             item.setData(0, annotation)
             if annotation.modified:
                 item.setBackground(QBrush(Qt.GlobalColor.green))
@@ -171,7 +171,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         decoder = QAudioDecoder()
         decoder.setSource(QUrl.fromLocalFile(os.path.join(
                 self.project.audio_folder,
-                self.project.annotations[self.current_item].file)))
+                self.project.annotations[self.current_item].path)))
         decoder.durationChanged.connect(self.set_annotation_length)
         decoder.start()
 
@@ -186,7 +186,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.annotationEdit.setText(annotation.text)
         self.annotationEdit.blockSignals(False)
         self.player.setSource(QUrl.fromLocalFile(os.path.join(self.project.audio_folder,
-                annotation.file)))
+                annotation.path)))
 
     def delete_selected(self):
         """Delete the selected annotations and audio files."""
