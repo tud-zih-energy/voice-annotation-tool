@@ -43,6 +43,8 @@ class Annotation:
     def from_dict(self, dict):
         """Loads an annotation from a loaded csv row."""
         for header in self.TSV_HEADER_MEMBERS:
+            if not header in dict:
+                continue
             value = dict[header]
             if getattr(self, header) is int:
                 value = int(value)
