@@ -6,7 +6,6 @@ edit the annotation.
 """
 
 import os
-from itertools import islice
 from PySide6.QtGui import QBrush, QIcon
 from PySide6.QtCore import QAbstractListModel, QModelIndex, QSize, Slot, QTime, Qt, QUrl
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QAudioDecoder
@@ -47,6 +46,8 @@ AGE_STRINGS = [
 GENDERS = ["", "male", "female", "other"]
 
 class AnnotationListModel(QAbstractListModel):
+    """Model that shows the annotations of a project."""
+
     def __init__(self, data, parent=None):
         super().__init__(parent)
         self._data = data
@@ -57,6 +58,8 @@ class AnnotationListModel(QAbstractListModel):
         return len(self._data.annotations)
 
     def data(self, index: QModelIndex, role: int):
+        if not index.isValid():
+            return None
         annotation = self._data.annotations[index.row()]
         if role == Qt.DisplayRole:
             return annotation.path
@@ -65,8 +68,8 @@ class AnnotationListModel(QAbstractListModel):
         elif role == Qt.UserRole:
             return annotation
 
-    def removeRow(self, row: int, parent: QModelIndex) -> bool:
-        if not self._data or row < 0 or row > self.rowCount():
+    def removeRow(self, row: int, parent=QModelIndex()) -> bool:
+        if not self._data or row < 0 or row >= self.rowCount():
             return False
         self._data.annotations.remove(row)
         return True
