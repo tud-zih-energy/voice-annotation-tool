@@ -322,7 +322,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QListWidget" name="fileList">
+      <widget class="QListView" name="fileList">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -342,22 +342,6 @@
   <include location="../../resources.qrc"/>
  </resources>
  <connections>
-  <connection>
-   <sender>fileList</sender>
-   <signal>currentRowChanged(int)</signal>
-   <receiver>OpenedProjectFrame</receiver>
-   <slot>sound_selected(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1227</x>
-     <y>298</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>538</x>
-     <y>381</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>annotationEdit</sender>
    <signal>textChanged()</signal>
@@ -439,22 +423,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>fileList</sender>
-   <signal>itemSelectionChanged()</signal>
-   <receiver>OpenedProjectFrame</receiver>
-   <slot>file_selection_changed()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>1036</x>
-     <y>574</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1098</x>
-     <y>888</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>previousButton</sender>
    <signal>clicked()</signal>
    <receiver>OpenedProjectFrame</receiver>
@@ -477,7 +445,7 @@
    <slot>next_pressed()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>559</x>
+     <x>195</x>
      <y>731</y>
     </hint>
     <hint type="destinationlabel">
@@ -509,12 +477,28 @@
    <slot>play_pause_pressed()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>160</x>
-     <y>713</y>
+     <x>38</x>
+     <y>731</y>
     </hint>
     <hint type="destinationlabel">
      <x>203</x>
      <y>784</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fileList</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>OpenedProjectFrame</receiver>
+   <slot>annotation_selected(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>936</x>
+     <y>105</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>953</x>
+     <y>-62</y>
     </hint>
    </hints>
   </connection>
@@ -528,7 +512,7 @@
   <slot>age_selected(int)</slot>
   <slot>gender_selected(int)</slot>
   <slot>accent_changed(QString)</slot>
-  <slot>file_selection_changed()</slot>
+  <slot>annotation_selected(QModelIndex)</slot>
   <slot>client_id_changed(QString)</slot>
   <slot>play_pause_pressed()</slot>
  </slots>
