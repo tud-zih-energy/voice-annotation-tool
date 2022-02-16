@@ -17,5 +17,5 @@ def test_annotation_list():
     }
     project.annotations = [Annotation(data)] * 3
     frame.load_project(project)
-    model : AnnotationListModel = frame.fileList.model()
+    model : AnnotationListModel = frame.annotationList.model()
     assert model.rowCount() == 3
