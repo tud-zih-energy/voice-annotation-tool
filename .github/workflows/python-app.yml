@@ -1,0 +1,32 @@
+# This workflow will install Python dependencies and run tests with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Python application
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      QT_QPA_PLATFORM: minimal
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install gstreamer1.0-qt5 libgstreamer1.0 libgstreamer-plugins-base1.0 ffmpeg libsm6 libxext6 libegl1-mesa xvfb -y
+        python -m pip install --upgrade pip
+        pip install . pytest
+    - name: Test with pytest
+      run: |
+        pytest
+
