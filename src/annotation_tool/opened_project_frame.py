@@ -6,11 +6,11 @@ edit the annotation.
 """
 
 import os
-from typing import Any
+from typing import Any, Dict, List
 from PySide6.QtGui import QBrush, QIcon
 from PySide6.QtCore import QAbstractListModel, QModelIndex, QSize, Slot, QTime, Qt, QUrl
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QAudioDecoder
-from PySide6.QtWidgets import QFrame, QFileDialog, QMessageBox
+from PySide6.QtWidgets import QFrame, QFileDialog, QMessageBox, QPushButton
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
 from .project import Project
 
@@ -90,7 +90,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.player.setAudioOutput(self.output)
         self.playback_buttons = [self.playPauseButton, self.previousButton,
                 self.stopButton, self.nextButton]
-        self.buttonTooltips = []
+        self.buttonTooltips : Dict[QPushButton, str] = {}
 
         self.fileList.installEventFilter(self)
         self.stopButton.pressed.connect(self.player.stop)
@@ -105,14 +105,24 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
             self.ageInput.addItem(age)
         self.ageInput.addItem(self.tr("[Multiple]"))
 
-    def apply_shortcuts(self, shortcuts):
-        """Aplies the shortcuts to the buttons."""
+    def get_button_tooltip(self, button : QPushButton) -> str:
+        """
+        Returns the original tooltip of a button.
+        Stores the current tooltip if it is accessed for the first time.
+        """
+        if not button in self.buttonTooltips:
+            self.buttonTooltips[button] = button.toolTip()
+        return self.buttonTooltips[button]
+
+    def apply_shortcuts(self, shortcuts : Dict[int,str]):
+        """
+        Applies the shortcuts to the buttons.
+        The shortcut is also added to the tooltip.
+        """
         for buttonNum in range(len(shortcuts)):
             button = self.playback_buttons[buttonNum]
             button.setShortcut(shortcuts[buttonNum])
-            if buttonNum >= len(self.buttonTooltips):
-                self.buttonTooltips.append(button.toolTip())
-            button.setToolTip(self.buttonTooltips[buttonNum] + " " +
+            button.setToolTip(self.get_button_tooltip(button) + " " +
                     button.shortcut().toString())
     
     def apply_profile_change(self, member : str, value : object):
