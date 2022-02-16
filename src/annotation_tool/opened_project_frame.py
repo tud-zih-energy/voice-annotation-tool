@@ -48,16 +48,16 @@ GENDERS = ["", "male", "female", "other"]
 class AnnotationListModel(QAbstractListModel):
     """Model that shows the annotations of a project."""
 
-    def __init__(self, data, parent=None):
+    def __init__(self, project : Project, parent=None):
         super().__init__(parent)
-        self._data = data
+        self._data: Project = project
     
     def rowCount(self, parent=QModelIndex()) -> int:
         if self._data is None:
             return 0
         return len(self._data.annotations)
 
-    def data(self, index: QModelIndex, role: int):
+    def data(self, index: QModelIndex, role: int) -> Any:
         if not index.isValid():
             return None
         annotation = self._data.annotations[index.row()]
@@ -67,6 +67,7 @@ class AnnotationListModel(QAbstractListModel):
             return QBrush(Qt.GlobalColor.green) if annotation.modified else QBrush()
         elif role == Qt.UserRole:
             return annotation
+        return None
 
     def removeRow(self, row: int, parent=QModelIndex()) -> bool:
         if not self._data or row < 0 or row >= self.rowCount():
@@ -256,7 +257,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def annotation_selected(self, index : QModelIndex):
         self.previousButton.setEnabled(index.row() > 0)
         self.nextButton.setEnabled(index.row() < len(self.project.annotations) - 1)
-        annotation = index.data(Qt.UserRole)
+        annotation : Annotation = index.data(Qt.UserRole)
         self.annotationEdit.blockSignals(True)
         self.annotationEdit.setText(annotation.text)
         self.annotationEdit.blockSignals(False)
