@@ -6,7 +6,7 @@ edit the annotation.
 """
 
 import os
-from typing import Any, Callable, Union
+from typing import Any, Callable, Union, Dict
 from PySide6.QtGui import QBrush, QIcon
 from PySide6.QtCore import QAbstractListModel, QModelIndex, QSize, Slot, QTime, Qt, QUrl
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QAudioDecoder
@@ -164,8 +164,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         age = self.get_member_of_selected(lambda annotation: annotation.age)
         self.ageInput.setCurrentIndex(len(AGES) if age is None
                 else AGES.index(age))
-        self.ageInput.view().setRowHidden(len(AGES),
-                age != MIXED_VALUES)
+        self.ageInput.view().setRowHidden(len(AGES), age is not None)
 
         gender = self.get_member_of_selected(lambda annotation: annotation.gender)
         self.genderInput.setCurrentIndex(
