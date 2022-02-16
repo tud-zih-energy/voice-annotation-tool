@@ -104,6 +104,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         for age in AGE_STRINGS:
             self.ageInput.addItem(age)
         self.ageInput.addItem(self.tr("[Multiple]"))
+        self.reload_button_tooltips()
 
     def get_button_tooltip(self, button : QPushButton) -> str:
         """
@@ -122,6 +123,11 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         for buttonNum in range(len(shortcuts)):
             button = self.playback_buttons[buttonNum]
             button.setShortcut(shortcuts[buttonNum])
+        self.reload_button_tooltips()
+
+    def reload_button_tooltips(self):
+        """Adds the shortcut of the buttons to the tooltips."""
+        for button in self.playback_buttons:
             button.setToolTip(self.get_button_tooltip(button) + " " +
                     button.shortcut().toString())
     
