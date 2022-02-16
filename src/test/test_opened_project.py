@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QPushButton
 import pytest
-from annotation_tool.opened_project_frame import AnnotationListModel, OpenedProjectFrame
-from annotation_tool.project import Project, Annotation
+from voice_annotation_tool.opened_project_frame import AnnotationListModel, OpenedProjectFrame
+from voice_annotation_tool.project import Project, Annotation
 
 annotation_data = {
     "client_id": "id",

@@ -9,7 +9,7 @@ args = sys.argv
 # Convert .ui to ui.py files
 ui_folder = "src/ui"
 for filename in os.listdir(ui_folder):
-    output = f"src/annotation_tool/{os.path.splitext(filename)[0]}_ui.py"
+    output = f"src/voice_annotation_tool/{os.path.splitext(filename)[0]}_ui.py"
     sys.argv = ["", "--from-imports", "-o", output, f"{ui_folder}/{filename}"]
     try:
         pyside_tool.uic()
@@ -26,7 +26,7 @@ for filename in os.listdir(translation_folder):
         pass
 
 # Generate resource python library.
-sys.argv = ["", "resources.qrc", "-o", "src/annotation_tool/resources_rc.py"]
+sys.argv = ["", "resources.qrc", "-o", "src/voice_annotation_tool/resources_rc.py"]
 try:
     pyside_tool.rcc()
 except SystemExit:
