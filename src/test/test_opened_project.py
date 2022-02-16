@@ -1,4 +1,4 @@
-from annotation_tool.opened_project_frame import OpenedProjectFrame
+from annotation_tool.opened_project_frame import AnnotationListModel, OpenedProjectFrame
 from annotation_tool.project import Project, Annotation
 
 def test_annotation_list():
@@ -17,4 +17,5 @@ def test_annotation_list():
     }
     project.annotations = [Annotation(data)] * 3
     frame.load_project(project)
-    assert frame.fileList.count() == 3
+    model : AnnotationListModel = frame.fileList.model()
+    assert model.rowCount() == 3
