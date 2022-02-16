@@ -6,15 +6,13 @@ edit the annotation.
 """
 
 import os
-from typing import Any, Dict, List
+from typing import Any, Callable, Union
 from PySide6.QtGui import QBrush, QIcon
 from PySide6.QtCore import QAbstractListModel, QModelIndex, QSize, Slot, QTime, Qt, QUrl
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QAudioDecoder
 from PySide6.QtWidgets import QFrame, QFileDialog, QMessageBox, QPushButton
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
-from .project import Project
-
-MIXED_VALUES = object()
+from .project import Annotation, Project
 
 # Age groups how they are displayed on the CommonVoice website and how they are
 # stored in the exported tsv file.
