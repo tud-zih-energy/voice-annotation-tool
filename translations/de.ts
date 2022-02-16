@@ -83,17 +83,13 @@
         <translation>&amp;Öffnen...</translation>
     </message>
     <message>
-        <location filename="../src/ui/create_project_dialog.ui" line="77"/>
-        <source>Open...</source>
-        <translation>Öffnen...</translation>
-    </message>
-    <message>
         <location filename="../src/ui/create_project_dialog.ui" line="44"/>
         <source>Project File</source>
         <translation>Projektdatei</translation>
     </message>
     <message>
         <location filename="../src/ui/create_project_dialog.ui" line="51"/>
+        <location filename="../src/ui/create_project_dialog.ui" line="80"/>
         <source>Select...</source>
         <translation>Auswählen...</translation>
     </message>
@@ -103,9 +99,9 @@
         <translation>TSV-Datei</translation>
     </message>
     <message>
-        <location filename="../src/ui/create_project_dialog.ui" line="84"/>
-        <source>Create...</source>
-        <translation>Erstellen...</translation>
+        <location filename="../src/ui/create_project_dialog.ui" line="77"/>
+        <source>Open or create the TSV that holds the annotations.</source>
+        <translation>Öffne oder erstelle die TSV-Datei die die Annotationen beinhaltet.</translation>
     </message>
 </context>
 <context>
