@@ -10,8 +10,8 @@
     </message>
     <message>
         <location filename="../src/ui/about.ui" line="20"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Voice Annotation Tool&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Version: {version}&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Utility to annotate short voice samples&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://gitlab.hrz.tu-chemnitz.de/tud-zih-energy/machine-learning/voice-annotation-tool&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;https://gitlab.hrz.tu-chemnitz.de&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Stimmenannotations-Werkzeug&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Version: {version}&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Werkzeug zum Annotieren von kurzen Stimmproben&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://gitlab.hrz.tu-chemnitz.de/tud-zih-energy/machine-learning/voice-annotation-tool&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;https://gitlab.hrz.tu-chemnitz.de&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Voice Annotation Tool&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Version: {version}&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Utility to annotate short voice samples&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://github.com/tud-zih-energy/voice-annotation-tool&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;https://github.com/tud-zih-energy/voice-annotation-tool&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Stimmenannotations-Werkzeug&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Version: {version}&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Werkzeug zum Annotieren von kurzen Stimmproben&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://github.com/tud-zih-energy/voice-annotation-tool&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;https://github.com/tud-zih-energy/voice-annotation-tool&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../src/ui/about.ui" line="40"/>
@@ -32,6 +32,19 @@
         <location filename="../src/ui/about.ui" line="81"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.&lt;/p&gt;&lt;p&gt;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.&lt;/p&gt;&lt;p&gt;You should have received a copy of the GNU General Public License along with this program. If not, see &amp;lt;https://www.gnu.org/licenses/&amp;gt;. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dieses Programm ist Freie Software: Sie können es unter den Bedingungen der GNU General Public License, wie von der Free Software Foundation, Version 3 der Lizenz oder (nach Ihrer Wahl) jeder neueren veröffentlichten Version, weiter verteilen und/oder modifizieren.&lt;/p&gt;&lt;p&gt;Dieses Programm wird in der Hoffnung bereitgestellt, dass es nützlich sein wird, jedoch OHNE JEDE GEWÄHR,; sogar ohne die implizite Gewähr der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK. Siehe die GNU General Public License für weitere Einzelheiten.&lt;/p&gt;&lt;p&gt;Sie sollten eine Kopie der GNU General Public License zusammen mit diesem Programm erhalten haben. Wenn nicht, siehe &amp;lt;https://www.gnu.org/licenses/&amp;gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>Application</name>
+    <message>
+        <location filename="../src/voice_annotation_tool/application.py" line="34"/>
+        <source>Utility to annotate short voice samples</source>
+        <translation>Werkzeug zur Annotation von kurzen Sprachproben</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/application.py" line="35"/>
+        <source>Project file to open.</source>
+        <translation>Zu öffnende Projektdatei.</translation>
     </message>
 </context>
 <context>
@@ -93,84 +106,6 @@
         <location filename="../src/ui/create_project_dialog.ui" line="84"/>
         <source>Create...</source>
         <translation>Erstellen...</translation>
-    </message>
-</context>
-<context>
-    <name>Main</name>
-    <message>
-        <location filename="../src/annotation_tool/main.py" line="144"/>
-        <location filename="../src/annotation_tool/main.py" line="187"/>
-        <location filename="../src/annotation_tool/main.py" line="253"/>
-        <source>Warning</source>
-        <translation>Warnung</translation>
-    </message>
-    <message>
-        <location filename="../src/annotation_tool/main.py" line="145"/>
-        <source>The audio folder doesn&apos;t exist. Choose another one?</source>
-        <translation>Der Audioordner existiert nicht. Einen anderen auswählen?</translation>
-    </message>
-    <message>
-        <location filename="../src/annotation_tool/main.py" line="149"/>
-        <source>Open Audio Folder</source>
-        <translation>Audioordner Öffnen</translation>
-    </message>
-    <message>
-        <location filename="../src/annotation_tool/main.py" line="165"/>
-        <source>Open Project</source>
-        <translation>Projekt Öffnen</translation>
-    </message>
-    <message>
-        <location filename="../src/annotation_tool/main.py" line="166"/>
-        <location filename="../src/annotation_tool/main.py" line="179"/>
-        <source>Project Files (*.json)</source>
-        <translation>Projektdateien (*.json)</translation>
-    </message>
-    <message>
-        <location filename="../src/annotation_tool/main.py" line="179"/>
-        <source>Save Project</source>
-        <translation>Projekt Speichern</translation>
-    </message>
-    <message>
-        <location filename="../src/annotation_tool/main.py" line="188"/>
-        <source>Delete the TSV and project file?</source>
-        <translation>TSV und Projektdatei löschen?</translation>
-    </message>
-    <message>
-        <location filename="../src/annotation_tool/main.py" line="209"/>
-        <source>Import CSV</source>
-        <translation>CSV Importieren</translation>
-    </message>
-    <message>
-        <location filename="../src/annotation_tool/main.py" line="210"/>
-        <location filename="../src/annotation_tool/main.py" line="221"/>
-        <source>CSV Files (*.csv)</source>
-        <translation>CSV-Dateien (*.csv)</translation>
-    </message>
-    <message>
-        <location filename="../src/annotation_tool/main.py" line="220"/>
-        <source>Export CSV</source>
-        <translation>CSV Exportieren</translation>
-    </message>
-    <message>
-        <location filename="../src/annotation_tool/main.py" line="230"/>
-        <source>Import Json</source>
-        <translation>Json Importieren</translation>
-    </message>
-    <message>
-        <location filename="../src/annotation_tool/main.py" line="231"/>
-        <location filename="../src/annotation_tool/main.py" line="243"/>
-        <source>Json Files (*.json)</source>
-        <translation>Json-Dateien (*.json)</translation>
-    </message>
-    <message>
-        <location filename="../src/annotation_tool/main.py" line="242"/>
-        <source>Export Json</source>
-        <translation>Json Exportieren</translation>
-    </message>
-    <message>
-        <location filename="../src/annotation_tool/main.py" line="254"/>
-        <source>Really delete selected annotations and audio files?</source>
-        <translation>Wirklich die ausgewählten Annotationen und die dazugehörigen Audiodateien löschen?</translation>
     </message>
 </context>
 <context>
@@ -300,22 +235,97 @@
         <source>Ctrl+N</source>
         <translation></translation>
     </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="119"/>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="162"/>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="220"/>
+        <source>Warning</source>
+        <translation>Warnung</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="120"/>
+        <source>The audio folder doesn&apos;t exist. Choose another one?</source>
+        <translation>Der Audioordner existiert nicht. Einen anderen auswählen?</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="124"/>
+        <source>Open Audio Folder</source>
+        <translation>Audioordner Öffnen</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="140"/>
+        <source>Open Project</source>
+        <translation>Projekt Öffnen</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="141"/>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="154"/>
+        <source>Project Files (*.json)</source>
+        <translation>Projektdateien (*.json)</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="154"/>
+        <source>Save Project</source>
+        <translation>Projekt Speichern</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="163"/>
+        <source>Delete the TSV and project file?</source>
+        <translation>TSV und Projektdatei löschen?</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="184"/>
+        <source>Import CSV</source>
+        <translation>CSV Importieren</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="185"/>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="194"/>
+        <source>CSV Files (*.csv)</source>
+        <translation>CSV-Dateien (*.csv)</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="193"/>
+        <source>Export CSV</source>
+        <translation>CSV Exportieren</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="202"/>
+        <source>Import Json</source>
+        <translation>Json Importieren</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="203"/>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="212"/>
+        <source>Json Files (*.json)</source>
+        <translation>Json-Dateien (*.json)</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="211"/>
+        <source>Export Json</source>
+        <translation>Json Exportieren</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="221"/>
+        <source>Really delete selected annotations and audio files?</source>
+        <translation>Wirklich die ausgewählten Annotationen und die dazugehörigen Audiodateien löschen?</translation>
+    </message>
 </context>
 <context>
     <name>OpenedProjectFrame</name>
     <message>
-        <location filename="../src/annotation_tool/opened_project_frame.py" line="73"/>
         <location filename="../src/ui/opened_project_frame.ui" line="77"/>
+        <location filename="../src/voice_annotation_tool/opened_project_frame.py" line="106"/>
         <source>[Multiple]</source>
         <translation>[Mehrere]</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/opened_project_frame.py" line="161"/>
+        <location filename="../src/voice_annotation_tool/opened_project_frame.py" line="205"/>
         <source>No samples found in the audio folder: {folder}</source>
         <translation>Keine Samples in dem Audioordner gefunden: {folder}</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/opened_project_frame.py" line="201"/>
+        <location filename="../src/voice_annotation_tool/opened_project_frame.py" line="232"/>
         <source>Error playing audio: {error}</source>
         <translation>Fehler beim abspielen: {error}</translation>
     </message>
@@ -418,22 +428,9 @@
         <translation>Tastenkürzel-Einstellungen</translation>
     </message>
     <message>
-        <location filename="../src/annotation_tool/shortcut_settings_dialog.py" line="57"/>
+        <location filename="../src/voice_annotation_tool/shortcut_settings_dialog.py" line="57"/>
         <source>{shortcut} is already used elsewhere in the application.</source>
         <translation>{shortcut} ist im Programm schon verwendet.</translation>
-    </message>
-</context>
-<context>
-    <name>app</name>
-    <message>
-        <location filename="../src/annotation_tool/main.py" line="273"/>
-        <source>Utility to annotate short voice samples</source>
-        <translation>Werkzeug zur Annotation von kurzen Sprachproben</translation>
-    </message>
-    <message>
-        <location filename="../src/annotation_tool/main.py" line="274"/>
-        <source>Project file to open.</source>
-        <translation>Zu öffnende Projektdatei.</translation>
     </message>
 </context>
 </TS>

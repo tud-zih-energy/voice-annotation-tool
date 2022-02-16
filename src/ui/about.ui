@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>362</width>
-    <height>338</height>
+    <width>560</width>
+    <height>335</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="descriptionLabel">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Voice Annotation Tool&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Version: {version}&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Utility to annotate short voice samples&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://gitlab.hrz.tu-chemnitz.de/tud-zih-energy/machine-learning/voice-annotation-tool&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;https://gitlab.hrz.tu-chemnitz.de&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Voice Annotation Tool&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Version: {version}&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Utility to annotate short voice samples&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://github.com/tud-zih-energy/voice-annotation-tool&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;https://github.com/tud-zih-energy/voice-annotation-tool&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="textFormat">
       <enum>Qt::RichText</enum>
@@ -70,8 +70,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>305</width>
-            <height>519</height>
+            <width>503</width>
+            <height>335</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
