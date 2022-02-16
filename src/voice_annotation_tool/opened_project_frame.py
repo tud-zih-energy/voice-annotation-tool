@@ -129,13 +129,15 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
             button.setToolTip(self.get_button_tooltip(button) + " " +
                     button.shortcut().toString())
     
-    def apply_profile_change(self, member : str, value : object):
+    def apply_profile_change(self, apply_change : Callable[[Annotation], None]):
         """
-        Sets a member of the metadata of all selected files to a give value.
+        Sets a member of the metadata of all selected files to a give value by
+        calling a lambda function that does the change.
         """
-        for selectedItem in self.annotationList.selectedIndexes():
-            setattr(selectedItem.data(Qt.UserRole), member, value)
-        self.annotationList.model().layoutChanged.emit()
+        for selected in self.annotationList.selectedIndexes():
+            annotation = selected.data(Qt.UserRole)
+            apply_change(annotation)
+        self.fileList.model().layoutChanged.emit()
         self.update_metadata_header()
 
     def get_member_of_selected(self, member_getter: Callable[[Annotation], Any]) -> Union[str, None]:
@@ -237,22 +239,32 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     @Slot()
     def gender_selected(self, gender : int):
         if gender == len(GENDERS):
+            # Selected the "Multiple" option, changing nothing.
             return
-        self.apply_profile_change("gender", GENDERS[gender])
+        def set_gender(annotation : Annotation) -> None:
+            annotation.gender = GENDERS[gender]
+        self.apply_profile_change(set_gender)
 
     @Slot()
     def age_selected(self, age : int):
         if age == len(AGES):
+            # Selected the "Multiple" option, changing nothing.
             return
-        self.apply_profile_change("age", AGES[age])
+        def set_age(annotation : Annotation) -> None:
+            annotation.age = AGES[age]
+        self.apply_profile_change(set_age)
 
     @Slot()
     def accent_changed(self, accent : str):
-        self.apply_profile_change("accent", accent)
+        def set_accent(annotation : Annotation) -> None:
+            annotation.accent = accent
+        self.apply_profile_change(set_accent)
 
     @Slot()
     def client_id_changed(self, id : str):
-        self.apply_profile_change("client_id", id)
+        def set_id(annotation : Annotation) -> None:
+            annotation.client_id = id
+        self.apply_profile_change(set_id)
 
     @Slot()
     def text_changed(self):
