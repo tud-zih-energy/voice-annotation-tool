@@ -92,7 +92,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
                 self.stopButton, self.nextButton]
         self.buttonTooltips : Dict[QPushButton, str] = {}
 
-        self.fileList.installEventFilter(self)
+        self.annotationList.installEventFilter(self)
         self.stopButton.pressed.connect(self.player.stop)
         self.timeSlider.valueChanged.connect(self.player.setPosition)
         self.volumeSlider.valueChanged.connect(self.volume_changed)
@@ -129,9 +129,9 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         """
         Sets a member of the metadata of all selected files to a give value.
         """
-        for selected in self.fileList.selectedIndexes():
-            setattr(selected.data(Qt.UserRole), member, value)
-        self.fileList.model().layoutChanged.emit()
+        for selectedItem in self.annotationList.selectedIndexes():
+            setattr(selectedItem.data(Qt.UserRole), member, value)
+        self.annotationList.model().layoutChanged.emit()
         self.update_metadata_header()
 
     def get_multiple_profile_value(self, member) -> object:
@@ -140,7 +140,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         equal, MIXED_VALUES otherwise.
         """
         value = None
-        for selected in self.fileList.selectionModel().selectedIndexes():
+        for selected in self.annotationList.selectionModel().selectedIndexes():
             this = getattr(selected.data(Qt.UserRole), member)
             if value == None:
                 value = this
@@ -187,11 +187,11 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def load_project(self, project : Project):
         """Loads the project's samples and annotations."""
         self.project = project
-        self.fileList.setModel(AnnotationListModel(self.project))
-        self.fileList.selectionModel().selectionChanged.connect(self.selection_changed)
+        self.annotationList.setModel(AnnotationListModel(self.project))
+        self.annotationList.selectionModel().selectionChanged.connect(self.selection_changed)
         self.current_item = -1
         self.set_annotation_length(-1)
-        self.fileList.setCurrentIndex(self.fileList.model().index(0,0))
+        self.annotationList.setCurrentIndex(self.annotationList.model().index(0,0))
         if not len(self.project.annotations):
             message = QMessageBox()
             message.setText(self.tr(
@@ -202,7 +202,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def set_annotation_length(self, length):
         """Set the length of an annotation displayed in the list."""
         if self.current_item > 0 and length > 0:
-            item = self.fileList.item(self.current_item)
+            item = self.annotationList.item(self.current_item)
             item.setText(f"[{QTime(0, 0).addMSecs(length).toString()}] {item.text()}")
         self.current_item += 1
         decoder = QAudioDecoder()
@@ -214,9 +214,9 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
 
     def delete_selected(self):
         """Delete the selected annotations and audio files."""
-        for selected in self.fileList.selectionModel().selectedIndexes()[::-1]:
+        for selected in self.annotationList.selectionModel().selectedIndexes()[::-1]:
             self.project.delete_annotation(selected.row())
-        self.fileList.model().layoutChanged.emit()
+        self.annotationList.model().layoutChanged.emit()
 
     @Slot()
     def playerError(self, error, string):
@@ -257,8 +257,8 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     @Slot()
     def text_changed(self):
         text = self.annotationEdit.toPlainText()
-        self.project.annotate(self.fileList.currentIndex().row(), text)
-        self.fileList.model().layoutChanged.emit()
+        self.project.annotate(self.annotationList.currentIndex().row(), text)
+        self.annotationList.model().layoutChanged.emit()
 
     @Slot()
     def selection_changed(self, selected, deselected):
@@ -301,13 +301,13 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
 
     @Slot()
     def previous_pressed(self):
-        self.fileList.setCurrentIndex(self.fileList.model().index(
-                self.fileList.currentIndex().row() - 1, 0))
+        self.annotationList.setCurrentIndex(self.annotationList.model().index(
+                self.annotationList.currentIndex().row() - 1, 0))
 
     @Slot()
     def next_pressed(self):
-        self.fileList.setCurrentIndex(self.fileList.model().index(
-                self.fileList.currentIndex().row() + 1, 0))
+        self.annotationList.setCurrentIndex(self.annotationList.model().index(
+                self.annotationList.currentIndex().row() + 1, 0))
 
     @Slot()
     def volume_changed(self, to):
