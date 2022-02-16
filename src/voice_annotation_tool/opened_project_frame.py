@@ -140,52 +140,48 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.annotationList.model().layoutChanged.emit()
         self.update_metadata_header()
 
-    def get_multiple_profile_value(self, member) -> object:
+    def get_member_of_selected(self, member_getter: Callable[[Annotation], Any]) -> Union[str, None]:
         """
-        Returns the value of the selected files metadata if all values are
-        equal, MIXED_VALUES otherwise.
+        Returns the value of the selected annotations metadata if all values are
+        equal, otherwise None.
         """
         value = None
         for selected in self.annotationList.selectionModel().selectedIndexes():
-            this = getattr(selected.data(Qt.UserRole), member)
+            annotation = selected.data(Qt.UserRole)
+            selected_value = member_getter(annotation)
             if value == None:
-                value = this
-            elif this != value:
-                return MIXED_VALUES
+                value = selected_value
+            elif selected_value != value:
+                return None
         return value
 
     def update_metadata_header(self):
         """Loads the profile metadata of the selected files into the GUI."""
-        members = {
-            "age": None, "accent": None, "gender": None, "client_id": None
-        }
-        for member in members:
-            members[member] = self.get_multiple_profile_value(member)
-        if members["age"] == None:
-            return
         inputs = [self.ageInput, self.accentEdit, self.genderInput, self.clientIdEdit]
         for input in inputs:
             input.blockSignals(True)
 
-        self.ageInput.setCurrentIndex(len(AGES) if
-                members["age"] == MIXED_VALUES
-                else AGES.index(members["age"]))
+        age = self.get_member_of_selected(lambda annotation: annotation.age)
+        self.ageInput.setCurrentIndex(len(AGES) if age is None
+                else AGES.index(age))
         self.ageInput.view().setRowHidden(len(AGES),
-                members["age"] != MIXED_VALUES)
+                age != MIXED_VALUES)
 
-        self.genderInput.setCurrentIndex(len(GENDERS) if
-                members["gender"] == MIXED_VALUES
-                else GENDERS.index(members["gender"]))
-        self.genderInput.view().setRowHidden(len(GENDERS),
-                members["gender"] != MIXED_VALUES)
+        gender = self.get_member_of_selected(lambda annotation: annotation.gender)
+        self.genderInput.setCurrentIndex(
+                len(GENDERS) if gender is None
+                else GENDERS.index(gender))
+        self.genderInput.view().setRowHidden(len(GENDERS), gender is not None)
 
+        accent = self.get_member_of_selected(lambda annotation: annotation.accent)
         self.accentEdit.clear()
-        if members["accent"] != MIXED_VALUES:
-            self.accentEdit.insert(members["accent"])
+        if accent:
+            self.accentEdit.insert(accent)
 
+        client_id = self.get_member_of_selected(lambda annotation: annotation.client_id)
         self.clientIdEdit.clear()
-        if members["client_id"] != MIXED_VALUES:
-            self.clientIdEdit.insert(members["client_id"])
+        if client_id:
+            self.clientIdEdit.insert(client_id)
 
         for input in inputs:
             input.blockSignals(False)
