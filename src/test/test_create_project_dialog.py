@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QDialogButtonBox, QPushButton
 from PySide6.QtTest import QTest
-from annotation_tool.create_project_dialog import CreateProjectDialog
+from voice_annotation_tool.create_project_dialog import CreateProjectDialog
 
 def test_ok_disabled():
     dialog = CreateProjectDialog()
