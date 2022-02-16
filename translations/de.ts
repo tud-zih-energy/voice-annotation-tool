@@ -375,47 +375,57 @@
         <translation>Profil Importieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/opened_project_frame.ui" line="170"/>
+        <location filename="../src/ui/opened_project_frame.ui" line="138"/>
+        <source>Marks the selected annotations as not modified, removing the green higlight.</source>
+        <translation>Markiert die ausgewählten Annotationen als nicht geändert, entfernt die grüne Hervorhebung.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/opened_project_frame.ui" line="141"/>
+        <source>Mark Unchanged</source>
+        <translation>Markiere Unverändert</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/opened_project_frame.ui" line="180"/>
         <source>Play / Pause</source>
         <translation>Abspielen / Pausieren</translation>
     </message>
     <message>
-        <location filename="../src/ui/opened_project_frame.ui" line="177"/>
+        <location filename="../src/ui/opened_project_frame.ui" line="187"/>
         <source>Ctrl+Return</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ui/opened_project_frame.ui" line="200"/>
+        <location filename="../src/ui/opened_project_frame.ui" line="210"/>
         <source>Previous sample</source>
         <translation>Vorheriges Sample</translation>
     </message>
     <message>
-        <location filename="../src/ui/opened_project_frame.ui" line="210"/>
+        <location filename="../src/ui/opened_project_frame.ui" line="220"/>
         <source>Ctrl+PgUp</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ui/opened_project_frame.ui" line="217"/>
+        <location filename="../src/ui/opened_project_frame.ui" line="227"/>
         <source>Stop</source>
         <translation>Stop</translation>
     </message>
     <message>
-        <location filename="../src/ui/opened_project_frame.ui" line="227"/>
+        <location filename="../src/ui/opened_project_frame.ui" line="237"/>
         <source>Ctrl+P</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ui/opened_project_frame.ui" line="234"/>
+        <location filename="../src/ui/opened_project_frame.ui" line="244"/>
         <source>Next sample</source>
         <translation>Nächstes Sample</translation>
     </message>
     <message>
-        <location filename="../src/ui/opened_project_frame.ui" line="244"/>
+        <location filename="../src/ui/opened_project_frame.ui" line="254"/>
         <source>Ctrl+PgDown</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ui/opened_project_frame.ui" line="317"/>
+        <location filename="../src/ui/opened_project_frame.ui" line="327"/>
         <source>Samples</source>
         <translation>Samples</translation>
     </message>

@@ -132,6 +132,16 @@
          </property>
         </widget>
        </item>
+       <item row="1" column="4">
+        <widget class="QPushButton" name="markUnchangedButton">
+         <property name="toolTip">
+          <string>Marks the selected annotations as not modified, removing the green higlight.</string>
+         </property>
+         <property name="text">
+          <string>Mark Unchanged</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -369,7 +379,7 @@
      <y>43</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1135</x>
+     <x>1126</x>
      <y>138</y>
     </hint>
    </hints>
@@ -433,7 +443,7 @@
      <y>731</y>
     </hint>
     <hint type="destinationlabel">
-     <x>-34</x>
+     <x>0</x>
      <y>576</y>
     </hint>
    </hints>
@@ -450,7 +460,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>711</x>
-     <y>760</y>
+     <y>739</y>
     </hint>
    </hints>
   </connection>
@@ -466,7 +476,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>280</x>
-     <y>-48</y>
+     <y>0</y>
     </hint>
    </hints>
   </connection>
@@ -482,7 +492,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>203</x>
-     <y>784</y>
+     <y>739</y>
     </hint>
    </hints>
   </connection>
@@ -498,7 +508,23 @@
     </hint>
     <hint type="destinationlabel">
      <x>953</x>
-     <y>-62</y>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>markUnchangedButton</sender>
+   <signal>clicked()</signal>
+   <receiver>OpenedProjectFrame</receiver>
+   <slot>mark_unchanged_pressed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>614</x>
+     <y>75</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>556</x>
+     <y>830</y>
     </hint>
    </hints>
   </connection>
@@ -515,5 +541,6 @@
   <slot>annotation_selected(QModelIndex)</slot>
   <slot>client_id_changed(QString)</slot>
   <slot>play_pause_pressed()</slot>
+  <slot>mark_unchanged_pressed()</slot>
  </slots>
 </ui>
