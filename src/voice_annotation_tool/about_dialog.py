@@ -12,7 +12,7 @@ class AboutDialog(QDialog, Ui_AboutDialog):
         super().__init__()
         self.setupUi(self)
         self.descriptionLabel.setText(self.descriptionLabel.text().format(
-            version=pkg_resources.get_distribution("annotation-tool-feliks-weber").version))
+            version=pkg_resources.get_distribution("voice-annotation-tool").version))
 
     @Slot()
     def accept(self):
