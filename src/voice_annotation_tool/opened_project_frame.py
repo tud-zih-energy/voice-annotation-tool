@@ -121,6 +121,10 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
             if annotation.client_id != client_id:
                 client_id = None
 
+            if all([age == None, gender == None,
+                    accent == None, client_id == None]):
+                break
+
         if first:
             # No annotation in the list.
             return
@@ -130,13 +134,11 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         for input in inputs:
             input.blockSignals(True)
 
-        multiple_index = len(GENDERS)
-        gender_index = multiple_index if not gender else GENDERS.index(gender)
+        gender_index = len(GENDERS) if gender == None else GENDERS.index(gender)
         self.genderInput.setCurrentIndex(gender_index)
         self.genderInput.view().setRowHidden(multiple_index, gender != None)
 
-        multiple_index = len(AGES)
-        age_index = multiple_index if not age else AGES.index(age)
+        age_index = len(AGES) if age == None else AGES.index(age)
         self.ageInput.setCurrentIndex(age_index)
         self.ageInput.view().setRowHidden(multiple_index, age != None)
 
