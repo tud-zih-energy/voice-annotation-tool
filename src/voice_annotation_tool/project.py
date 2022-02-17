@@ -5,6 +5,7 @@ Handles loading and saving projects as well as loading the samples from the
 audio folder.
 """
 
+from io import StringIO
 import os, csv
 from pathlib import Path
 import json
@@ -174,24 +175,29 @@ class Project:
         os.remove(os.path.join(self.audio_folder, annotation.path))
         self.annotations.remove(annotation)
 
-    def importCSV(self, infile):
+    def importCSV(self, infile: StringIO):
         reader = csv.reader(infile, delimiter=';')
         for row in reader:
-            self.annotate(self.get_by_file(row[0]), row[1])
+            annotation = self.get_by_file(row[0])
+            if annotation != None:
+                self.annotate(annotation, row[1])
 
-    def exportCSV(self, outfile):
+    def exportCSV(self, outfile: StringIO):
         writer = csv.writer(outfile, delimiter=';')
         for annotation in self.annotations:
-            writer.writerow([annotation.file, annotation.text])
+            writer.writerow([annotation.path, annotation.text])
 
-    def importJson(self, infile):
+    def importJson(self, infile: StringIO):
         data = json.load(infile)
         for row in data:
             for filename in row:
-                self.annotate(self.get_by_file(filename), row[filename])
+                annotation = self.get_by_file(filename)
+                if annotation == None:
+                    continue
+                self.annotate(annotation, row[filename])
 
-    def exportJson(self, outfile):
+    def exportJson(self, outfile: StringIO):
         data = []
         for annotation in self.annotations:
-            data.append({annotation.file: annotation.text})
+            data.append({annotation.path: annotation.text})
         json.dump(data, outfile)
