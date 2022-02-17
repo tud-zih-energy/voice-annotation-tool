@@ -5,12 +5,13 @@ the GUI.
 
 import sys
 from pathlib import Path
+import traceback
 from PySide6.QtCore import QCommandLineParser, QLocale, QStandardPaths, QTranslator
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QErrorMessage
 from .main_window import MainWindow
 from .project import Project
 
-def get_data_dir():
+def get_data_dir() -> Path:
     """Returns the directory where application data is stored."""
     data_dir = Path(QStandardPaths.standardLocations(
         QStandardPaths.AppDataLocation)[0]).joinpath("annotation_tool")
@@ -18,8 +19,7 @@ def get_data_dir():
         data_dir.mkdir(parents=True)
     return data_dir
 
-
-def get_settings_file():
+def get_settings_file() -> Path:
     """
     Returns the json file which stores a list of recently used projects and the
     shortcuts.
@@ -41,14 +41,25 @@ class Application(QApplication):
         translator.load(QLocale(), 'translations/')
         self.installTranslator(translator)
 
-        main_window = MainWindow()
-        main_window.load_settings(get_settings_file())
-        main_window.actionAboutQT.triggered.connect(self.aboutQt)
+        self.main_window = MainWindow()
+        self.main_window.load_settings(get_settings_file())
+        self.main_window.actionAboutQT.triggered.connect(self.aboutQt)
 
-        sys.excepthook = main_window.excepthook
+        sys.excepthook = self.excepthook
+        self.error_dialog = None
 
         args = parser.positionalArguments()
         if len(args) > 0:
-            main_window.project_opened(Project(args[0]))
+            self.main_window.project_opened(Project(args[0]))
 
-        main_window.show()
+        self.main_window.show()
+
+    def excepthook(self, exc_type, exc_value, exc_tb):
+        if self.error_dialog:
+            # Only show one error message to prevent dialog spam.
+            self.error_dialog.close()
+        self.error_dialog = QErrorMessage(self.main_window)
+        message = "\n".join(traceback.format_exception(exc_type,
+                exc_value, exc_tb))
+        print(message)
+        self.error_dialog.showMessage(message, "exception")

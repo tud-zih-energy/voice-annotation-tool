@@ -97,13 +97,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 "shortcuts": self.shortcuts,
             }, file)
 
-    def excepthook(self, exc_type, exc_value, exc_tb):
-        error_dialog = QErrorMessage(self)
-        message = "\n".join(traceback.format_exception(exc_type,
-                exc_value, exc_tb))
-        print(message)
-        error_dialog.showMessage(message, "exception")
-
     @Slot()
     def project_opened(self, project):
         self.recent_projects.append(project.project_file)
