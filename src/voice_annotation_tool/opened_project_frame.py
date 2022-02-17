@@ -213,6 +213,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         for selected_item in self.annotationList.selectedIndexes():
             annotation: Annotation = selected_item.data(ANNOTATION_ROLE)
             annotation.gender = GENDERS[gender]
+        self.update_metadata_header()
 
     @Slot()
     def age_selected(self, age : int):
@@ -221,22 +222,20 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         for selected_item in self.annotationList.selectedIndexes():
             annotation: Annotation = selected_item.data(ANNOTATION_ROLE)
             annotation.age = AGES[age]
+        self.update_metadata_header()
 
     @Slot()
     def accent_changed(self, accent : str):
         for selected_item in self.annotationList.selectedIndexes():
             annotation: Annotation = selected_item.data(ANNOTATION_ROLE)
             annotation.accent = accent
+        self.update_metadata_header()
 
     @Slot()
     def client_id_changed(self, client_id : str):
         for selected_item in self.annotationList.selectedIndexes():
             annotation: Annotation = selected_item.data(ANNOTATION_ROLE)
             annotation.client_id = client_id
-
-    @Slot()
-    def metadata_changed(self, to: Union[str, int]):
-        self.annotationList.model().layoutChanged.emit()
         self.update_metadata_header()
 
     @Slot()
