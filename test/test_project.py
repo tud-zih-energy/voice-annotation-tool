@@ -1,8 +1,6 @@
 from io import StringIO
-import os
-
 import pytest
-from voice_annotation_tool.project import Annotation
+from voice_annotation_tool.annotation import Annotation
 from voice_annotation_tool.project import Project
 
 @pytest.fixture
