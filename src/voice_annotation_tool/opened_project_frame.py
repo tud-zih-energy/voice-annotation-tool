@@ -6,11 +6,13 @@ edit the annotation.
 """
 
 import os
-from typing import Any, Dict
-from PySide6.QtGui import QBrush, QIcon
-from PySide6.QtCore import QAbstractListModel, QModelIndex, QSize, Slot, QTime, Qt, QUrl
+from typing import Dict
+from PySide6.QtGui import QIcon
+from PySide6.QtCore import QModelIndex, QSize, Slot, QTime, QUrl
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QAudioDecoder
 from PySide6.QtWidgets import QFrame, QFileDialog, QMessageBox, QPushButton
+
+from .annotation_list_model import AnnotationListModel, ANNOTATION_ROLE
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
 from .project import Annotation, Project
 
@@ -45,39 +47,6 @@ AGE_STRINGS = [
 ]
 
 GENDERS = ["", "male", "female", "other"]
-
-class AnnotationListModel(QAbstractListModel):
-    """Model that shows the annotations of a project."""
-
-    def __init__(self, project : Project, parent=None):
-        super().__init__(parent)
-        self._data: Project = project
-    
-    def rowCount(self, parent=QModelIndex()) -> int:
-        if self._data is None:
-            return 0
-        return len(self._data.annotations)
-
-    def data(self, index: QModelIndex, role: int) -> Any:
-        if not index.isValid():
-            return None
-        annotation = self._data.annotations[index.row()]
-        if role == Qt.DisplayRole:
-            return annotation.path
-        elif role == Qt.BackgroundRole:
-            return QBrush(Qt.GlobalColor.green) if annotation.modified else QBrush()
-        elif role == Qt.UserRole:
-            return annotation
-        return None
-
-    def removeRow(self, row: int, parent=QModelIndex()) -> bool:
-        if not self._data or row < 0 or row >= self.rowCount():
-            return False
-        self._data.annotations.remove(row)
-        return True
-
-    def index(self, row: int, column: int = 0, parent=QModelIndex()) -> QModelIndex:
-        return self.createIndex(row, column)
 
 class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def __init__(self):
@@ -136,7 +105,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         Sets a member of the metadata of all selected files to a give value.
         """
         for selectedItem in self.annotationList.selectedIndexes():
-            setattr(selectedItem.data(Qt.UserRole), member, value)
+            setattr(selectedItem.data(ANNOTATION_ROLE), member, value)
         self.annotationList.model().layoutChanged.emit()
         self.update_metadata_header()
 
@@ -147,7 +116,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         """
         value = None
         for selected in self.annotationList.selectionModel().selectedIndexes():
-            this = getattr(selected.data(Qt.UserRole), member)
+            this = getattr(selected.data(ANNOTATION_ROLE), member)
             if value == None:
                 value = this
             elif this != value:
@@ -274,7 +243,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def annotation_selected(self, index : QModelIndex):
         self.previousButton.setEnabled(index.row() > 0)
         self.nextButton.setEnabled(index.row() < len(self.project.annotations) - 1)
-        annotation : Annotation = index.data(Qt.UserRole)
+        annotation : Annotation = index.data(ANNOTATION_ROLE)
         self.annotationEdit.blockSignals(True)
         self.annotationEdit.setText(annotation.text)
         self.annotationEdit.blockSignals(False)
@@ -334,6 +303,6 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     @Slot()
     def mark_unchanged_pressed(self):
         for selected in self.fileList.selectedIndexes():
-            annotation: Annotation = selected.data(Qt.UserRole)
+            annotation: Annotation = selected.data(ANNOTATION_ROLE)
             self.project.mark_unchanged(annotation)
         self.fileList.model().layoutChanged.emit()
