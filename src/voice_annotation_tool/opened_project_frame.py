@@ -271,11 +271,15 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
             for line in file:
                 parts = line.split(": ")
                 properties[parts[0]] = parts[1].rstrip()
-        for member in ["age", "gender", "accent"]:
-            for property in properties:
-                if member in property:
-                    self.apply_profile_change(member, properties[property])
-                    break
+        for annotation in self.get_selected_annotations():
+            if "age" in properties:
+                annotation.age = properties["age"]
+            if "gender" in properties:
+                annotation.gender = properties["gender"]
+            if "accent" in properties:
+                annotation.accent = properties["accent"]
+        self.annotationList.model().layoutChanged.emit()
+        self.update_metadata_header()
 
     @Slot()
     def play_pause_pressed(self):
