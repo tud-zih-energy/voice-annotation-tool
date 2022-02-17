@@ -497,22 +497,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>annotationList</sender>
-   <signal>clicked(QModelIndex)</signal>
-   <receiver>OpenedProjectFrame</receiver>
-   <slot>annotation_selected(QModelIndex)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>936</x>
-     <y>105</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>953</x>
-     <y>0</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>markUnchangedButton</sender>
    <signal>clicked()</signal>
    <receiver>OpenedProjectFrame</receiver>

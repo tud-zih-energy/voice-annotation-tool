@@ -247,9 +247,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     @Slot()
     def selection_changed(self, selected, deselected):
         self.update_metadata_header()
-
-    @Slot()
-    def annotation_selected(self, index : QModelIndex):
+        index: QModelIndex = self.annotationList.currentIndex()
         self.previousButton.setEnabled(index.row() > 0)
         self.nextButton.setEnabled(index.row() < len(self.project.annotations) - 1)
         annotation : Annotation = index.data(ANNOTATION_ROLE)
