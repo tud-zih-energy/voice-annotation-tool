@@ -314,4 +314,4 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def mark_unchanged_pressed(self):
         for annotation in self.get_selected_annotations():
             self.project.mark_unchanged(annotation)
-        self.fileList.model().layoutChanged.emit()
+        self.annotationList.model().layoutChanged.emit()
