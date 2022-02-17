@@ -95,15 +95,17 @@ class Project:
                     self.annotations.append(annotation)
         print("loaded audio folder")
     
-    def annotate(self, index, text):
+    def annotate(self, index : int, text : str) -> None:
         """Changes the text of the given annotation."""
         annotation = self.annotations[index]
         if not annotation.modified:
             self.modified_annotations.append(annotation.path)
-        if not text:
-            self.modified_annotations.remove(annotation.path)
         annotation.modified = bool(text)
         annotation.text = text
+
+    def mark_unchanged(self, annotation : Annotation) -> None:
+        annotation.modified = False
+        self.modified_annotations.remove(annotation.path)
 
     def get_by_file(self, file : str):
         """Returns the annotation of the given file."""

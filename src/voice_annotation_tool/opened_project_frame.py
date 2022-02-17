@@ -6,13 +6,13 @@ edit the annotation.
 """
 
 import os
-from typing import Any, Dict, List
+from typing import Any, Dict
 from PySide6.QtGui import QBrush, QIcon
 from PySide6.QtCore import QAbstractListModel, QModelIndex, QSize, Slot, QTime, Qt, QUrl
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QAudioDecoder
 from PySide6.QtWidgets import QFrame, QFileDialog, QMessageBox, QPushButton
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
-from .project import Project
+from .project import Annotation, Project
 
 MIXED_VALUES = object()
 
@@ -331,3 +331,9 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.timeSlider.setValue(position)
         self.timeSlider.blockSignals(False)
 
+    @Slot()
+    def mark_unchanged_pressed(self):
+        for selected in self.fileList.selectedIndexes():
+            annotation: Annotation = selected.data(Qt.UserRole)
+            self.project.mark_unchanged(annotation)
+        self.fileList.model().layoutChanged.emit()
