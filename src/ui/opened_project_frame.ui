@@ -528,6 +528,70 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>ageInput</sender>
+   <signal>currentIndexChanged(QString)</signal>
+   <receiver>OpenedProjectFrame</receiver>
+   <slot>metadata_changed(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>193</x>
+     <y>37</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>-120</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clientIdEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>OpenedProjectFrame</receiver>
+   <slot>metadata_changed(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>185</x>
+     <y>58</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
+     <y>-136</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>accentEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>OpenedProjectFrame</receiver>
+   <slot>metadata_changed(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>393</x>
+     <y>78</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>353</x>
+     <y>-80</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>genderInput</sender>
+   <signal>currentIndexChanged(QString)</signal>
+   <receiver>OpenedProjectFrame</receiver>
+   <slot>metadata_changed(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>455</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>436</x>
+     <y>-94</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>previous_pressed()</slot>
@@ -542,5 +606,6 @@
   <slot>client_id_changed(QString)</slot>
   <slot>play_pause_pressed()</slot>
   <slot>mark_unchanged_pressed()</slot>
+  <slot>metadata_changed(QString)</slot>
  </slots>
 </ui>

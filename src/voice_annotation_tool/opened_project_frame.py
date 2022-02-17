@@ -6,12 +6,13 @@ edit the annotation.
 """
 
 import os
-from typing import Any, Dict
-from PySide6.QtGui import QBrush, QIcon
-from PySide6.QtCore import QAbstractListModel, QModelIndex, QSize, Slot, QTime, Qt, QUrl
+from typing import Dict, List, Union
+from PySide6.QtGui import QIcon
+from PySide6.QtCore import QModelIndex, QSize, Slot, QTime, QUrl
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QAudioDecoder
 from PySide6.QtWidgets import QFrame, QFileDialog, QMessageBox, QPushButton
 
+from .annotation_list_model import AnnotationListModel, ANNOTATION_ROLE
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
 from .project import Annotation, Project
 
@@ -44,39 +45,6 @@ AGE_STRINGS = [
 ]
 
 GENDERS = ["", "male", "female", "other"]
-
-class AnnotationListModel(QAbstractListModel):
-    """Model that shows the annotations of a project."""
-
-    def __init__(self, project : Project, parent=None):
-        super().__init__(parent)
-        self._data: Project = project
-    
-    def rowCount(self, parent=QModelIndex()) -> int:
-        if self._data is None:
-            return 0
-        return len(self._data.annotations)
-
-    def data(self, index: QModelIndex, role: int) -> Any:
-        if not index.isValid():
-            return None
-        annotation = self._data.annotations[index.row()]
-        if role == Qt.DisplayRole:
-            return annotation.path
-        elif role == Qt.BackgroundRole:
-            return QBrush(Qt.GlobalColor.green) if annotation.modified else QBrush()
-        elif role == Qt.UserRole:
-            return annotation
-        return None
-
-    def removeRow(self, row: int, parent=QModelIndex()) -> bool:
-        if not self._data or row < 0 or row >= self.rowCount():
-            return False
-        self._data.annotations.remove(row)
-        return True
-
-    def index(self, row: int, column: int = 0, parent=QModelIndex()) -> QModelIndex:
-        return self.createIndex(row, column)
 
 class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def __init__(self):
@@ -129,15 +97,6 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         for button in self.playback_buttons:
             button.setToolTip(self.get_button_tooltip(button) + " " +
                     button.shortcut().toString())
-    
-    def apply_profile_change(self, member : str, value : object):
-        """
-        Sets a member of the metadata of all selected files to a give value.
-        """
-        for selectedItem in self.annotationList.selectedIndexes():
-            setattr(selectedItem.data(Qt.UserRole), member, value)
-        self.annotationList.model().layoutChanged.emit()
-        self.update_metadata_header()
 
     def update_metadata_header(self):
         """Loads the profile metadata of the selected files into the GUI."""
@@ -146,8 +105,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         gender = None
         accent = None
         client_id = None
-        for selected in self.annotationList.selectionModel().selectedIndexes():
-            annotation: Annotation = selected.data(Qt.UserRole)
+        for annotation in self.get_selected_annotations():
             if first:
                 age = annotation.age
                 gender = annotation.gender
@@ -223,9 +181,15 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
 
     def delete_selected(self):
         """Delete the selected annotations and audio files."""
-        for selected in self.annotationList.selectionModel().selectedIndexes()[::-1]:
+        for selected in self.get_selected_annotations()[::-1]:
             self.project.delete_annotation(selected.row())
         self.annotationList.model().layoutChanged.emit()
+
+    def get_selected_annotations(self) -> List[Annotation]:
+        annotations: List[Annotation] = []
+        for selected_index in self.annotationList.selectionModel().selectedIndexes():
+            annotations.append(selected_index.data(ANNOTATION_ROLE))
+        return annotations
 
     @Slot()
     def playerError(self, error, string):
@@ -247,21 +211,34 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def gender_selected(self, gender : int):
         if gender == len(GENDERS):
             return
-        self.apply_profile_change("gender", GENDERS[gender])
+        for selected_item in self.annotationList.selectedIndexes():
+            annotation: Annotation = selected_item.data(ANNOTATION_ROLE)
+            annotation.gender = GENDERS[gender]
 
     @Slot()
     def age_selected(self, age : int):
         if age == len(AGES):
             return
-        self.apply_profile_change("age", AGES[age])
+        for selected_item in self.annotationList.selectedIndexes():
+            annotation: Annotation = selected_item.data(ANNOTATION_ROLE)
+            annotation.age = AGES[age]
 
     @Slot()
     def accent_changed(self, accent : str):
-        self.apply_profile_change("accent", accent)
+        for selected_item in self.annotationList.selectedIndexes():
+            annotation: Annotation = selected_item.data(ANNOTATION_ROLE)
+            annotation.accent = accent
 
     @Slot()
-    def client_id_changed(self, id : str):
-        self.apply_profile_change("client_id", id)
+    def client_id_changed(self, client_id : str):
+        for selected_item in self.annotationList.selectedIndexes():
+            annotation: Annotation = selected_item.data(ANNOTATION_ROLE)
+            annotation.client_id = client_id
+
+    @Slot()
+    def metadata_changed(self, to: Union[str, int]):
+        self.annotationList.model().layoutChanged.emit()
+        self.update_metadata_header()
 
     @Slot()
     def text_changed(self):
@@ -277,7 +254,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def annotation_selected(self, index : QModelIndex):
         self.previousButton.setEnabled(index.row() > 0)
         self.nextButton.setEnabled(index.row() < len(self.project.annotations) - 1)
-        annotation : Annotation = index.data(Qt.UserRole)
+        annotation : Annotation = index.data(ANNOTATION_ROLE)
         self.annotationEdit.blockSignals(True)
         self.annotationEdit.setText(annotation.text)
         self.annotationEdit.blockSignals(False)
@@ -336,7 +313,6 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
 
     @Slot()
     def mark_unchanged_pressed(self):
-        for selected in self.fileList.selectedIndexes():
-            annotation: Annotation = selected.data(Qt.UserRole)
+        for annotation in self.get_selected_annotations():
             self.project.mark_unchanged(annotation)
         self.fileList.model().layoutChanged.emit()

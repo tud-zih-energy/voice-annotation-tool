@@ -72,16 +72,12 @@
      <item row="1" column="2">
       <layout class="QHBoxLayout" name="tsvButtonsLayout">
        <item>
-        <widget class="QPushButton" name="openTsvFileButton">
-         <property name="text">
-          <string>Open...</string>
+        <widget class="QPushButton" name="selectTsvFileButton">
+         <property name="toolTip">
+          <string>Open or create the TSV that holds the annotations.</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="createTsvFileButton">
          <property name="text">
-          <string>Create...</string>
+          <string>Select...</string>
          </property>
         </widget>
        </item>
@@ -111,8 +107,7 @@
   <tabstop>audioPathEdit</tabstop>
   <tabstop>audioFilesButton</tabstop>
   <tabstop>tsvPathEdit</tabstop>
-  <tabstop>openTsvFileButton</tabstop>
-  <tabstop>createTsvFileButton</tabstop>
+  <tabstop>selectTsvFileButton</tabstop>
   <tabstop>projectPathEdit</tabstop>
   <tabstop>selectProjectFileButton</tabstop>
  </tabstops>
@@ -163,38 +158,6 @@
     <hint type="destinationlabel">
      <x>210</x>
      <y>189</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>createTsvFileButton</sender>
-   <signal>clicked()</signal>
-   <receiver>CreateProjectDialog</receiver>
-   <slot>create_tsv_file()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>503</x>
-     <y>91</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>438</x>
-     <y>106</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>openTsvFileButton</sender>
-   <signal>clicked()</signal>
-   <receiver>CreateProjectDialog</receiver>
-   <slot>open_tsv_file()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>405</x>
-     <y>91</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>438</x>
-     <y>169</y>
     </hint>
    </hints>
   </connection>
@@ -262,12 +225,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>selectTsvFileButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CreateProjectDialog</receiver>
+   <slot>tsv_file_button_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>473</x>
+     <y>79</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>476</x>
+     <y>579</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>audio_files_button_clicked()</slot>
   <slot>tsv_file_button_clicked()</slot>
   <slot>ok_pressed()</slot>
-  <slot>create_tsv_file()</slot>
   <slot>open_tsv_file()</slot>
   <slot>open_project_file()</slot>
   <slot>audio_path_changed(QString)</slot>
