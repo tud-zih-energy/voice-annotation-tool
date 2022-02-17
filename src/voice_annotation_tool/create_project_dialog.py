@@ -47,22 +47,12 @@ class CreateProjectDialog(QDialog, Ui_CreateProjectDialog):
         self.update_buttons()
 
     @Slot()
-    def open_tsv_file(self):
-        file, _ = QFileDialog.getOpenFileName(self, "Open TSV File",
-                self.current_folder, "TSV Files (*)")
+    def tsv_file_button_clicked(self):
+        file, _ = QFileDialog.getSaveFileName(self, "Select TSV File Location",
+                self.current_folder, "TSV/CSV Files (*.tsv);;CSV Files (*.csv)",
+                options=QFileDialog.DontConfirmOverwrite)
         if not file:
             return
-        self.tsvPathEdit.setText(file)
-
-    @Slot()
-    def create_tsv_file(self):
-        file, _ = QFileDialog.getSaveFileName(self,
-                "Select Location of TSV File", self.current_folder,
-                "TSV Files (*)")
-        if not file:
-            return
-        if os.path.exists(file):
-            os.remove(file)
         self.tsvPathEdit.setText(file)
 
     @Slot()
