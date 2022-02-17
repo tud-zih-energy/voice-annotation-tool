@@ -252,7 +252,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.nextButton.setEnabled(index.row() < len(self.project.annotations) - 1)
         annotation : Annotation = index.data(ANNOTATION_ROLE)
         self.annotationEdit.blockSignals(True)
-        self.annotationEdit.setText(annotation.text)
+        self.annotationEdit.setText(annotation.sentence)
         self.annotationEdit.blockSignals(False)
         self.player.setSource(QUrl.fromLocalFile(os.path.join(self.project.audio_folder,
                 annotation.path)))

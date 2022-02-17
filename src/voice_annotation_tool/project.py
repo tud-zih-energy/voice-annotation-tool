@@ -15,13 +15,13 @@ class Annotation:
 
     # An ordered list of the members of an annotation that are read and written
     # to and from a tsv file.
-    TSV_HEADER_MEMBERS = ["client_id", "path", "text", "up_votes", "down_votes",
+    TSV_HEADER_MEMBERS = ["client_id", "path", "sentence", "up_votes", "down_votes",
             "age", "gender", "accent"]
 
     def __init__(self, dict=None):
         self.client_id = "0"
         self.path = ""
-        self.text = ""
+        self.sentence = ""
         self.up_votes = 0
         self.down_votes = 0
         self.age = ""
@@ -102,7 +102,7 @@ class Project:
         if not annotation.modified:
             self.modified_annotations.append(annotation.path)
         annotation.modified = bool(text)
-        annotation.text = text
+        annotation.sentence = text
 
     def mark_unchanged(self, annotation : Annotation) -> None:
         annotation.modified = False
@@ -185,7 +185,7 @@ class Project:
     def exportCSV(self, outfile: StringIO):
         writer = csv.writer(outfile, delimiter=';')
         for annotation in self.annotations:
-            writer.writerow([annotation.path, annotation.text])
+            writer.writerow([annotation.path, annotation.sentence])
 
     def importJson(self, infile: StringIO):
         data = json.load(infile)
@@ -199,5 +199,5 @@ class Project:
     def exportJson(self, outfile: StringIO):
         data = []
         for annotation in self.annotations:
-            data.append({annotation.path: annotation.text})
+            data.append({annotation.path: annotation.sentence})
         json.dump(data, outfile)

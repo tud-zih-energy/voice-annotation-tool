@@ -8,7 +8,7 @@ from voice_annotation_tool.project import Project
 @pytest.fixture
 def project():
     project = Project("")
-    project.annotations.append(Annotation({"path": "path", "text": "text"}))
+    project.annotations.append(Annotation({"path": "path", "sentence": "text"}))
     return project
 
 def test_creation(project):
@@ -28,8 +28,8 @@ def test_export_json(project):
 
 def test_import_csv(project):
     project.importCSV(StringIO("path;new"))
-    assert project.annotations[0].text == "new"
+    assert project.annotations[0].sentence == "new"
 
 def test_import_json(project):
     project.importJson(StringIO('[{"path": "new"}]'))
-    assert project.annotations[0].text == "new"
+    assert project.annotations[0].sentence == "new"
