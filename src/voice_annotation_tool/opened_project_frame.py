@@ -6,15 +6,15 @@ edit the annotation.
 """
 
 import os
-from typing import Any, Dict
+from typing import Any, Dict, List, Union
 from PySide6.QtGui import QBrush, QIcon
 from PySide6.QtCore import QAbstractListModel, QModelIndex, QSize, Slot, QTime, Qt, QUrl
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QAudioDecoder
-from PySide6.QtWidgets import QFrame, QFileDialog, QMessageBox, QPushButton
+from PySide6.QtWidgets import QComboBox, QFrame, QFileDialog, QMessageBox, QPushButton
+
+from voice_annotation_tool.multi_selection import AnnotationMultiselection
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
 from .project import Annotation, Project
-
-MIXED_VALUES = object()
 
 # Age groups how they are displayed on the CommonVoice website and how they are
 # stored in the exported tsv file.
@@ -103,7 +103,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
 
         for age in AGE_STRINGS:
             self.ageInput.addItem(age)
-        self.ageInput.addItem(self.tr("[Multiple]"))
+        self.multiple_ages_item = self.ageInput.addItem(self.tr("[Multiple]"))
         self.reload_button_tooltips()
 
     def get_button_tooltip(self, button : QPushButton) -> str:
@@ -140,55 +140,54 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.annotationList.model().layoutChanged.emit()
         self.update_metadata_header()
 
-    def get_multiple_profile_value(self, member) -> object:
-        """
-        Returns the value of the selected files metadata if all values are
-        equal, MIXED_VALUES otherwise.
-        """
-        value = None
-        for selected in self.annotationList.selectionModel().selectedIndexes():
-            this = getattr(selected.data(Qt.UserRole), member)
-            if value == None:
-                value = this
-            elif this != value:
-                return MIXED_VALUES
-        return value
-
     def update_metadata_header(self):
         """Loads the profile metadata of the selected files into the GUI."""
-        members = {
-            "age": None, "accent": None, "gender": None, "client_id": None
-        }
-        for member in members:
-            members[member] = self.get_multiple_profile_value(member)
-        if members["age"] == None:
-            return
         inputs = [self.ageInput, self.accentEdit, self.genderInput, self.clientIdEdit]
         for input in inputs:
             input.blockSignals(True)
 
-        self.ageInput.setCurrentIndex(len(AGES) if
-                members["age"] == MIXED_VALUES
-                else AGES.index(members["age"]))
-        self.ageInput.view().setRowHidden(len(AGES),
-                members["age"] != MIXED_VALUES)
+        selected_annotations: List[Annotation] = []
+        for index in self.annotationList.selectedIndexes():
+            annotation: Annotation = index.data(Qt.UserRole)
+            selected_annotations.append(annotation)
+        multi_selection = AnnotationMultiselection(selected_annotations)
 
-        self.genderInput.setCurrentIndex(len(GENDERS) if
-                members["gender"] == MIXED_VALUES
-                else GENDERS.index(members["gender"]))
-        self.genderInput.view().setRowHidden(len(GENDERS),
-                members["gender"] != MIXED_VALUES)
+        common_age = multi_selection.get_age()
+        self.set_combo_box_with_multiple_option(
+                self.ageInput, AGES, common_age)
 
+        common_gender = multi_selection.get_gender()
+        self.set_combo_box_with_multiple_option(
+                self.genderInput, GENDERS, common_gender)
+
+        common_accent = multi_selection.get_accent()
         self.accentEdit.clear()
-        if members["accent"] != MIXED_VALUES:
-            self.accentEdit.insert(members["accent"])
+        if common_age:
+            self.accentEdit.insert(common_accent)
 
+        common_client_id = multi_selection.get_client_id()
         self.clientIdEdit.clear()
-        if members["client_id"] != MIXED_VALUES:
-            self.clientIdEdit.insert(members["client_id"])
+        if common_client_id:
+            self.clientIdEdit.insert(common_client_id)
 
         for input in inputs:
             input.blockSignals(False)
+
+    def set_combo_box_with_multiple_option(self, input: QComboBox,
+                possible_values: List[str], value: Union[str, None]) -> None:
+        """
+        Sets the index of a combo box using a given value. If the value is
+        none, the 'Multiple Values' option is shown.
+        """
+        # In the combo box, the possible values are listed first. The last
+        # index is the 'multiple' option.
+        multiple_values_index = len(possible_values)
+        has_multiple_values = value == None
+        if has_multiple_values:
+            input.setCurrentIndex(multiple_values_index)
+        else:
+            input.setCurrentIndex(possible_values.index(value))
+        input.view().setRowHidden(multiple_values_index, has_multiple_values)
 
     def load_project(self, project : Project):
         """Loads the project's samples and annotations."""

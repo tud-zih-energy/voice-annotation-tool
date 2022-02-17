@@ -50,6 +50,18 @@ class Annotation:
                 value = int(value)
             setattr(self, header, value) 
 
+    def get_client_id(self) -> str:
+        return self.client_id
+
+    def get_age(self) -> str:
+        return self.age
+    
+    def get_gender(self) -> str:
+        return self.gender
+
+    def get_accent(self) -> str:
+        return self.accent
+
 class Project:
     def __init__(self, file):
         self.tsv_file = ""
