@@ -103,7 +103,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
 
         for age in AGE_STRINGS:
             self.ageInput.addItem(age)
-        self.multiple_ages_item = self.ageInput.addItem(self.tr("[Multiple]"))
+        self.ageInput.addItem(self.tr("[Multiple]"))
         self.reload_button_tooltips()
 
     def get_button_tooltip(self, button : QPushButton) -> str:
