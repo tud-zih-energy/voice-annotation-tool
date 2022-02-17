@@ -16,8 +16,6 @@ from .annotation_list_model import AnnotationListModel, ANNOTATION_ROLE
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
 from .project import Annotation, Project
 
-MIXED_VALUES = object()
-
 # Age groups how they are displayed on the CommonVoice website and how they are
 # stored in the exported tsv file.
 AGES = [
@@ -100,52 +98,57 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
             button.setToolTip(self.get_button_tooltip(button) + " " +
                     button.shortcut().toString())
 
-    def get_multiple_profile_value(self, member) -> object:
-        """
-        Returns the value of the selected files metadata if all values are
-        equal, MIXED_VALUES otherwise.
-        """
-        value = None
-        for selected in self.annotationList.selectionModel().selectedIndexes():
-            this = getattr(selected.data(ANNOTATION_ROLE), member)
-            if value == None:
-                value = this
-            elif this != value:
-                return MIXED_VALUES
-        return value
-
     def update_metadata_header(self):
         """Loads the profile metadata of the selected files into the GUI."""
-        members = {
-            "age": None, "accent": None, "gender": None, "client_id": None
-        }
-        for member in members:
-            members[member] = self.get_multiple_profile_value(member)
-        if members["age"] == None:
+        first = True
+        age = None
+        gender = None
+        accent = None
+        client_id = None
+        for annotation in self.get_selected_annotations():
+            if first:
+                age = annotation.age
+                gender = annotation.gender
+                accent = annotation.accent
+                client_id = annotation.client_id
+                first = False
+            if annotation.age != age:
+                age = None
+            if annotation.gender != gender:
+                gender = None
+            if annotation.accent != accent:
+                accent = None
+            if annotation.client_id != client_id:
+                client_id = None
+
+            if all([age == None, gender == None,
+                    accent == None, client_id == None]):
+                break
+
+        if first:
+            # No annotation in the list.
             return
-        inputs = [self.ageInput, self.accentEdit, self.genderInput, self.clientIdEdit]
+
+        inputs = [self.ageInput, self.accentEdit,
+                self.genderInput, self.clientIdEdit]
         for input in inputs:
             input.blockSignals(True)
 
-        self.ageInput.setCurrentIndex(len(AGES) if
-                members["age"] == MIXED_VALUES
-                else AGES.index(members["age"]))
-        self.ageInput.view().setRowHidden(len(AGES),
-                members["age"] != MIXED_VALUES)
+        gender_index = len(GENDERS) if gender == None else GENDERS.index(gender)
+        self.genderInput.setCurrentIndex(gender_index)
+        self.genderInput.view().setRowHidden(multiple_index, gender != None)
 
-        self.genderInput.setCurrentIndex(len(GENDERS) if
-                members["gender"] == MIXED_VALUES
-                else GENDERS.index(members["gender"]))
-        self.genderInput.view().setRowHidden(len(GENDERS),
-                members["gender"] != MIXED_VALUES)
-
-        self.accentEdit.clear()
-        if members["accent"] != MIXED_VALUES:
-            self.accentEdit.insert(members["accent"])
+        age_index = len(AGES) if age == None else AGES.index(age)
+        self.ageInput.setCurrentIndex(age_index)
+        self.ageInput.view().setRowHidden(multiple_index, age != None)
 
         self.clientIdEdit.clear()
-        if members["client_id"] != MIXED_VALUES:
-            self.clientIdEdit.insert(members["client_id"])
+        if client_id:
+            self.clientIdEdit.insert(client_id)
+
+        self.accentEdit.clear()
+        if accent:
+            self.accentEdit.insert(accent)
 
         for input in inputs:
             input.blockSignals(False)
