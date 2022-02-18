@@ -9,7 +9,7 @@ class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
     next_pressed = Signal()
     previous_pressed = Signal()
 
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         super().__init__()
         self.setupUi(self)
         self.output = QAudioOutput()
