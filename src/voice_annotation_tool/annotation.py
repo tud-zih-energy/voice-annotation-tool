@@ -30,11 +30,12 @@ class Annotation:
         return properties
 
     def from_dict(self, dict):
-        """Loads an annotation from a loaded csv row."""
-        for header in self.TSV_HEADER_MEMBERS:
-            if not header in dict:
-                continue
-            value = dict[header]
-            if getattr(self, header) is int:
-                value = int(value)
-            setattr(self, header, value) 
+        """Loads an annotation from deserialized csv row."""
+        self.client_id = dict.get("client_id", "")
+        self.path = dict.get("path", "")
+        self.sentence = dict.get("sentence", "")
+        self.age = dict.get("age", "")
+        self.gender = dict.get("gender")
+        self.accent = dict.get("accent")
+        self.down_votes = int(dict.get("down_votes", 0))
+        self.up_votes = int(dict.get("up_votes", 0))
