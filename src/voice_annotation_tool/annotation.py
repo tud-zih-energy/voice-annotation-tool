@@ -7,15 +7,15 @@ class Annotation:
             "age", "gender", "accent"]
 
     def __init__(self, dict=None):
-        self.client_id = "0"
-        self.path = ""
-        self.sentence = ""
-        self.up_votes = 0
-        self.down_votes = 0
-        self.age = ""
-        self.gender = ""
-        self.accent = ""
-        self.modified = False
+        self.client_id: str = "0"
+        self.path: str = ""
+        self.sentence: str = ""
+        self.up_votes: int = 0
+        self.down_votes: int = 0
+        self.age: str = ""
+        self.gender: str = ""
+        self.accent: str = ""
+        self.modified: bool = False
 
         if dict is not None:
             self.from_dict(dict)
