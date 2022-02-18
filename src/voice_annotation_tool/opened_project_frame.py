@@ -134,13 +134,15 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         for input in inputs:
             input.blockSignals(True)
 
+        # The last index of the ages and genders combo box is the "multiple"
+        # option.
         gender_index = len(GENDERS) if gender == None else GENDERS.index(gender)
         self.genderInput.setCurrentIndex(gender_index)
-        self.genderInput.view().setRowHidden(multiple_index, gender != None)
+        self.genderInput.view().setRowHidden(len(GENDERS), gender != None)
 
         age_index = len(AGES) if age == None else AGES.index(age)
         self.ageInput.setCurrentIndex(age_index)
-        self.ageInput.view().setRowHidden(multiple_index, age != None)
+        self.ageInput.view().setRowHidden(len(AGES), age != None)
 
         self.clientIdEdit.clear()
         if client_id:
