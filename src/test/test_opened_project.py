@@ -19,7 +19,9 @@ annotation_data = {
 def project_frame():
     frame = OpenedProjectFrame()
     project = Project("")
-    project.annotations = [Annotation(annotation_data)] * 3
+    for annotation_num in range(3):
+        annotation_data["path"] = "path_" + str(annotation_num)
+        project.add_annotation(Annotation(annotation_data))
     frame.load_project(project)
     return frame
 
