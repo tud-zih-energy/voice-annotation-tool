@@ -82,7 +82,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
             self.buttonTooltips[button] = button.toolTip()
         return self.buttonTooltips[button]
 
-    def apply_shortcuts(self, shortcuts : Dict[int,str]):
+    def apply_shortcuts(self, shortcuts : List[str]):
         """
         Applies the shortcuts to the buttons.
         The shortcut is also added to the tooltip.
