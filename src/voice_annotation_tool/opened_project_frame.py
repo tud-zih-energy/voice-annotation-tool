@@ -63,7 +63,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def get_playback_buttons(self) -> List[QPushButton]:
         return self.audioPlaybackWidget.playback_buttons
 
-    def apply_shortcuts(self, shortcuts : Dict[int,str]):
+    def apply_shortcuts(self, shortcuts : List[str]):
         """
         Applies the shortcuts to the buttons.
         The shortcut is also added to the tooltip.
@@ -157,8 +157,8 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
 
     def delete_selected(self):
         """Delete the selected annotations and audio files."""
-        for selected in self.get_selected_annotations()[::-1]:
-            self.project.delete_annotation(selected.row())
+        for selected in self.get_selected_annotations():
+            self.project.delete_annotation(selected)
         self.annotationList.model().layoutChanged.emit()
 
     def get_selected_annotations(self) -> List[Annotation]:
@@ -212,7 +212,9 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     @Slot()
     def text_changed(self):
         text = self.annotationEdit.toPlainText()
-        self.project.annotate(self.annotationList.currentIndex().row(), text)
+        selected_annotation: Annotation = self.annotationList.currentIndex()\
+                .data(ANNOTATION_ROLE)
+        self.project.annotate(selected_annotation, text)
         self.annotationList.model().layoutChanged.emit()
 
     @Slot()
