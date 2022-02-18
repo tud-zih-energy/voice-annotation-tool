@@ -18,6 +18,7 @@ class Project:
         self.tsv_file = ""
         self.audio_folder = ""
         self.project_file = file
+        self.annotations_by_path: dict[str, Annotation] = {}
         self.annotations: List[Annotation] = []
         self.modified_annotations: List[str] = []
         self.load()
