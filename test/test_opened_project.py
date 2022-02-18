@@ -38,3 +38,8 @@ def test_metadata_header_filled_on_open(project_frame):
 def test_tooltips_have_shortcuts(project_frame):
     play_button : QPushButton = project_frame.playPauseButton
     assert play_button.shortcut().toString() in play_button.toolTip()
+
+def test_mark_unchanged(project_frame: OpenedProjectFrame):
+    project_frame.mark_unchanged_pressed()
+    project_frame.mark_unchanged_pressed()
+    assert not project_frame.project.annotations[0].modified
