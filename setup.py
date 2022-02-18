@@ -7,7 +7,7 @@ from setuptools import setup
 args = sys.argv
 
 # Convert .ui to ui.py files
-ui_folder = "src/ui"
+ui_folder = "ui"
 for filename in os.listdir(ui_folder):
     output = f"src/voice_annotation_tool/{os.path.splitext(filename)[0]}_ui.py"
     sys.argv = ["", "--from-imports", "-o", output, f"{ui_folder}/{filename}"]
