@@ -52,7 +52,11 @@ class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
             button.setToolTip(self.get_button_tooltip(button) + " " +
                     button.shortcut().toString())
 
-    def play_file(self, file: str) -> None:
+    def load_file(self, file: str) -> None:
+        """
+        Loads the given audio file which can then be played by pressing
+        the pause/play button.
+        """
         self.player.setSource(QUrl.fromLocalFile(file))
 
     @Slot()

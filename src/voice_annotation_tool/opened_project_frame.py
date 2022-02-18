@@ -227,7 +227,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.annotationEdit.blockSignals(True)
         self.annotationEdit.setText(annotation.sentence)
         self.annotationEdit.blockSignals(False)
-        self.audioPlaybackWidget.play_file(os.path.join(self.project.audio_folder,
+        self.audioPlaybackWidget.load_file(os.path.join(self.project.audio_folder,
                 annotation.path))
 
     @Slot()
