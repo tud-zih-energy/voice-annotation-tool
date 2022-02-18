@@ -30,5 +30,12 @@ class AnnotationListModel(QAbstractListModel):
             return annotation
         return None
 
+    def removeRow(self, row: int, parent=QModelIndex()) -> bool:
+        if not self._data or row < 0 or row >= self.rowCount():
+            return False
+        self._data.annotations.remove(row)
+        return True
+
     def index(self, row: int, column: int = 0, parent=QModelIndex()) -> QModelIndex:
         return self.createIndex(row, column)
+
