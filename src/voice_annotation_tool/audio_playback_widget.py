@@ -67,10 +67,10 @@ class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
     
     @Slot()
     def playback_state_changed(self, state):
-        icon = QIcon()
         playing = state == QMediaPlayer.PlayingState
-        icon.addFile(u":/playback/pause" if playing else u":/playback/play",
-                QSize(), QIcon.Normal, QIcon.Off)
+        file = u":/playback/pause" if playing else u":/playback/play"
+        icon = QIcon()
+        icon.addFile(file, QSize(), QIcon.Normal, QIcon.Off)
         self.playPauseButton.setIcon(icon)
 
     @Slot()
