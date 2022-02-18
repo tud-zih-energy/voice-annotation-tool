@@ -190,6 +190,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.annotationList.model().layoutChanged.emit()
 
     def get_selected_annotations(self) -> List[Annotation]:
+        """ Returns all the selected annotations in the annotation panel. """
         annotations: List[Annotation] = []
         for selected_index in self.annotationList.selectionModel().selectedIndexes():
             annotations.append(selected_index.data(ANNOTATION_ROLE))
