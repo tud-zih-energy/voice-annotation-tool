@@ -6,11 +6,12 @@ edit the annotation.
 """
 
 import os
-from typing import Dict, List, Union
-from PySide6.QtGui import QIcon
-from PySide6.QtCore import QModelIndex, QSize, Slot, QTime, QUrl
-from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QAudioDecoder
+from typing import Dict, List
+from PySide6.QtCore import QModelIndex, Slot, QTime, QUrl
+from PySide6.QtMultimedia import QAudioDecoder
 from PySide6.QtWidgets import QFrame, QFileDialog, QMessageBox, QPushButton
+
+from voice_annotation_tool.audio_playback_widget import AudioPlaybackWidget
 
 from .annotation_list_model import AnnotationListModel, ANNOTATION_ROLE
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
@@ -51,52 +52,25 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         super().__init__()
         self.setupUi(self)
 
-        self.project : Project
-        self.output = QAudioOutput()
-        self.player = QMediaPlayer()
-        self.player.setAudioOutput(self.output)
-        self.playback_buttons = [self.playPauseButton, self.previousButton,
-                self.stopButton, self.nextButton]
-        self.buttonTooltips : Dict[QPushButton, str] = {}
-
+        self.audio_playback_widget = AudioPlaybackWidget()
+        self.audio_playback_widget.next_pressed.connect(self.next_pressed)
+        self.audio_playback_widget.previous_pressed.connect(self.previous_pressed)
+        self.mainLayout.addWidget(self.audio_playback_widget)
+        self.project: Project
         self.annotationList.installEventFilter(self)
-        self.stopButton.pressed.connect(self.player.stop)
-        self.timeSlider.valueChanged.connect(self.player.setPosition)
-        self.volumeSlider.valueChanged.connect(self.volume_changed)
-        self.player.durationChanged.connect(self.update_duration)
-        self.player.positionChanged.connect(self.update_position)
-        self.player.errorOccurred.connect(self.playerError)
-        self.player.playbackStateChanged.connect(self.playback_state_changed)
-
         for age in AGE_STRINGS:
             self.ageInput.addItem(age)
         self.ageInput.addItem(self.tr("[Multiple]"))
-        self.reload_button_tooltips()
 
-    def get_button_tooltip(self, button : QPushButton) -> str:
-        """
-        Returns the original tooltip of a button.
-        Stores the current tooltip if it is accessed for the first time.
-        """
-        if not button in self.buttonTooltips:
-            self.buttonTooltips[button] = button.toolTip()
-        return self.buttonTooltips[button]
+    def get_playback_buttons(self) -> List[QPushButton]:
+        return self.audio_playback_widget.playback_buttons
 
     def apply_shortcuts(self, shortcuts : Dict[int,str]):
         """
         Applies the shortcuts to the buttons.
         The shortcut is also added to the tooltip.
         """
-        for buttonNum in range(len(shortcuts)):
-            button = self.playback_buttons[buttonNum]
-            button.setShortcut(shortcuts[buttonNum])
-        self.reload_button_tooltips()
-
-    def reload_button_tooltips(self):
-        """Adds the shortcut of the buttons to the tooltips."""
-        for button in self.playback_buttons:
-            button.setToolTip(self.get_button_tooltip(button) + " " +
-                    button.shortcut().toString())
+        self.audio_playback_widget.apply_shortcuts(shortcuts)
 
     def update_metadata_header(self):
         """Loads the profile metadata of the selected files into the GUI."""
@@ -196,20 +170,14 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         return annotations
 
     @Slot()
-    def playerError(self, error, string):
-        message = QMessageBox()
-        message.setText(self.tr(
-            "Error playing audio: {error}"
-            ).format(error=string))
-        message.exec()
-    
+    def previous_pressed(self):
+        self.annotationList.setCurrentIndex(self.annotationList.model().index(
+                self.annotationList.currentIndex().row() - 1, 0))
+
     @Slot()
-    def playback_state_changed(self, state):
-        icon = QIcon()
-        playing = state == QMediaPlayer.PlayingState
-        icon.addFile(u":/playback/pause" if playing else u":/playback/play",
-                QSize(), QIcon.Normal, QIcon.Off)
-        self.playPauseButton.setIcon(icon)
+    def next_pressed(self):
+        self.annotationList.setCurrentIndex(self.annotationList.model().index(
+                self.annotationList.currentIndex().row() + 1, 0))
 
     @Slot()
     def gender_selected(self, gender : int):
@@ -253,14 +221,14 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def selection_changed(self, selected, deselected):
         self.update_metadata_header()
         index: QModelIndex = self.annotationList.currentIndex()
-        self.previousButton.setEnabled(index.row() > 0)
-        self.nextButton.setEnabled(index.row() < len(self.project.annotations) - 1)
+        self.audio_playback_widget.previousButton.setEnabled(index.row() > 0)
+        self.audio_playback_widget.nextButton.setEnabled(index.row() < len(self.project.annotations) - 1)
         annotation : Annotation = index.data(ANNOTATION_ROLE)
         self.annotationEdit.blockSignals(True)
         self.annotationEdit.setText(annotation.sentence)
         self.annotationEdit.blockSignals(False)
-        self.player.setSource(QUrl.fromLocalFile(os.path.join(self.project.audio_folder,
-                annotation.path)))
+        self.audio_playback_widget.play_file(os.path.join(self.project.audio_folder,
+                annotation.path))
 
     @Slot()
     def import_profile_pressed(self):
@@ -282,39 +250,6 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
                 annotation.accent = properties["accent"]
         self.annotationList.model().layoutChanged.emit()
         self.update_metadata_header()
-
-    @Slot()
-    def play_pause_pressed(self):
-        if self.player.playbackState() == QMediaPlayer.PlayingState:
-            self.player.pause()
-        else:
-            self.player.play()
-
-    @Slot()
-    def previous_pressed(self):
-        self.annotationList.setCurrentIndex(self.annotationList.model().index(
-                self.annotationList.currentIndex().row() - 1, 0))
-
-    @Slot()
-    def next_pressed(self):
-        self.annotationList.setCurrentIndex(self.annotationList.model().index(
-                self.annotationList.currentIndex().row() + 1, 0))
-
-    @Slot()
-    def volume_changed(self, to):
-        self.output.setVolume(to / 100)
-
-    @Slot()
-    def update_duration(self, duration):
-        self.totalTimeLabel.setText(QTime(0, 0).addSecs(duration).toString())
-        self.timeSlider.setMaximum(duration)
-
-    @Slot()
-    def update_position(self, position):
-        self.elapsedTimeLabel.setText(QTime(0, 0).addSecs(position).toString())
-        self.timeSlider.blockSignals(True)
-        self.timeSlider.setValue(position)
-        self.timeSlider.blockSignals(False)
 
     @Slot()
     def mark_unchanged_pressed(self):

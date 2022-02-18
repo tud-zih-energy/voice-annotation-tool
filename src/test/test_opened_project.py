@@ -32,7 +32,3 @@ def test_metadata_header_filled_on_open(project_frame):
     assert project_frame.clientIdEdit.text() == "id"
     assert project_frame.genderInput.currentText() == "Male"
     assert project_frame.ageInput.currentText() == "19 - 29"
-
-def test_tooltips_have_shortcuts(project_frame):
-    play_button : QPushButton = project_frame.playPauseButton
-    assert play_button.shortcut().toString() in play_button.toolTip()
