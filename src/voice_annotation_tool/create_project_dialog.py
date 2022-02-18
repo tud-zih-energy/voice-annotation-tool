@@ -17,17 +17,16 @@ class CreateProjectDialog(QDialog, Ui_CreateProjectDialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.tsv_file = ""
-        self.project_file = ""
-        self.audio_folder = ""
-        self.current_folder = ""
-        self.update_buttons()
+        self.tsv_file: str = ""
+        self.project_file: str = ""
+        self.audio_folder: str = ""
+        self.current_folder: str = ""
+        self._update_buttons()
 
-    def update_buttons(self):
+    def _update_buttons(self):
         """Enable the OK button when all paths are specified."""
-        self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(
-                bool(self.tsv_file) and bool(self.tsv_file)
-                and bool(self.project_file))
+        all_set = all([self.tsv_file, self.tsv_file, self.project_file])
+        self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(all_set)
 
     def accept(self):
         project = Project(self.project_file)
@@ -44,7 +43,7 @@ class CreateProjectDialog(QDialog, Ui_CreateProjectDialog):
         self.audio_folder = folder
         self.current_folder = str(Path(folder).parent.absolute())
         self.audioPathEdit.setText(folder)
-        self.update_buttons()
+        self._update_buttons()
 
     @Slot()
     def tsv_file_button_clicked(self):
@@ -62,6 +61,7 @@ class CreateProjectDialog(QDialog, Ui_CreateProjectDialog):
                 "Json Files (*)")
         if not file:
             return
+        # TODO: Instead of deleting mark the project as unsaved.
         if os.path.exists(file):
             os.remove(file)
         self.projectPathEdit.setText(file)
@@ -69,15 +69,14 @@ class CreateProjectDialog(QDialog, Ui_CreateProjectDialog):
     @Slot(str)
     def project_path_changed(self, path : str):
         self.project_file = path
-        self.update_buttons()
+        self._update_buttons()
 
     @Slot(str)
     def audio_path_changed(self, path : str):
         self.audio_folder = path
-        self.update_buttons()
+        self._update_buttons()
 
     @Slot(str)
     def tsv_path_changed(self, path : str):
         self.tsv_file = path
-        self.update_buttons()
-
+        self._update_buttons()
