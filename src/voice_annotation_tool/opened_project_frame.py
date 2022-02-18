@@ -6,7 +6,7 @@ edit the annotation.
 """
 
 import os
-from typing import Dict, List, Union
+from typing import Dict, List
 from PySide6.QtGui import QIcon
 from PySide6.QtCore import QModelIndex, QSize, Slot, QTime, QUrl
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput, QAudioDecoder
@@ -185,8 +185,8 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
 
     def delete_selected(self):
         """Delete the selected annotations and audio files."""
-        for selected in self.get_selected_annotations()[::-1]:
-            self.project.delete_annotation(selected.row())
+        for selected in self.get_selected_annotations():
+            self.project.delete_annotation(selected)
         self.annotationList.model().layoutChanged.emit()
 
     def get_selected_annotations(self) -> List[Annotation]:
@@ -246,7 +246,9 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     @Slot()
     def text_changed(self):
         text = self.annotationEdit.toPlainText()
-        self.project.annotate(self.annotationList.currentIndex().row(), text)
+        selected_annotation: Annotation = self.annotationList.currentIndex()\
+                .data(ANNOTATION_ROLE)
+        self.project.annotate(selected_annotation, text)
         self.annotationList.model().layoutChanged.emit()
 
     @Slot()
