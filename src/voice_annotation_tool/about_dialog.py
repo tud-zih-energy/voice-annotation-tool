@@ -11,8 +11,9 @@ class AboutDialog(QDialog, Ui_AboutDialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.descriptionLabel.setText(self.descriptionLabel.text().format(
-            version=pkg_resources.get_distribution("voice-annotation-tool").version))
+        version = pkg_resources.get_distribution("voice-annotation-tool").version
+        text = self.descriptionLabel.text().format(version=version)
+        self.descriptionLabel.setText(text)
 
     @Slot()
     def accept(self):
