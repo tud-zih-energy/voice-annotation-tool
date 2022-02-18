@@ -5,7 +5,6 @@ Handles loading and saving projects as well as loading the samples from the
 audio folder.
 """
 
-from itertools import islice
 from io import StringIO
 import os, csv
 from pathlib import Path
