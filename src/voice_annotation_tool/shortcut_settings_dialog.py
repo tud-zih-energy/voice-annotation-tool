@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QDialog, QHBoxLayout, QLineEdit, QLabel, QSizePoli
 from .shortcut_settings_dialog_ui import Ui_ShortcutSettingsDialog
 
 class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
-    shortcuts_confirmed = Signal(List[str])
+    shortcuts_confirmed = Signal(object)
 
     def __init__(self):
         super().__init__()
