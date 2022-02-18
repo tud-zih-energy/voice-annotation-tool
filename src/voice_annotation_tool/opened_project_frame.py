@@ -160,8 +160,6 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.project = project
         self.annotationList.setModel(AnnotationListModel(self.project))
         self.annotationList.selectionModel().selectionChanged.connect(self.selection_changed)
-        self.current_item = -1
-        self.set_annotation_length(-1)
         self.annotationList.setCurrentIndex(self.annotationList.model().index(0,0))
         if not len(self.project.annotations):
             message = QMessageBox()
@@ -169,19 +167,6 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
                 "No samples found in the audio folder: {folder}"
                 ).format(folder=project.audio_folder))
             message.exec()
-
-    def set_annotation_length(self, length):
-        """Set the length of an annotation displayed in the list."""
-        if self.current_item > 0 and length > 0:
-            item = self.annotationList.item(self.current_item)
-            item.setText(f"[{QTime(0, 0).addMSecs(length).toString()}] {item.text()}")
-        self.current_item += 1
-        decoder = QAudioDecoder()
-        decoder.setSource(QUrl.fromLocalFile(os.path.join(
-                self.project.audio_folder,
-                self.project.annotations[self.current_item].path)))
-        decoder.durationChanged.connect(self.set_annotation_length)
-        decoder.start()
 
     def delete_selected(self):
         """Delete the selected annotations and audio files."""
