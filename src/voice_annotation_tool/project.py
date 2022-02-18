@@ -59,7 +59,7 @@ class Project:
         """Changes the text of the given annotation."""
         if not annotation.modified:
             self.modified_annotations.append(annotation.path)
-        annotation.modified = bool(text)
+        annotation.modified = True
         annotation.sentence = text
 
     def mark_unchanged(self, annotation : Annotation) -> None:
