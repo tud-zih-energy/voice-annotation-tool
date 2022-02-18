@@ -5,7 +5,7 @@ from voice_annotation_tool.project import Project, Annotation
 
 annotation_data = {
     "client_id": "id",
-    "path": "path",
+    "path": "",
     "text": "",
     "up_votes": 0,
     "down_votes": 0,
@@ -19,7 +19,8 @@ annotation_data = {
 def project_frame():
     frame = OpenedProjectFrame()
     project = Project("")
-    for annotation in range(3):
+    for annotation_num in range(3):
+        annotation_data["path"] = "path_" + str(annotation_num)
         project.add_annotation(Annotation(annotation_data))
     frame.load_project(project)
     return frame
