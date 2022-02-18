@@ -52,10 +52,8 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         super().__init__()
         self.setupUi(self)
 
-        self.audio_playback_widget = AudioPlaybackWidget()
-        self.audio_playback_widget.next_pressed.connect(self.next_pressed)
-        self.audio_playback_widget.previous_pressed.connect(self.previous_pressed)
-        self.mainLayout.addWidget(self.audio_playback_widget)
+        self.audioPlaybackWidget.next_pressed.connect(self.next_pressed)
+        self.audioPlaybackWidget.previous_pressed.connect(self.previous_pressed)
         self.project: Project
         self.annotationList.installEventFilter(self)
         for age in AGE_STRINGS:
@@ -63,14 +61,14 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.ageInput.addItem(self.tr("[Multiple]"))
 
     def get_playback_buttons(self) -> List[QPushButton]:
-        return self.audio_playback_widget.playback_buttons
+        return self.audioPlaybackWidget.playback_buttons
 
     def apply_shortcuts(self, shortcuts : Dict[int,str]):
         """
         Applies the shortcuts to the buttons.
         The shortcut is also added to the tooltip.
         """
-        self.audio_playback_widget.apply_shortcuts(shortcuts)
+        self.audioPlaybackWidget.apply_shortcuts(shortcuts)
 
     def update_metadata_header(self):
         """Loads the profile metadata of the selected files into the GUI."""
@@ -221,13 +219,13 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def selection_changed(self, selected, deselected):
         self.update_metadata_header()
         index: QModelIndex = self.annotationList.currentIndex()
-        self.audio_playback_widget.previousButton.setEnabled(index.row() > 0)
-        self.audio_playback_widget.nextButton.setEnabled(index.row() < len(self.project.annotations) - 1)
+        self.audioPlaybackWidget.previousButton.setEnabled(index.row() > 0)
+        self.audioPlaybackWidget.nextButton.setEnabled(index.row() < len(self.project.annotations) - 1)
         annotation : Annotation = index.data(ANNOTATION_ROLE)
         self.annotationEdit.blockSignals(True)
         self.annotationEdit.setText(annotation.sentence)
         self.annotationEdit.blockSignals(False)
-        self.audio_playback_widget.play_file(os.path.join(self.project.audio_folder,
+        self.audioPlaybackWidget.play_file(os.path.join(self.project.audio_folder,
                 annotation.path))
 
     @Slot()

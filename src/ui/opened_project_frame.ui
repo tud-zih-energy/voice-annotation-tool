@@ -147,6 +147,9 @@
      <item>
       <widget class="QTextEdit" name="annotationEdit"/>
      </item>
+     <item>
+      <widget class="AudioPlaybackWidget" name="audioPlaybackWidget"/>
+     </item>
     </layout>
    </item>
    <item>
@@ -184,6 +187,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>AudioPlaybackWidget</class>
+   <extends>QFrame</extends>
+   <header>.audio_playback_widget</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../../resources.qrc"/>
  </resources>
