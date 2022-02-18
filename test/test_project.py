@@ -1,4 +1,5 @@
 from io import StringIO
+
 import pytest
 from voice_annotation_tool.annotation import Annotation
 from voice_annotation_tool.project import Project
@@ -6,7 +7,7 @@ from voice_annotation_tool.project import Project
 @pytest.fixture
 def project():
     project = Project("")
-    project.annotations.append(Annotation({"path": "path", "sentence": "text"}))
+    project.add_annotation(Annotation({"path": "path", "sentence": "text"}))
     return project
 
 def test_creation(project):

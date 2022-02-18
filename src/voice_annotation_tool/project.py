@@ -45,21 +45,17 @@ class Project:
         self.audio_folder = to
         if not os.path.exists(self.audio_folder):
             return
-        existing = {}
-        for annotation in self.annotations:
-            existing[annotation.path] = True
         for audio_file in os.listdir(self.audio_folder):
             if os.path.splitext(audio_file)[1] in [".mp3", ".ogg", ".mp4",
                     ".webm", ".avi", ".mkv", ".wav"]:
-                if not audio_file in existing:
+                if not audio_file in self.annotations_by_path:
                     annotation = Annotation()
                     annotation.path = audio_file
-                    self.annotations.append(annotation)
+                    self.add_annotation(annotation)
         print("loaded audio folder")
     
-    def annotate(self, index : int, text : str) -> None:
+    def annotate(self, annotation: Annotation, text : str) -> None:
         """Changes the text of the given annotation."""
-        annotation = self.annotations[index]
         if not annotation.modified:
             self.modified_annotations.append(annotation.path)
         annotation.modified = bool(text)
@@ -68,12 +64,6 @@ class Project:
     def mark_unchanged(self, annotation : Annotation) -> None:
         annotation.modified = False
         self.modified_annotations.remove(annotation.path)
-
-    def get_by_file(self, file : str):
-        """Returns the annotation of the given file."""
-        for annotationNum in range(len(self.annotations)):
-            if self.annotations[annotationNum].path == file:
-                return annotationNum
 
     def save(self):
         """
@@ -121,7 +111,7 @@ class Project:
                         annotation.path)):
                     if annotation.path in self.modified_annotations:
                         annotation.modified = True
-                    self.annotations.append(annotation)
+                    self.add_annotation(annotation)
         print("loaded csv")
 
     def delete(self):
@@ -130,18 +120,23 @@ class Project:
             os.remove(self.tsv_file)
         os.remove(self.project_file)
  
-    def delete_annotation(self, index : int):
+    def delete_annotation(self, annotation: Annotation):
         """Delete a stored annotation and the audio file on disk."""
-        annotation : Annotation = self.annotations[index]
         os.remove(os.path.join(self.audio_folder, annotation.path))
+        self.annotations_by_path.pop(annotation.path)
         self.annotations.remove(annotation)
+
+    def add_annotation(self, annotation: Annotation):
+        self.annotations_by_path[annotation.path] = annotation
+        self.annotations.append(annotation)
 
     def importCSV(self, infile: StringIO):
         reader = csv.reader(infile, delimiter=';')
         for row in reader:
-            annotation = self.get_by_file(row[0])
-            if annotation != None:
-                self.annotate(annotation, row[1])
+            path = row[0]
+            if not path in self.annotations_by_path:
+                return
+            self.annotate(self.annotations_by_path[path], row[1])
 
     def exportCSV(self, outfile: StringIO):
         writer = csv.writer(outfile, delimiter=';')
@@ -152,10 +147,9 @@ class Project:
         data = json.load(infile)
         for row in data:
             for filename in row:
-                annotation = self.get_by_file(filename)
-                if annotation == None:
+                if not filename in self.annotations_by_path:
                     continue
-                self.annotate(annotation, row[filename])
+                self.annotate(self.annotations_by_path[filename], row[filename])
 
     def exportJson(self, outfile: StringIO):
         data = []
