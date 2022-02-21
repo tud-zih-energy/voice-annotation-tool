@@ -180,7 +180,7 @@
           <string>Play / Pause</string>
          </property>
          <property name="icon">
-          <iconset resource="../../resources.qrc">
+          <iconset resource="../resources.qrc">
            <normaloff>:/playback/play</normaloff>:/playback/play</iconset>
          </property>
          <property name="shortcut">
@@ -213,7 +213,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../../resources.qrc">
+          <iconset resource="../resources.qrc">
            <normaloff>:/playback/back</normaloff>:/playback/back</iconset>
          </property>
          <property name="shortcut">
@@ -230,7 +230,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../../resources.qrc">
+          <iconset resource="../resources.qrc">
            <normaloff>:/playback/stop</normaloff>:/playback/stop</iconset>
          </property>
          <property name="shortcut">
@@ -247,7 +247,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../../resources.qrc">
+          <iconset resource="../resources.qrc">
            <normaloff>:/playback/skip</normaloff>:/playback/skip</iconset>
          </property>
          <property name="shortcut">
@@ -280,7 +280,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="../../resources.qrc">:/playback/volume</pixmap>
+          <pixmap resource="../resources.qrc">:/playback/volume</pixmap>
          </property>
         </widget>
        </item>
@@ -349,6 +349,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../resources.qrc"/>
   <include location="../../resources.qrc"/>
  </resources>
  <connections>
