@@ -43,6 +43,24 @@ def test_tooltips_have_shortcuts(project_frame):
     play_button : QPushButton = project_frame.playPauseButton
     assert play_button.shortcut().toString() in play_button.toolTip()
 
+def test_next_button_selects_one(project_frame: OpenedProjectFrame):
+    project_frame.next_pressed()
+    assert len(project_frame.annotationList.selectedIndexes()) == 1
+
+def test_next_button_selects_correct_annotation(project_frame: OpenedProjectFrame):
+    project_frame.next_pressed()
+    assert project_frame.annotationList.selectedIndexes()[0].row() == 1
+
+def test_previous_button_selects_one(project_frame: OpenedProjectFrame):
+    project_frame.next_pressed()
+    project_frame.previous_pressed()
+    assert len(project_frame.annotationList.selectedIndexes()) == 1
+
+def test_previous_button_selects_correct_annotation(project_frame: OpenedProjectFrame):
+    project_frame.next_pressed()
+    project_frame.previous_pressed()
+    assert project_frame.annotationList.selectedIndexes()[0].row() == 0
+
 def test_mark_unchanged(project_frame: OpenedProjectFrame):
     project_frame.mark_unchanged_pressed()
     project_frame.mark_unchanged_pressed()
