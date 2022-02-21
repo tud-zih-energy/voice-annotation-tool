@@ -43,7 +43,7 @@ class Project:
         Loads the samples from the audio folder of this project into files.
         """
         self.audio_folder = to
-        if not os.path.isdir(self.audio_folder):
+        if not self.audio_folder.is_dir():
             return
         for audio_file in os.listdir(self.audio_folder):
             path = Path(audio_file)
@@ -117,9 +117,9 @@ class Project:
 
     def delete(self):
         """Delete the TSV and project file."""
-        if os.path.exists(self.tsv_file):
-            os.remove(self.tsv_file)
-        os.remove(self.project_file)
+        if self.tsv_file.is_file():
+            self.tsv_file.unlink()
+        self.project_file.unlink()
  
     def delete_annotation(self, annotation: Annotation):
         """Delete a stored annotation and the audio file on disk."""
