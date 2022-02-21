@@ -130,16 +130,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for action in self.project_actions:
             action.setEnabled(True)
         if not os.path.exists(project.audio_folder):
-            if (
-                QMessageBox.warning(
-                    self,
-                    self.tr("Warning"),
-                    self.tr("The audio folder doesn't exist. Choose another one?"),
-                    QMessageBox.StandardButton.Ok,
-                    QMessageBox.Cancel,
-                )
-                == QMessageBox.Ok
-            ):
+            result: int = QMessageBox.warning(
+                self,
+                self.tr("Warning"),
+                self.tr("The audio folder doesn't exist. Choose another one?"),
+                QMessageBox.StandardButton.Ok,
+                QMessageBox.Cancel,
+            )
+            if result == QMessageBox.Ok:
                 folder = QFileDialog.getExistingDirectory(
                     self, self.tr("Open Audio Folder")
                 )
@@ -258,16 +256,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def deleteSelected(self):
-        if (
-            QMessageBox.warning(
-                self,
-                self.tr("Warning"),
-                self.tr("Really delete selected annotations and audio files?"),
-                QMessageBox.StandardButton.Ok,
-                QMessageBox.Cancel,
-            )
-            == QMessageBox.Ok
-        ):
+        result: int = QMessageBox.warning(
+            self,
+            self.tr("Warning"),
+            self.tr("Really delete selected annotations and audio files?"),
+            QMessageBox.StandardButton.Ok,
+            QMessageBox.Cancel,
+        )
+        if result == QMessageBox.Ok:
             self.opened_project_frame.delete_selected()
 
     @Slot()
