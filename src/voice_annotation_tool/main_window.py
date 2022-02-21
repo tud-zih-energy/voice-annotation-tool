@@ -83,7 +83,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.shortcuts = data["shortcuts"]
             self.opened_project_frame.apply_shortcuts(self.shortcuts)
             self.shortcut_settings_dialog.load_buttons(
-                    self.opened_project_frame.playbackButtons)
+                    self.opened_project_frame.get_playback_buttons())
             self.shortcut_settings_dialog.load_existing(self.menuEdit)
             self.shortcut_settings_dialog.load_existing(self.menuFile)
 

@@ -64,7 +64,8 @@ class Project:
 
     def mark_unchanged(self, annotation : Annotation) -> None:
         annotation.modified = False
-        self.modified_annotations.remove(annotation.path)
+        if annotation.path in self.modified_annotations:
+            self.modified_annotations.remove(annotation.path)
 
     def save(self):
         """
@@ -123,7 +124,9 @@ class Project:
  
     def delete_annotation(self, annotation: Annotation):
         """Delete a stored annotation and the audio file on disk."""
-        os.remove(os.path.join(self.audio_folder, annotation.path))
+        annotation_path = os.path.join(self.audio_folder, annotation.path)
+        if os.path.isfile(annotation_path):
+            os.remove(annotation_path)
         self.annotations_by_path.pop(annotation.path)
         self.annotations.remove(annotation)
 

@@ -7,15 +7,15 @@ class Annotation:
             "age", "gender", "accent"]
 
     def __init__(self, dict=None):
-        self.client_id = "0"
-        self.path = ""
-        self.sentence = ""
-        self.up_votes = 0
-        self.down_votes = 0
-        self.age = ""
-        self.gender = ""
-        self.accent = ""
-        self.modified = False
+        self.client_id: str = "0"
+        self.path: str = ""
+        self.sentence: str = ""
+        self.up_votes: int = 0
+        self.down_votes: int = 0
+        self.age: str = ""
+        self.gender: str = ""
+        self.accent: str = ""
+        self.modified: bool = False
 
         if dict is not None:
             self.from_dict(dict)
@@ -30,11 +30,12 @@ class Annotation:
         return properties
 
     def from_dict(self, dict):
-        """Loads an annotation from a loaded csv row."""
-        for header in self.TSV_HEADER_MEMBERS:
-            if not header in dict:
-                continue
-            value = dict[header]
-            if getattr(self, header) is int:
-                value = int(value)
-            setattr(self, header, value) 
+        """Loads an annotation from deserialized csv row."""
+        self.client_id = dict.get("client_id", "")
+        self.path = dict.get("path", "")
+        self.sentence = dict.get("sentence", "")
+        self.age = dict.get("age", "")
+        self.gender = dict.get("gender")
+        self.accent = dict.get("accent")
+        self.down_votes = int(dict.get("down_votes", 0))
+        self.up_votes = int(dict.get("up_votes", 0))
