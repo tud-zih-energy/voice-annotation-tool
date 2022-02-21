@@ -6,6 +6,7 @@ from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PySide6.QtWidgets import QMessageBox, QPushButton, QWidget
 from .audio_playback_widget_ui import Ui_AudioPlaybackWidget
 
+
 class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
     next_pressed = Signal()
     previous_pressed = Signal()
@@ -16,9 +17,13 @@ class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
         self.output = QAudioOutput()
         self.player = QMediaPlayer()
         self.player.setAudioOutput(self.output)
-        self.buttonTooltips : Dict[QPushButton, str] = {}
-        self.playback_buttons = [self.playPauseButton, self.previousButton,
-                self.stopButton, self.nextButton]
+        self.buttonTooltips: Dict[QPushButton, str] = {}
+        self.playback_buttons = [
+            self.playPauseButton,
+            self.previousButton,
+            self.stopButton,
+            self.nextButton,
+        ]
         self.stopButton.pressed.connect(self.player.stop)
         self.timeSlider.valueChanged.connect(self.player.setPosition)
         self.volumeSlider.valueChanged.connect(self.volume_changed)
@@ -28,7 +33,7 @@ class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
         self.player.playbackStateChanged.connect(self.playback_state_changed)
         self.reload_button_tooltips()
 
-    def get_button_tooltip(self, button : QPushButton) -> str:
+    def get_button_tooltip(self, button: QPushButton) -> str:
         """
         Returns the original tooltip of a button.
         Stores the current tooltip if it is accessed for the first time.
@@ -37,7 +42,7 @@ class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
             self.buttonTooltips[button] = button.toolTip()
         return self.buttonTooltips[button]
 
-    def apply_shortcuts(self, shortcuts : Dict[int,str]):
+    def apply_shortcuts(self, shortcuts: Dict[int, str]):
         """
         Applies the shortcuts to the buttons.
         The shortcut is also added to the tooltip.
@@ -50,8 +55,9 @@ class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
     def reload_button_tooltips(self):
         """Adds the shortcut of the buttons to the tooltips."""
         for button in self.playback_buttons:
-            button.setToolTip(self.get_button_tooltip(button) + " " +
-                    button.shortcut().toString())
+            button.setToolTip(
+                self.get_button_tooltip(button) + " " + button.shortcut().toString()
+            )
 
     def load_file(self, file: Path) -> None:
         """
@@ -65,11 +71,11 @@ class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
         message = QMessageBox()
         message.setText(self.tr("Error playing audio: {error}").format(error=string))
         message.exec()
-    
+
     @Slot()
     def playback_state_changed(self, state):
         playing = state == QMediaPlayer.PlayingState
-        file = u":/playback/pause" if playing else u":/playback/play"
+        file = ":/playback/pause" if playing else ":/playback/play"
         icon = QIcon()
         icon.addFile(file, QSize(), QIcon.Normal, QIcon.Off)
         self.playPauseButton.setIcon(icon)

@@ -9,6 +9,7 @@ from PySide6.QtCore import Signal, Slot, QModelIndex
 from .project import Project
 from .choose_project_frame_ui import Ui_ChooseProjectFrame
 
+
 class ChooseProjectFrame(QFrame, Ui_ChooseProjectFrame):
     create_project_pressed = Signal()
     project_opened = Signal(Project)
@@ -16,7 +17,7 @@ class ChooseProjectFrame(QFrame, Ui_ChooseProjectFrame):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-            
+
     def load_recent_projects(self, projects):
         for project in projects:
             item = QListWidgetItem(project)
@@ -25,8 +26,9 @@ class ChooseProjectFrame(QFrame, Ui_ChooseProjectFrame):
 
     @Slot()
     def open_project(self):
-        files = QFileDialog.getOpenFileName(self, "Open Project", "",
-                "Project Files (*.json)")
+        files = QFileDialog.getOpenFileName(
+            self, "Open Project", "", "Project Files (*.json)"
+        )
         if not files[0]:
             return
         self.project_opened.emit(Project(files[0]))

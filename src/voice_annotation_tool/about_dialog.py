@@ -7,6 +7,7 @@ from PySide6.QtWidgets import QDialog
 from PySide6.QtCore import Slot
 from .about_ui import Ui_AboutDialog
 
+
 class AboutDialog(QDialog, Ui_AboutDialog):
     def __init__(self):
         super().__init__()

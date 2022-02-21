@@ -6,8 +6,16 @@ class Annotation:
 
     # An ordered list of the members of an annotation that are read and written
     # to and from a tsv file.
-    TSV_HEADER_MEMBERS = ["client_id", "path", "sentence", "up_votes", "down_votes",
-            "age", "gender", "accent"]
+    TSV_HEADER_MEMBERS = [
+        "client_id",
+        "path",
+        "sentence",
+        "up_votes",
+        "down_votes",
+        "age",
+        "gender",
+        "accent",
+    ]
 
     def __init__(self, dict=None):
         self.client_id: str = "0"
@@ -22,7 +30,7 @@ class Annotation:
 
         if dict is not None:
             self.from_dict(dict)
-    
+
     def to_dict(self):
         """
         Returns a dictionary ready to be written to a csv file by a DictWriter.

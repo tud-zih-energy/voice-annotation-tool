@@ -18,6 +18,7 @@ from .choose_project_frame import ChooseProjectFrame
 from .about_dialog import AboutDialog
 from .main_ui import Ui_MainWindow
 
+
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -28,7 +29,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.opened_project_frame = OpenedProjectFrame()
         self.choose_project_frame = ChooseProjectFrame()
         self.original_title = self.windowTitle()
-        self.project : Project
+        self.project: Project
         self.settings_file: Path
         self.recent_projects: List[str] = []
         self.shortcuts = []
@@ -40,7 +41,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Connections
         self.create_project_dialog.project_created.connect(self.project_created)
-        self.shortcut_settings_dialog.shortcuts_confirmed.connect(self.shortcuts_confirmed)
+        self.shortcut_settings_dialog.shortcuts_confirmed.connect(
+            self.shortcuts_confirmed
+        )
         self.choose_project_frame.project_opened.connect(self.project_opened)
         self.choose_project_frame.create_project_pressed.connect(self.new_project)
         self.actionNewProject.triggered.connect(self.new_project)
@@ -80,8 +83,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 data = json.load(file)
             except JSONDecodeError as error:
-                return QMessageBox.warning(self, self.tr("Warning"), self.tr(
-                    "Failed to parse the configuration file: {error}".format(error=error.msg)))
+                return QMessageBox.warning(
+                    self,
+                    self.tr("Warning"),
+                    self.tr(
+                        "Failed to parse the configuration file: {error}".format(
+                            error=error.msg
+                        )
+                    ),
+                )
             for recent in data["recent_projects"]:
                 if os.path.exists(recent):
                     self.recent_projects.append(recent)
@@ -90,7 +100,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.shortcuts = data["shortcuts"]
             self.opened_project_frame.apply_shortcuts(self.shortcuts)
             self.shortcut_settings_dialog.load_buttons(
-                    self.opened_project_frame.get_playback_buttons())
+                self.opened_project_frame.get_playback_buttons()
+            )
             self.shortcut_settings_dialog.load_existing(self.menuEdit)
             self.shortcut_settings_dialog.load_existing(self.menuFile)
 
@@ -99,10 +110,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Saves the `recent_projects` list and keyboard shortcuts to a json file
         """
         with open(self.settings_file, "w") as file:
-            json.dump({
-                "recent_projects": list(dict.fromkeys(self.recent_projects)),
-                "shortcuts": self.shortcuts,
-            }, file)
+            json.dump(
+                {
+                    "recent_projects": list(dict.fromkeys(self.recent_projects)),
+                    "shortcuts": self.shortcuts,
+                },
+                file,
+            )
 
     @Slot()
     def project_opened(self, project: Project):
@@ -116,20 +130,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for action in self.project_actions:
             action.setEnabled(True)
         if not os.path.exists(project.audio_folder):
-            if QMessageBox.warning(self, self.tr("Warning"), self.tr(
-                    "The audio folder doesn't exist. Choose another one?"),
+            if (
+                QMessageBox.warning(
+                    self,
+                    self.tr("Warning"),
+                    self.tr("The audio folder doesn't exist. Choose another one?"),
                     QMessageBox.StandardButton.Ok,
-                    QMessageBox.Cancel) == QMessageBox.Ok:
-                folder = QFileDialog.getExistingDirectory(self,
-                        self.tr("Open Audio Folder"))
+                    QMessageBox.Cancel,
+                )
+                == QMessageBox.Ok
+            ):
+                folder = QFileDialog.getExistingDirectory(
+                    self, self.tr("Open Audio Folder")
+                )
                 if folder:
                     project.audio_folder = Path(folder)
                     self.project_opened(project)
         elif len(project.annotations) == 0:
             message = QMessageBox()
-            message.setText(self.tr(
-                "No samples found in the audio folder: {folder}"
-                ).format(folder=project.audio_folder))
+            message.setText(
+                self.tr("No samples found in the audio folder: {folder}").format(
+                    folder=project.audio_folder
+                )
+            )
             message.exec()
         print("opened done")
 
@@ -143,8 +166,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def open(self):
-        file, _ = QFileDialog.getOpenFileName(self, self.tr("Open Project"), "",
-                self.tr("Project Files (*.json)"))
+        file, _ = QFileDialog.getOpenFileName(
+            self, self.tr("Open Project"), "", self.tr("Project Files (*.json)")
+        )
         if file:
             self.project_opened(Project(file))
 
@@ -156,8 +180,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def save_project_as(self):
-        file, _ = QFileDialog.getSaveFileName(self,
-                self.tr("Save Project"), "", self.tr("Project Files (*.json)"))
+        file, _ = QFileDialog.getSaveFileName(
+            self, self.tr("Save Project"), "", self.tr("Project Files (*.json)")
+        )
         if file:
             self.project.project_file = file
             self.project.save()
@@ -165,10 +190,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def delete_project(self):
-        if QMessageBox.warning(self, self.tr("Warning"), self.tr(
-                "Delete the TSV and project file?"),
+        if (
+            QMessageBox.warning(
+                self,
+                self.tr("Warning"),
+                self.tr("Delete the TSV and project file?"),
                 QMessageBox.StandardButton.Ok,
-                QMessageBox.Cancel) == QMessageBox.Cancel:
+                QMessageBox.Cancel,
+            )
+            == QMessageBox.Cancel
+        ):
             return
         self.project.delete()
         self.setWindowTitle(self.original_title)
@@ -187,26 +218,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def importCSV(self):
-        path, _ = QFileDialog.getOpenFileName(self, self.tr("Import CSV"), "",
-                self.tr("CSV Files (*.csv)"))
+        path, _ = QFileDialog.getOpenFileName(
+            self, self.tr("Import CSV"), "", self.tr("CSV Files (*.csv)")
+        )
         if not path:
             return
-        with open(path, newline='') as file:
+        with open(path, newline="") as file:
             self.project.importCSV(file)
 
     @Slot()
     def exportCSV(self):
-        path, _ = QFileDialog.getSaveFileName(self, self.tr("Export CSV"), "",
-                self.tr("CSV Files (*.csv)"))
+        path, _ = QFileDialog.getSaveFileName(
+            self, self.tr("Export CSV"), "", self.tr("CSV Files (*.csv)")
+        )
         if not path:
             return
-        with open(path, "w", newline='') as file:
+        with open(path, "w", newline="") as file:
             self.project.exportCSV(file)
 
     @Slot()
     def importJson(self):
-        path, _ = QFileDialog.getOpenFileName(self, self.tr("Import Json"), "",
-                self.tr("Json Files (*.json)"))
+        path, _ = QFileDialog.getOpenFileName(
+            self, self.tr("Import Json"), "", self.tr("Json Files (*.json)")
+        )
         if not path:
             return
         with open(path) as file:
@@ -214,8 +248,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def exportJson(self):
-        path, _ = QFileDialog.getSaveFileName(self, self.tr("Export Json"), "",
-                self.tr("Json Files (*.json)"))
+        path, _ = QFileDialog.getSaveFileName(
+            self, self.tr("Export Json"), "", self.tr("Json Files (*.json)")
+        )
         if not path:
             return
         with open(path, "w") as file:
@@ -223,10 +258,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def deleteSelected(self):
-        if QMessageBox.warning(self, self.tr("Warning"), self.tr(
-                "Really delete selected annotations and audio files?"),
+        if (
+            QMessageBox.warning(
+                self,
+                self.tr("Warning"),
+                self.tr("Really delete selected annotations and audio files?"),
                 QMessageBox.StandardButton.Ok,
-                QMessageBox.Cancel) == QMessageBox.Ok:
+                QMessageBox.Cancel,
+            )
+            == QMessageBox.Ok
+        ):
             self.opened_project_frame.delete_selected()
 
     @Slot()

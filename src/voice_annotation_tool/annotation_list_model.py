@@ -6,19 +6,22 @@ from .project import Project, Annotation
 
 ANNOTATION_ROLE = Qt.UserRole + 1
 
+
 class AnnotationListModel(QAbstractListModel):
     """Model that shows the annotations of a project."""
 
-    def __init__(self, project : Project, parent=None):
+    def __init__(self, project: Project, parent=None):
         super().__init__(parent)
         self._data: Project = project
-    
+
     def rowCount(self, parent=QModelIndex()) -> int:
         if self._data is None:
             return 0
         return len(self._data.annotations)
 
-    def data(self, index: QModelIndex, role: int) -> Union[None, str, Annotation, QBrush]:
+    def data(
+        self, index: QModelIndex, role: int
+    ) -> Union[None, str, Annotation, QBrush]:
         if not index.isValid():
             return None
         if index.row() >= len(self._data.annotations):
@@ -45,7 +48,7 @@ class AnnotationListModel(QAbstractListModel):
         role_names = super.roleNames()
         role_names[ANNOTATION_ROLE] = "annotation"
         return role_names
-    
+
     def headerData(self, section: int, orientation: Qt.Orientation, role: int) -> Any:
         if orientation == Qt.Horizontal:
             if role == Qt.DisplayRole:
