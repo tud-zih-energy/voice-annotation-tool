@@ -39,8 +39,8 @@ def test_metadata_header_filled_on_open(project_frame):
     assert project_frame.genderInput.currentText() == "Male"
     assert project_frame.ageInput.currentText() == "19 - 29"
 
-def test_tooltips_have_shortcuts(project_frame):
-    play_button : QPushButton = project_frame.playPauseButton
+def test_tooltips_have_shortcuts(project_frame: OpenedProjectFrame):
+    play_button : QPushButton = project_frame.get_playback_buttons()[0]
     assert play_button.shortcut().toString() in play_button.toolTip()
 
 def test_next_button_selects_one(project_frame: OpenedProjectFrame):
