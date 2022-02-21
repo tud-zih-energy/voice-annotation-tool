@@ -9,7 +9,7 @@ from voice_annotation_tool.project import Project, Annotation
 annotation_data = {
     "client_id": "id",
     "path": "",
-    "text": "",
+    "sentence": "",
     "up_votes": 0,
     "down_votes": 0,
     "age": "twenties",
@@ -26,9 +26,17 @@ def project_frame():
         path = Path("/tmp/path_" + str(annotation_num))
         path.touch()
         annotation_data["path"] = str(path)
+        annotation_data["sentence"] = f"Sentence {annotation_num}"
         project.add_annotation(Annotation(annotation_data))
     frame.load_project(project)
     return frame
+
+def test_annotation_text_loaded(project_frame: OpenedProjectFrame):
+    assert project_frame.annotationEdit.toPlainText() == "Sentence 0"
+
+def test_next_annotation_text(project_frame: OpenedProjectFrame):
+    project_frame.annotationList.setCurrentIndex(project_frame.annotationList.model().index(1,0))
+    assert project_frame.annotationEdit.toPlainText() == "Sentence 1"
 
 def test_annotation_list_has_rows(project_frame: OpenedProjectFrame):
     model : AnnotationListModel = project_frame.annotationList.model()
