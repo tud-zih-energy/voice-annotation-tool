@@ -200,7 +200,6 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         selected_annotation: Annotation = self.annotationList.currentIndex()\
                 .data(ANNOTATION_ROLE)
         self.project.annotate(selected_annotation, text)
-        self.annotationList.model().layoutChanged.emit()
 
     @Slot()
     def selection_changed(self, selected, deselected):
@@ -232,11 +231,9 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
                 annotation.gender = properties["gender"]
             if "accent" in properties:
                 annotation.accent = properties["accent"]
-        self.annotationList.model().layoutChanged.emit()
         self.update_metadata_header()
 
     @Slot()
     def mark_unchanged_pressed(self):
         for annotation in self.get_selected_annotations():
             self.project.mark_unchanged(annotation)
-        self.annotationList.model().layoutChanged.emit()

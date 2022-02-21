@@ -4,10 +4,11 @@ Holds a project list on startup, and the project view when a project was
 opened.
 """
 
-import os, json, traceback, csv
+from json.decoder import JSONDecodeError
+import os, json
 from pathlib import Path
 from typing import List
-from PySide6.QtWidgets import QMainWindow, QFileDialog, QErrorMessage, QMessageBox
+from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from PySide6.QtCore import Slot
 from .project import Project
 from .create_project_dialog import CreateProjectDialog
@@ -28,7 +29,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.choose_project_frame = ChooseProjectFrame()
         self.original_title = self.windowTitle()
         self.project : Project
-        self.settings_file = ""
+        self.settings_file: Path
         self.recent_projects: List[str] = []
         self.shortcuts = []
 
@@ -67,16 +68,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionDeleteSelected,
         ]
 
-    def load_settings(self, settings_file):
+    def load_settings(self, settings_file: Path):
         """
         Loads the recently used projects into the `recent_projects` list and
         applies the shortcuts.
         """
         self.settings_file = settings_file
-        if not os.path.exists(settings_file):
+        if not settings_file.is_file():
             return
         with open(settings_file) as file:
-            data = json.load(file)
+            try:
+                data = json.load(file)
+            except JSONDecodeError as error:
+                return QMessageBox.warning(self, self.tr("Warning"), self.tr(
+                    "Failed to parse the configuration file: {error}".format(error=error.msg)))
             for recent in data["recent_projects"]:
                 if os.path.exists(recent):
                     self.recent_projects.append(recent)
