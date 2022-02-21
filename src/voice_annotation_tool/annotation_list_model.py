@@ -1,4 +1,4 @@
-from typing import Any, Dict, Union
+from typing import Any, Union, Dict
 from PySide6.QtCore import QAbstractListModel, QModelIndex
 from PySide6.QtGui import QBrush, Qt
 

@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from PySide6.QtWidgets import QPushButton
+from PySide6.QtCore import Qt
 import pytest
 from voice_annotation_tool.opened_project_frame import AnnotationListModel, OpenedProjectFrame
 from voice_annotation_tool.project import Project, Annotation
@@ -8,7 +9,7 @@ from voice_annotation_tool.project import Project, Annotation
 annotation_data = {
     "client_id": "id",
     "path": "",
-    "text": "",
+    "sentence": "",
     "up_votes": 0,
     "down_votes": 0,
     "age": "twenties",
@@ -25,13 +26,25 @@ def project_frame():
         path = Path("/tmp/path_" + str(annotation_num))
         path.touch()
         annotation_data["path"] = str(path)
+        annotation_data["sentence"] = f"Sentence {annotation_num}"
         project.add_annotation(Annotation(annotation_data))
     frame.load_project(project)
     return frame
 
-def test_annotation_list(project_frame):
+def test_annotation_text_loaded(project_frame: OpenedProjectFrame):
+    assert project_frame.annotationEdit.toPlainText() == "Sentence 0"
+
+def test_next_annotation_text(project_frame: OpenedProjectFrame):
+    project_frame.annotationList.setCurrentIndex(project_frame.annotationList.model().index(1,0))
+    assert project_frame.annotationEdit.toPlainText() == "Sentence 1"
+
+def test_annotation_list_has_rows(project_frame: OpenedProjectFrame):
     model : AnnotationListModel = project_frame.annotationList.model()
     assert model.rowCount() == 3
+
+def test_annotation_list_shows_filename(project_frame: OpenedProjectFrame):
+    model : AnnotationListModel = project_frame.annotationList.model()
+    assert model.data(model.index(0,0), Qt.DisplayRole) == project_frame.project.annotations[0].path.name
 
 def test_metadata_header_filled_on_open(project_frame):
     assert project_frame.accentEdit.text() == "accent"
