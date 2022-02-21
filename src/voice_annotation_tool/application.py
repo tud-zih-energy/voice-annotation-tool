@@ -11,12 +11,14 @@ from PySide6.QtWidgets import QApplication, QErrorMessage
 from .main_window import MainWindow
 from .project import Project
 
+
 def get_data_dir() -> Path:
     """Returns the directory where application data is stored."""
     data_dir = Path(QStandardPaths.standardLocations(QStandardPaths.AppDataLocation)[0])
     if not data_dir.exists():
         data_dir.mkdir(parents=True)
     return data_dir
+
 
 def get_settings_file() -> Path:
     """
@@ -25,19 +27,21 @@ def get_settings_file() -> Path:
     """
     return get_data_dir().joinpath("settings.json")
 
+
 class Application(QApplication):
     def __init__(self, args) -> None:
         super().__init__(args)
         parser = QCommandLineParser()
         parser.setApplicationDescription(
-                self.tr("Utility to annotate short voice samples"))
+            self.tr("Utility to annotate short voice samples")
+        )
         parser.addPositionalArgument("project", self.tr("Project file to open."))
         parser.addHelpOption()
         parser.addVersionOption()
         parser.process(self)
 
         translator = QTranslator()
-        translator.load(QLocale(), 'translations/')
+        translator.load(QLocale(), "translations/")
         self.installTranslator(translator)
 
         self.main_window = MainWindow()
@@ -58,7 +62,6 @@ class Application(QApplication):
             # Only show one error message to prevent dialog spam.
             self.error_dialog.close()
         self.error_dialog = QErrorMessage(self.main_window)
-        message = "\n".join(traceback.format_exception(exc_type,
-                exc_value, exc_tb))
+        message = "\n".join(traceback.format_exception(exc_type, exc_value, exc_tb))
         print(message)
         self.error_dialog.showMessage(message, "exception")

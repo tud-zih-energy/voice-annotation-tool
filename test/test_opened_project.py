@@ -3,7 +3,10 @@ from pathlib import Path
 from PySide6.QtWidgets import QPushButton
 from PySide6.QtCore import Qt
 import pytest
-from voice_annotation_tool.opened_project_frame import AnnotationListModel, OpenedProjectFrame
+from voice_annotation_tool.opened_project_frame import (
+    AnnotationListModel,
+    OpenedProjectFrame,
+)
 from voice_annotation_tool.project import Project, Annotation
 
 annotation_data = {
@@ -18,6 +21,7 @@ annotation_data = {
     "modified": False,
 }
 
+
 @pytest.fixture
 def project_frame():
     frame = OpenedProjectFrame()
@@ -31,20 +35,30 @@ def project_frame():
     frame.load_project(project)
     return frame
 
+
 def test_annotation_text_loaded(project_frame: OpenedProjectFrame):
     assert project_frame.annotationEdit.toPlainText() == "Sentence 0"
 
+
 def test_next_annotation_text(project_frame: OpenedProjectFrame):
-    project_frame.annotationList.setCurrentIndex(project_frame.annotationList.model().index(1,0))
+    project_frame.annotationList.setCurrentIndex(
+        project_frame.annotationList.model().index(1, 0)
+    )
     assert project_frame.annotationEdit.toPlainText() == "Sentence 1"
 
+
 def test_annotation_list_has_rows(project_frame: OpenedProjectFrame):
-    model : AnnotationListModel = project_frame.annotationList.model()
+    model: AnnotationListModel = project_frame.annotationList.model()
     assert model.rowCount() == 3
 
+
 def test_annotation_list_shows_filename(project_frame: OpenedProjectFrame):
-    model : AnnotationListModel = project_frame.annotationList.model()
-    assert model.data(model.index(0,0), Qt.DisplayRole) == project_frame.project.annotations[0].path.name
+    model: AnnotationListModel = project_frame.annotationList.model()
+    assert (
+        model.data(model.index(0, 0), Qt.DisplayRole)
+        == project_frame.project.annotations[0].path.name
+    )
+
 
 def test_metadata_header_filled_on_open(project_frame):
     assert project_frame.accentEdit.text() == "accent"
@@ -52,32 +66,39 @@ def test_metadata_header_filled_on_open(project_frame):
     assert project_frame.genderInput.currentText() == "Male"
     assert project_frame.ageInput.currentText() == "19 - 29"
 
+
 def test_tooltips_have_shortcuts(project_frame: OpenedProjectFrame):
-    play_button : QPushButton = project_frame.get_playback_buttons()[0]
+    play_button: QPushButton = project_frame.get_playback_buttons()[0]
     assert play_button.shortcut().toString() in play_button.toolTip()
+
 
 def test_next_button_selects_one(project_frame: OpenedProjectFrame):
     project_frame.next_pressed()
     assert len(project_frame.annotationList.selectedIndexes()) == 1
 
+
 def test_next_button_selects_correct_annotation(project_frame: OpenedProjectFrame):
     project_frame.next_pressed()
     assert project_frame.annotationList.selectedIndexes()[0].row() == 1
+
 
 def test_previous_button_selects_one(project_frame: OpenedProjectFrame):
     project_frame.next_pressed()
     project_frame.previous_pressed()
     assert len(project_frame.annotationList.selectedIndexes()) == 1
 
+
 def test_previous_button_selects_correct_annotation(project_frame: OpenedProjectFrame):
     project_frame.next_pressed()
     project_frame.previous_pressed()
     assert project_frame.annotationList.selectedIndexes()[0].row() == 0
 
+
 def test_mark_unchanged(project_frame: OpenedProjectFrame):
     project_frame.mark_unchanged_pressed()
     project_frame.mark_unchanged_pressed()
     assert not project_frame.project.annotations[0].modified
+
 
 def test_delete_removes_rows(project_frame: OpenedProjectFrame):
     model: AnnotationListModel = project_frame.annotationList.model()
@@ -85,6 +106,7 @@ def test_delete_removes_rows(project_frame: OpenedProjectFrame):
     selected = len(project_frame.get_selected_annotations())
     project_frame.delete_selected()
     assert model.rowCount() == start - selected
+
 
 def test_delete_removes_files(project_frame: OpenedProjectFrame):
     selected: Annotation = project_frame.get_selected_annotations()[0]

@@ -11,6 +11,7 @@ from PySide6.QtCore import Signal, Slot
 from .project import Project
 from .create_project_dialog_ui import Ui_CreateProjectDialog
 
+
 class CreateProjectDialog(QDialog, Ui_CreateProjectDialog):
     project_created = Signal(Project)
 
@@ -47,18 +48,25 @@ class CreateProjectDialog(QDialog, Ui_CreateProjectDialog):
 
     @Slot()
     def tsv_file_button_clicked(self):
-        file, _ = QFileDialog.getSaveFileName(self, "Select TSV File Location",
-                self.current_folder, "TSV/CSV Files (*.tsv);;CSV Files (*.csv)",
-                options=QFileDialog.DontConfirmOverwrite)
+        file, _ = QFileDialog.getSaveFileName(
+            self,
+            "Select TSV File Location",
+            self.current_folder,
+            "TSV/CSV Files (*.tsv);;CSV Files (*.csv)",
+            options=QFileDialog.DontConfirmOverwrite,
+        )
         if not file:
             return
         self.tsvPathEdit.setText(file)
 
     @Slot()
     def open_project_file(self):
-        file, _ = QFileDialog.getSaveFileName(self,
-                "Select Location of Project File", self.current_folder,
-                "Json Files (*)")
+        file, _ = QFileDialog.getSaveFileName(
+            self,
+            "Select Location of Project File",
+            self.current_folder,
+            "Json Files (*)",
+        )
         if not file:
             return
         # TODO: Instead of deleting mark the project as unsaved.
@@ -67,16 +75,16 @@ class CreateProjectDialog(QDialog, Ui_CreateProjectDialog):
         self.projectPathEdit.setText(file)
 
     @Slot(str)
-    def project_path_changed(self, path : str):
+    def project_path_changed(self, path: str):
         self.project_file = path
         self._update_buttons()
 
     @Slot(str)
-    def audio_path_changed(self, path : str):
+    def audio_path_changed(self, path: str):
         self.audio_folder = path
         self._update_buttons()
 
     @Slot(str)
-    def tsv_path_changed(self, path : str):
+    def tsv_path_changed(self, path: str):
         self.tsv_file = path
         self._update_buttons()

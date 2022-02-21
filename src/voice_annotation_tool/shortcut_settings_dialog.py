@@ -4,8 +4,18 @@ Dialog used to configure the shortcuts of the buttons.
 
 from typing import List
 from PySide6.QtCore import Slot, Signal
-from PySide6.QtWidgets import QDialog, QHBoxLayout, QLineEdit, QLabel, QSizePolicy, QPushButton, QErrorMessage, QWidget
+from PySide6.QtWidgets import (
+    QDialog,
+    QHBoxLayout,
+    QLineEdit,
+    QLabel,
+    QSizePolicy,
+    QPushButton,
+    QErrorMessage,
+    QWidget,
+)
 from .shortcut_settings_dialog_ui import Ui_ShortcutSettingsDialog
+
 
 class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
     shortcuts_confirmed = Signal(object)
@@ -36,10 +46,14 @@ class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
             layout = QHBoxLayout()
             label = QLabel(self)
             label.setText(button.toolTip().replace(shortcut, ""))
-            label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+            label.setSizePolicy(
+                QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred
+            )
             line_edit = QLineEdit(self)
             line_edit.setText(shortcut)
-            line_edit.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+            line_edit.setSizePolicy(
+                QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred
+            )
             layout.addWidget(label)
             layout.addWidget(line_edit)
             self.shortcut_edits.append(line_edit)
@@ -53,9 +67,10 @@ class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
         for shortcut in shortcuts:
             if shortcut in self.existing:
                 error = QErrorMessage(self)
-                message = self.tr("{shortcut} is already used elsewhere in the application.")
-                error.showMessage(message.format(shortcut = shortcut))
+                message = self.tr(
+                    "{shortcut} is already used elsewhere in the application."
+                )
+                error.showMessage(message.format(shortcut=shortcut))
                 return
         self.shortcuts_confirmed.emit(shortcuts)
         super().accept()
-
