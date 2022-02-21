@@ -21,9 +21,11 @@ class AnnotationListModel(QAbstractListModel):
     def data(self, index: QModelIndex, role: int) -> Union[None, str, Annotation, QBrush]:
         if not index.isValid():
             return None
+        if index.row() >= len(self._data.annotations):
+            return None
         annotation = self._data.annotations[index.row()]
         if role == Qt.DisplayRole:
-            return annotation.path
+            return annotation.path.name
         elif role == Qt.BackgroundRole:
             return QBrush(Qt.GlobalColor.green) if annotation.modified else QBrush()
         elif role == ANNOTATION_ROLE:

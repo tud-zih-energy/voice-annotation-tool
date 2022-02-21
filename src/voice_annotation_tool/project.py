@@ -15,10 +15,10 @@ from typing import List, Union
 from .annotation import Annotation
 
 class Project:
-        self.tsv_file = ""
-        self.audio_folder = ""
-        self.project_file = file
     def __init__(self, file: Union[str, PathLike]):
+        self.tsv_file: Path = Path()
+        self.audio_folder: Path = Path()
+        self.project_file: Path = Path(file)
         self.annotations_by_path: dict[str, Annotation] = {}
         self.annotations: List[Annotation] = []
         self.modified_annotations: List[str] = []
@@ -29,18 +29,16 @@ class Project:
         Loads a project from the `project_file` json file. Paths to the audio
         folder and to the tsv file are loaded relative to the project file.
         """
-        if not os.path.isfile(self.project_file):
+        if not self.project_file.is_file():
             return
         with open(self.project_file) as file:
             data = json.load(file)
             self.modified_annotations = data["modified_annotations"]
-            self.audio_folder = str(Path(self.project_file).joinpath(
-                    data.get("audio_folder")).resolve())
-            self.set_tsv_file(str(Path(self.project_file).joinpath(
-                    data.get("tsv_file")).resolve()))
+            self.audio_folder = self.project_file.parent.joinpath(data.get("audio_folder"))
+            self.set_tsv_file(self.project_file.parent.joinpath(data.get("tsv_file")))
             self.set_audio_folder(self.audio_folder)
 
-    def set_audio_folder(self, to : str):
+    def set_audio_folder(self, to: Path):
         """
         Loads the samples from the audio folder of this project into files.
         """
@@ -48,18 +46,19 @@ class Project:
         if not os.path.isdir(self.audio_folder):
             return
         for audio_file in os.listdir(self.audio_folder):
-            if Path(audio_file).suffix in [".mp3", ".ogg", ".mp4",
+            path = Path(audio_file)
+            if path.suffix in [".mp3", ".ogg", ".mp4",
                     ".webm", ".avi", ".mkv", ".wav"]:
                 if not audio_file in self.annotations_by_path:
                     annotation = Annotation()
-                    annotation.path = audio_file
+                    annotation.path = path
                     self.add_annotation(annotation)
         print("loaded audio folder")
     
     def annotate(self, annotation: Annotation, text : str) -> None:
         """Changes the text of the given annotation."""
         if not annotation.modified:
-            self.modified_annotations.append(annotation.path)
+            self.modified_annotations.append(annotation.path.name)
         annotation.modified = True
         annotation.sentence = text
 
@@ -80,10 +79,10 @@ class Project:
                 annotation_data.append(vars(annotation))
             tsv_path = ""
             if self.tsv_file:
-                tsv_path = str(Path(self.tsv_file).relative_to(self.project_file))
+                tsv_path = str(self.tsv_file.relative_to(self.project_file.parent))
             json.dump({
                 "tsv_file": tsv_path,
-                "audio_folder": str(Path(self.audio_folder).relative_to(self.project_file)),
+                "audio_folder": str(self.audio_folder.relative_to(self.project_file.parent)),
                 "modified_annotations": self.modified_annotations,
             }, file)
         self.save_annotations()
@@ -99,19 +98,19 @@ class Project:
             for annotation in self.annotations:
                 writer.writerow(annotation.to_dict())
 
-    def set_tsv_file(self, to : str):
+    def set_tsv_file(self, to: Path):
         """
         Loads the annotations from the `tsv_file` into the annotations array.
         """
         self.tsv_file = to
-        if not os.path.exists(self.tsv_file):
+        if not self.tsv_file.is_file():
             return
         with open(to, newline='') as file:
             reader = csv.DictReader(file, delimiter='\t')
             for row in reader:
                 annotation = Annotation(row)
-                if Path(self.audio_folder).joinpath(annotation.path).exists():
-                    if annotation.path in self.modified_annotations:
+                if self.audio_folder.joinpath(annotation.path).exists():
+                    if annotation.path.name in self.modified_annotations:
                         annotation.modified = True
                     self.add_annotation(annotation)
         print("loaded csv")
@@ -124,13 +123,13 @@ class Project:
  
     def delete_annotation(self, annotation: Annotation):
         """Delete a stored annotation and the audio file on disk."""
-        annotation_path = Path(self.audio_folder).joinpath(annotation.path)
+        annotation_path = self.audio_folder.joinpath(annotation.path)
         annotation_path.unlink(missing_ok=True)
-        self.annotations_by_path.pop(annotation.path)
+        self.annotations_by_path.pop(annotation.path.name)
         self.annotations.remove(annotation)
 
     def add_annotation(self, annotation: Annotation):
-        self.annotations_by_path[annotation.path] = annotation
+        self.annotations_by_path[annotation.path.name] = annotation
         self.annotations.append(annotation)
 
     def importCSV(self, infile: StringIO):
@@ -157,5 +156,5 @@ class Project:
     def exportJson(self, outfile: StringIO):
         data = []
         for annotation in self.annotations:
-            data.append({annotation.path: annotation.sentence})
+            data.append({annotation.path.name: annotation.sentence})
         json.dump(data, outfile)

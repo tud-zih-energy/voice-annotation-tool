@@ -5,6 +5,7 @@ opened.
 """
 
 import os, json, traceback, csv
+from pathlib import Path
 from typing import List
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QErrorMessage, QMessageBox
 from PySide6.QtCore import Slot
@@ -99,8 +100,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             }, file)
 
     @Slot()
-    def project_opened(self, project):
-        self.recent_projects.append(project.project_file)
+    def project_opened(self, project: Project):
+        self.recent_projects.append(str(project.project_file))
         self.save_settings()
         self.setWindowTitle(os.path.basename(project.project_file))
         self.project = project
@@ -109,6 +110,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.opened_project_frame.load_project(project)
         for action in self.project_actions:
             action.setEnabled(True)
+        print(project.audio_folder)
         if not os.path.exists(project.audio_folder):
             if QMessageBox.warning(self, self.tr("Warning"), self.tr(
                     "The audio folder doesn't exist. Choose another one?"),
@@ -117,8 +119,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 folder = QFileDialog.getExistingDirectory(self,
                         self.tr("Open Audio Folder"))
                 if folder:
-                    project.audio_folder = folder
+                    project.audio_folder = Path(folder)
                     self.project_opened(project)
+        elif len(project.annotations) == 0:
+            message = QMessageBox()
+            message.setText(self.tr(
+                "No samples found in the audio folder: {folder}"
+                ).format(folder=project.audio_folder))
+            message.exec()
         print("opened done")
 
     @Slot()
