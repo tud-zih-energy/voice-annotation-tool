@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import Any, Dict, Union
 from PySide6.QtCore import QAbstractListModel, QModelIndex
 from PySide6.QtGui import QBrush, Qt
 
@@ -41,3 +41,15 @@ class AnnotationListModel(QAbstractListModel):
     def index(self, row: int, column: int = 0, parent=QModelIndex()) -> QModelIndex:
         return self.createIndex(row, column)
 
+    def roleNames(self) -> Dict[int, str]:
+        role_names = super.roleNames()
+        role_names[ANNOTATION_ROLE] = "annotation"
+        return role_names
+    
+    def headerData(self, section: int, orientation: Qt.Orientation, role: int) -> Any:
+        if orientation == Qt.Horizontal:
+            if role == Qt.DisplayRole:
+                return "File Name"
+            elif role == ANNOTATION_ROLE:
+                return "Annotation"
+        return None
