@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AudioPlaybackWidget</class>
+ <widget class="QWidget" name="AudioPlaybackWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>545</width>
+    <height>77</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="playbackInfo">
+     <item>
+      <widget class="QLabel" name="elapsedTimeLabel">
+       <property name="text">
+        <string notr="true">00:00</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="timeSlider">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="totalTimeLabel">
+       <property name="text">
+        <string notr="true">00:00</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="playbackButtons">
+     <item>
+      <widget class="QPushButton" name="playPauseButton">
+       <property name="toolTip">
+        <string>Play / Pause</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources.qrc">
+         <normaloff>:/playback/play</normaloff>:/playback/play</iconset>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+Return</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Preferred</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="previousButton">
+       <property name="toolTip">
+        <string>Previous sample</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources.qrc">
+         <normaloff>:/playback/back</normaloff>:/playback/back</iconset>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+PgUp</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="stopButton">
+       <property name="toolTip">
+        <string>Stop</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources.qrc">
+         <normaloff>:/playback/stop</normaloff>:/playback/stop</iconset>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+P</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="nextButton">
+       <property name="toolTip">
+        <string>Next sample</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../resources.qrc">
+         <normaloff>:/playback/skip</normaloff>:/playback/skip</iconset>
+       </property>
+       <property name="shortcut">
+        <string>Ctrl+PgDown</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="volumeLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../../resources.qrc">:/playback/volume</pixmap>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="volumeSlider">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>130</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="value">
+        <number>100</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../../resources.qrc"/>
+  <include location="../../../../../../../resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>playPauseButton</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioPlaybackWidget</receiver>
+   <slot>play_pause_button_pressed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>10</x>
+     <y>50</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-77</x>
+     <y>-43</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>previousButton</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioPlaybackWidget</receiver>
+   <slot>previous_button_pressed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>101</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>115</x>
+     <y>-127</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>nextButton</sender>
+   <signal>clicked()</signal>
+   <receiver>AudioPlaybackWidget</receiver>
+   <slot>next_button_pressed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>182</x>
+     <y>52</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>162</x>
+     <y>-23</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>play_pause_button_pressed()</slot>
+  <slot>previous_button_pressed()</slot>
+  <slot>stop_button_pressed()</slot>
+  <slot>next_button_pressed()</slot>
+ </slots>
+</ui>

@@ -2,8 +2,9 @@
 Dialog used to configure the shortcuts of the buttons.
 """
 
+from typing import List
 from PySide6.QtCore import Slot, Signal
-from PySide6.QtWidgets import QDialog, QHBoxLayout, QLineEdit, QLabel, QSizePolicy, QPushButton, QErrorMessage
+from PySide6.QtWidgets import QDialog, QHBoxLayout, QLineEdit, QLabel, QSizePolicy, QPushButton, QErrorMessage, QWidget
 from .shortcut_settings_dialog_ui import Ui_ShortcutSettingsDialog
 
 class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
@@ -12,10 +13,10 @@ class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.shortcut_edits = []
-        self.existing = []
+        self.shortcut_edits: List[QLineEdit] = []
+        self.existing: List[str] = []
 
-    def load_existing(self, widget):
+    def load_existing(self, widget: QWidget):
         """
         Load the shortcuts of the actions of the given widget into a list which
         is used to determine if a shortcut is already used or not.
@@ -23,14 +24,12 @@ class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
         for action in widget.actions():
             self.existing.append(action.shortcut().toString())
 
-    def load_buttons(self, button_layout : QHBoxLayout):
+    def load_buttons(self, buttons: List[QPushButton]):
         """
         Generates widgets to edit the shortcuts of the buttons inside the
         given layout.
         """
-        for childNum in range(button_layout.count()):
-            layout_item = button_layout.itemAt(childNum)
-            button = layout_item.widget()
+        for button in buttons:
             if not isinstance(button, QPushButton):
                 continue
             shortcut = button.shortcut().toString()
@@ -48,13 +47,14 @@ class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
 
     @Slot()
     def accept(self):
-        shortcuts = []
+        shortcuts: List[str] = []
         for edit in self.findChildren(QLineEdit):
             shortcuts.append(edit.text())
         for shortcut in shortcuts:
             if shortcut in self.existing:
                 error = QErrorMessage(self)
-                error.showMessage(self.tr("{shortcut} is already used elsewhere in the application.").format(shortcut = shortcut))
+                message = self.tr("{shortcut} is already used elsewhere in the application.")
+                error.showMessage(message.format(shortcut = shortcut))
                 return
         self.shortcuts_confirmed.emit(shortcuts)
         super().accept()

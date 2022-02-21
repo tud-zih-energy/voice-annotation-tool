@@ -4,8 +4,11 @@ Holds a project list on startup, and the project view when a project was
 opened.
 """
 
-import os, json, traceback, csv
-from PySide6.QtWidgets import QMainWindow, QFileDialog, QErrorMessage, QMessageBox
+from json.decoder import JSONDecodeError
+import os, json
+from pathlib import Path
+from typing import List
+from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from PySide6.QtCore import Slot
 from .project import Project
 from .create_project_dialog import CreateProjectDialog
@@ -26,8 +29,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.choose_project_frame = ChooseProjectFrame()
         self.original_title = self.windowTitle()
         self.project : Project
-        self.settings_file = ""
-        self.recent_projects = []
+        self.settings_file: Path
+        self.recent_projects: List[str] = []
         self.shortcuts = []
 
         # Layout
@@ -65,16 +68,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionDeleteSelected,
         ]
 
-    def load_settings(self, settings_file):
+    def load_settings(self, settings_file: Path):
         """
         Loads the recently used projects into the `recent_projects` list and
         applies the shortcuts.
         """
         self.settings_file = settings_file
-        if not os.path.exists(settings_file):
+        if not settings_file.is_file():
             return
         with open(settings_file) as file:
-            data = json.load(file)
+            try:
+                data = json.load(file)
+            except JSONDecodeError as error:
+                return QMessageBox.warning(self, self.tr("Warning"), self.tr(
+                    "Failed to parse the configuration file: {error}".format(error=error.msg)))
             for recent in data["recent_projects"]:
                 if os.path.exists(recent):
                     self.recent_projects.append(recent)
@@ -83,7 +90,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.shortcuts = data["shortcuts"]
             self.opened_project_frame.apply_shortcuts(self.shortcuts)
             self.shortcut_settings_dialog.load_buttons(
-                    self.opened_project_frame.playbackButtons)
+                    self.opened_project_frame.get_playback_buttons())
             self.shortcut_settings_dialog.load_existing(self.menuEdit)
             self.shortcut_settings_dialog.load_existing(self.menuFile)
 
@@ -98,8 +105,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             }, file)
 
     @Slot()
-    def project_opened(self, project):
-        self.recent_projects.append(project.project_file)
+    def project_opened(self, project: Project):
+        self.recent_projects.append(str(project.project_file))
         self.save_settings()
         self.setWindowTitle(os.path.basename(project.project_file))
         self.project = project
@@ -116,8 +123,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 folder = QFileDialog.getExistingDirectory(self,
                         self.tr("Open Audio Folder"))
                 if folder:
-                    project.audio_folder = folder
+                    project.audio_folder = Path(folder)
                     self.project_opened(project)
+        elif len(project.annotations) == 0:
+            message = QMessageBox()
+            message.setText(self.tr(
+                "No samples found in the audio folder: {folder}"
+                ).format(folder=project.audio_folder))
+            message.exec()
         print("opened done")
 
     @Slot()
