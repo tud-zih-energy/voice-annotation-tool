@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Dict
 from PySide6.QtCore import QSize, QTime, QUrl, Slot, Signal
 from PySide6.QtGui import QIcon
@@ -52,7 +53,7 @@ class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
             button.setToolTip(self.get_button_tooltip(button) + " " +
                     button.shortcut().toString())
 
-    def load_file(self, file: str) -> None:
+    def load_file(self, file: Path) -> None:
         """
         Loads the given audio file which can then be played by pressing
         the pause/play button.

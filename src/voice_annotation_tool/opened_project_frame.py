@@ -132,13 +132,8 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.project = project
         self.annotationList.setModel(AnnotationListModel(self.project))
         self.annotationList.selectionModel().selectionChanged.connect(self.selection_changed)
-        self.annotationList.setCurrentIndex(self.annotationList.model().index(0,0))
-        if not len(self.project.annotations):
-            message = QMessageBox()
-            message.setText(self.tr(
-                "No samples found in the audio folder: {folder}"
-                ).format(folder=project.audio_folder))
-            message.exec()
+        if len(project.annotations):
+            self.annotationList.setCurrentIndex(self.annotationList.model().index(0,0))
 
     def delete_selected(self):
         """Delete the selected annotations and audio files."""
@@ -217,8 +212,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.annotationEdit.blockSignals(True)
         self.annotationEdit.setText(annotation.sentence)
         self.annotationEdit.blockSignals(False)
-        self.audioPlaybackWidget.load_file(os.path.join(self.project.audio_folder,
-                annotation.path))
+        self.audioPlaybackWidget.load_file(annotation.path)
 
     @Slot()
     def import_profile_pressed(self):
