@@ -157,12 +157,14 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def previous_pressed(self):
         current = self.annotationList.currentIndex().row()
         previous = self.annotationList.model().index(current - 1, 0)
+        self.annotationList.clearSelection()
         self.annotationList.setCurrentIndex(previous)
 
     @Slot()
     def next_pressed(self):
         current = self.annotationList.currentIndex().row()
         next = self.annotationList.model().index(current + 1, 0)
+        self.annotationList.clearSelection()
         self.annotationList.setCurrentIndex(next)
 
     @Slot()
