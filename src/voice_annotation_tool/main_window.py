@@ -110,7 +110,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.opened_project_frame.load_project(project)
         for action in self.project_actions:
             action.setEnabled(True)
-        print(project.audio_folder)
         if not os.path.exists(project.audio_folder):
             if QMessageBox.warning(self, self.tr("Warning"), self.tr(
                     "The audio folder doesn't exist. Choose another one?"),
