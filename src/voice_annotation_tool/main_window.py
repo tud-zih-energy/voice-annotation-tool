@@ -5,6 +5,7 @@ opened.
 """
 
 import os, json, traceback, csv
+from typing import List
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QErrorMessage, QMessageBox
 from PySide6.QtCore import Slot
 from .project import Project
@@ -27,7 +28,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.original_title = self.windowTitle()
         self.project : Project
         self.settings_file = ""
-        self.recent_projects = []
+        self.recent_projects: List[str] = []
         self.shortcuts = []
 
         # Layout

@@ -6,18 +6,19 @@ audio folder.
 """
 
 from io import StringIO
+from os import PathLike
 import os, csv
 from pathlib import Path
 import json
-from typing import List
+from typing import List, Union
 
 from .annotation import Annotation
 
 class Project:
-    def __init__(self, file):
         self.tsv_file = ""
         self.audio_folder = ""
         self.project_file = file
+    def __init__(self, file: Union[str, PathLike]):
         self.annotations_by_path: dict[str, Annotation] = {}
         self.annotations: List[Annotation] = []
         self.modified_annotations: List[str] = []

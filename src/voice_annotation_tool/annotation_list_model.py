@@ -1,8 +1,8 @@
-from typing import Any
+from typing import Any, Union
 from PySide6.QtCore import QAbstractListModel, QModelIndex
 from PySide6.QtGui import QBrush, Qt
 
-from .project import Project
+from .project import Project, Annotation
 
 ANNOTATION_ROLE = Qt.UserRole + 1
 
@@ -18,7 +18,7 @@ class AnnotationListModel(QAbstractListModel):
             return 0
         return len(self._data.annotations)
 
-    def data(self, index: QModelIndex, role: int) -> Any:
+    def data(self, index: QModelIndex, role: int) -> Union[None, str, Annotation, QBrush]:
         if not index.isValid():
             return None
         annotation = self._data.annotations[index.row()]
