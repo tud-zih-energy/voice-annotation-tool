@@ -28,7 +28,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.choose_project_frame = ChooseProjectFrame()
         self.original_title = self.windowTitle()
         self.project : Project
-        self.settings_file = ""
+        self.settings_file: Path
         self.recent_projects: List[str] = []
         self.shortcuts = []
 
@@ -67,13 +67,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionDeleteSelected,
         ]
 
-    def load_settings(self, settings_file):
+    def load_settings(self, settings_file: Path):
         """
         Loads the recently used projects into the `recent_projects` list and
         applies the shortcuts.
         """
         self.settings_file = settings_file
-        if not os.path.exists(settings_file):
+        if not settings_file.is_file():
             return
         with open(settings_file) as file:
             data = json.load(file)
