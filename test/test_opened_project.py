@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from PySide6.QtWidgets import QPushButton
+from PySide6.QtCore import Qt
 import pytest
 from voice_annotation_tool.opened_project_frame import AnnotationListModel, OpenedProjectFrame
 from voice_annotation_tool.project import Project, Annotation
@@ -29,9 +30,13 @@ def project_frame():
     frame.load_project(project)
     return frame
 
-def test_annotation_list(project_frame):
+def test_annotation_list_has_rows(project_frame: OpenedProjectFrame):
     model : AnnotationListModel = project_frame.annotationList.model()
     assert model.rowCount() == 3
+
+def test_annotation_list_shows_filename(project_frame: OpenedProjectFrame):
+    model : AnnotationListModel = project_frame.annotationList.model()
+    assert model.data(model.index(0,0), Qt.DisplayRole) == project_frame.project.annotations[0].path.name
 
 def test_metadata_header_filled_on_open(project_frame):
     assert project_frame.accentEdit.text() == "accent"
