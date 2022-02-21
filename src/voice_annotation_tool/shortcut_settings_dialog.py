@@ -24,14 +24,12 @@ class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
         for action in widget.actions():
             self.existing.append(action.shortcut().toString())
 
-    def load_buttons(self, button_layout : QHBoxLayout):
+    def load_buttons(self, buttons: List[QPushButton]):
         """
         Generates widgets to edit the shortcuts of the buttons inside the
         given layout.
         """
-        for childNum in range(button_layout.count()):
-            layout_item = button_layout.itemAt(childNum)
-            button = layout_item.widget()
+        for button in buttons:
             if not isinstance(button, QPushButton):
                 continue
             shortcut = button.shortcut().toString()
