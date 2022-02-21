@@ -4,6 +4,7 @@ Holds a project list on startup, and the project view when a project was
 opened.
 """
 
+from json.decoder import JSONDecodeError
 import os, json
 from pathlib import Path
 from typing import List
@@ -76,7 +77,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not settings_file.is_file():
             return
         with open(settings_file) as file:
-            data = json.load(file)
+            try:
+                data = json.load(file)
+            except JSONDecodeError as error:
+                return QMessageBox.warning(self, self.tr("Warning"), self.tr(
+                    "Failed to parse the configuration file: {error}".format(error=error.msg)))
             for recent in data["recent_projects"]:
                 if os.path.exists(recent):
                     self.recent_projects.append(recent)
