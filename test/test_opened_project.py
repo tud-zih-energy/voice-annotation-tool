@@ -20,7 +20,7 @@ def project_frame():
     frame = OpenedProjectFrame()
     project = Project("")
     for annotation_num in range(3):
-        annotation_data["path"] = "path_" + str(annotation_num)
+        annotation_data["path"] = "/tmp/path_" + str(annotation_num)
         project.add_annotation(Annotation(annotation_data))
     frame.load_project(project)
     return frame
@@ -38,3 +38,10 @@ def test_metadata_header_filled_on_open(project_frame):
 def test_tooltips_have_shortcuts(project_frame):
     play_button : QPushButton = project_frame.playPauseButton
     assert play_button.shortcut().toString() in play_button.toolTip()
+
+def test_delete_rows(project_frame: OpenedProjectFrame):
+    model: AnnotationListModel = project_frame.annotationList.model()
+    start = model.rowCount()
+    selected = len(project_frame.get_selected_annotations())
+    project_frame.delete_selected()
+    assert model.rowCount() == start - selected
