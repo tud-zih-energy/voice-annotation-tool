@@ -109,7 +109,7 @@ class Project:
             reader = csv.DictReader(file, delimiter='\t')
             for row in reader:
                 annotation = Annotation(row)
-                if self.audio_folder.joinpath(annotation.path).exists():
+                if annotation.path.exists():
                     if annotation.path.name in self.modified_annotations:
                         annotation.modified = True
                     self.add_annotation(annotation)
@@ -123,12 +123,12 @@ class Project:
  
     def delete_annotation(self, annotation: Annotation):
         """Delete a stored annotation and the audio file on disk."""
-        annotation_path = self.audio_folder.joinpath(annotation.path)
-        annotation_path.unlink(missing_ok=True)
+        annotation.path.unlink(missing_ok=True)
         self.annotations_by_path.pop(annotation.path.name)
         self.annotations.remove(annotation)
 
     def add_annotation(self, annotation: Annotation):
+        annotation.path = self.audio_folder.joinpath(annotation.path)
         self.annotations_by_path[annotation.path.name] = annotation
         self.annotations.append(annotation)
 
