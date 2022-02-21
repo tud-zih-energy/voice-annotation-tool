@@ -4,10 +4,10 @@ Holds a project list on startup, and the project view when a project was
 opened.
 """
 
-import os, json, traceback, csv
+import os, json
 from pathlib import Path
 from typing import List
-from PySide6.QtWidgets import QMainWindow, QFileDialog, QErrorMessage, QMessageBox
+from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from PySide6.QtCore import Slot
 from .project import Project
 from .create_project_dialog import CreateProjectDialog
