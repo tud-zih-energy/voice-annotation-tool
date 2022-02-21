@@ -28,7 +28,7 @@ class Project:
         Loads a project from the `project_file` json file. Paths to the audio
         folder and to the tsv file are loaded relative to the project file.
         """
-        if not os.path.exists(self.project_file):
+        if not os.path.isfile(self.project_file):
             return
         with open(self.project_file) as file:
             data = json.load(file)
@@ -44,10 +44,10 @@ class Project:
         Loads the samples from the audio folder of this project into files.
         """
         self.audio_folder = to
-        if not os.path.exists(self.audio_folder):
+        if not os.path.isdir(self.audio_folder):
             return
         for audio_file in os.listdir(self.audio_folder):
-            if os.path.splitext(audio_file)[1] in [".mp3", ".ogg", ".mp4",
+            if Path(audio_file).suffix in [".mp3", ".ogg", ".mp4",
                     ".webm", ".avi", ".mkv", ".wav"]:
                 if not audio_file in self.annotations_by_path:
                     annotation = Annotation()
@@ -79,10 +79,10 @@ class Project:
                 annotation_data.append(vars(annotation))
             tsv_path = ""
             if self.tsv_file:
-                tsv_path = os.path.relpath(self.tsv_file, self.project_file)
+                tsv_path = str(Path(self.tsv_file).relative_to(self.project_file))
             json.dump({
                 "tsv_file": tsv_path,
-                "audio_folder": os.path.relpath(self.audio_folder, self.project_file),
+                "audio_folder": str(Path(self.audio_folder).relative_to(self.project_file)),
                 "modified_annotations": self.modified_annotations,
             }, file)
         self.save_annotations()
@@ -109,8 +109,7 @@ class Project:
             reader = csv.DictReader(file, delimiter='\t')
             for row in reader:
                 annotation = Annotation(row)
-                if os.path.exists(os.path.join(self.audio_folder,
-                        annotation.path)):
+                if Path(self.audio_folder).joinpath(annotation.path).exists():
                     if annotation.path in self.modified_annotations:
                         annotation.modified = True
                     self.add_annotation(annotation)
@@ -124,9 +123,8 @@ class Project:
  
     def delete_annotation(self, annotation: Annotation):
         """Delete a stored annotation and the audio file on disk."""
-        annotation_path = os.path.join(self.audio_folder, annotation.path)
-        if os.path.isfile(annotation_path):
-            os.remove(annotation_path)
+        annotation_path = Path(self.audio_folder).joinpath(annotation.path)
+        annotation_path.unlink(missing_ok=True)
         self.annotations_by_path.pop(annotation.path)
         self.annotations.remove(annotation)
 
