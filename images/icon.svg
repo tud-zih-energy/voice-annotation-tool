@@ -1,14 +1,42 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg width="32.183" height="32.173" version="1.1" viewBox="0 0 32.183 32.173" xmlns="http://www.w3.org/2000/svg">
- <g transform="translate(-44.156 -43.82)">
-  <rect x="45.051" y="44.715" width="30.244" height="30.383" ry="2.6246" fill="#5790c9" fill-rule="evenodd" style="paint-order:normal"/>
-  <rect x="45.2" y="64.879" width="30.095" height="10.219" ry=".85824" fill="#c1d8f1" style="paint-order:normal"/>
-  <g fill="#103e72">
-   <rect x="46.754" y="66.392" width="17.645" height="1.5727" ry=".78633" stroke-width="8.9785"/>
-   <rect x="46.754" y="68.708" width="24.499" height="1.5727" ry=".78633" stroke-width="10.58"/>
-   <rect x="46.754" y="71.355" width="21.667" height="1.5727" ry=".78633" stroke-width="9.9494"/>
+
+<svg
+   width="32.183"
+   height="32.173"
+   version="1.1"
+   viewBox="0 0 32.183 32.173"
+   id="svg907"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs911" />
+  <g
+     transform="translate(-44.156 -43.82)"
+     id="g905">
+    <rect
+       style="fill:#00719c;fill-opacity:1;stroke:none;stroke-width:1.954;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+       id="rect1239"
+       width="30.243999"
+       height="30.382999"
+       x="45.164124"
+       y="44.740257"
+       ry="3.0682807" />
+    <rect
+       style="fill:#00415a;stroke:none;stroke-width:1.954;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
+       id="rect1365"
+       width="30.243999"
+       height="10.219002"
+       x="45.164124"
+       y="64.904259"
+       ry="1.7978876" />
+    <path
+       id="path3159"
+       style="fill:none;stroke:#3ec1f5;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       d="m 64.354014,49.297959 v 11.841797 z m -3.935547,2.220703 v 7.400391 z m -7.867188,0.740234 v 5.919922 z m 15.736328,0.740235 v 4.439453 z m -11.802734,0.740234 v 2.958985 z m 15.738284,0.738281 v 1.480469 z m -23.607425,0.002 v 1.478516 z" />
+    <path
+       id="path6664"
+       style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#3ec1f5;stroke-width:1.9538;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+       d="m 48.045371,67.310146 h 17.644532 z m 0,2.772957 h 24.499996 z m 0,2.828583 h 21.667966 z" />
   </g>
-  <path d="m60.401 50.789v7.4001m-3.9344-5.1801v2.9601m-3.9344-4.4401v5.9201m-3.9344-3.7001v1.48m15.738-6.6601v11.84m3.9344-8.1402v4.4401m3.9344-2.9601v1.48" stroke="#103e72" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9538"/>
- </g>
 </svg>

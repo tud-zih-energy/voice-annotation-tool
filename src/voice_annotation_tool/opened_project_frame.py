@@ -211,7 +211,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.annotationEdit.blockSignals(True)
         self.annotationEdit.setText(annotation.sentence)
         self.annotationEdit.blockSignals(False)
-        self.audioPlaybackWidget.load_file(self.project.audio_folder.joinpath(annotation.path))
+        self.audioPlaybackWidget.load_file(annotation.path)
 
     @Slot()
     def import_profile_pressed(self):
