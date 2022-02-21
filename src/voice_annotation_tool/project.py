@@ -64,7 +64,8 @@ class Project:
 
     def mark_unchanged(self, annotation : Annotation) -> None:
         annotation.modified = False
-        self.modified_annotations.remove(annotation.path)
+        if annotation.path in self.modified_annotations:
+            self.modified_annotations.remove(annotation.path)
 
     def save(self):
         """
