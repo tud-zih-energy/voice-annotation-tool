@@ -69,44 +69,37 @@ class Project:
         if annotation.path in self.modified_annotations:
             self.modified_annotations.remove(annotation.path)
 
-    def save(self):
+    def save(self, file: StringIO):
         """
         Saves this project  to the `project_file` and the annotations to the
         `tsv_file`. Paths to the audio folder and to the tsv file are saved
         relative to the project file.
         """
-        with open(self.project_file, "w") as file:
-            annotation_data = []
-            for annotation in self.annotations:
-                annotation_data.append(vars(annotation))
-            tsv_path = ""
-            if self.tsv_file:
-                tsv_path = str(self.tsv_file.relative_to(self.project_file.parent))
-            json.dump(
-                {
-                    "tsv_file": tsv_path,
-                    "audio_folder": str(
-                        self.audio_folder.relative_to(self.project_file.parent)
-                    ),
-                    "modified_annotations": self.modified_annotations,
-                },
-                file,
-            )
-        self.save_annotations()
+        annotation_data = []
+        for annotation in self.annotations:
+            annotation_data.append(vars(annotation))
+        tsv_path = ""
+        if self.tsv_file:
+            tsv_path = str(self.tsv_file.relative_to(self.project_file.parent))
+        json.dump(
+            {
+                "tsv_file": tsv_path,
+                "audio_folder": str(
+                    self.audio_folder.relative_to(self.project_file.parent)
+                ),
+                "modified_annotations": self.modified_annotations,
+            },
+            file,
+        )
 
-    def save_annotations(self):
+    def save_annotations(self, file: StringIO):
         """
-        Exports the project's annotations to its tab separated value (tsv) file.
+        Exports the project's annotations to a tab separated value (tsv) file.
         """
-        with open(
-            self.tsv_file,
-            "w",
-            newline="",
-        ) as file:
-            writer = csv.DictWriter(file, Annotation.TSV_HEADER_MEMBERS, delimiter="\t")
-            writer.writeheader()
-            for annotation in self.annotations:
-                writer.writerow(annotation.to_dict())
+        writer = csv.DictWriter(file, Annotation.TSV_HEADER_MEMBERS, delimiter="\t")
+        writer.writeheader()
+        for annotation in self.annotations:
+            writer.writerow(annotation.to_dict())
 
     def set_tsv_file(self, to: Path):
         """

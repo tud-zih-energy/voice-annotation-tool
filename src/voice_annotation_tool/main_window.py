@@ -174,7 +174,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def save_project(self):
         if not self.project.project_file:
             return self.save_project_as()
-        self.project.save()
+        with open(self.project.project_file, "w") as file:
+            self.project.save(file)
+        with open(self.project.tsv_file, "w", newline="") as file:
+            self.project.save_annotations(file)
 
     @Slot()
     def save_project_as(self):
@@ -183,7 +186,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         if file:
             self.project.project_file = file
-            self.project.save()
+            self.save_project()
             self.project_opened(self.project)
 
     @Slot()
