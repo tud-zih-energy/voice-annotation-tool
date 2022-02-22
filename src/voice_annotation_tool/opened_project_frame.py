@@ -13,8 +13,7 @@ from .annotation_list_model import AnnotationListModel, ANNOTATION_ROLE
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
 from .project import Annotation, Project
 
-# Age groups how they are displayed on the CommonVoice website and how they are
-# stored in the exported tsv file.
+# Age groups how they are stored in the exported tsv file.
 AGES = [
     "",
     "teens",
@@ -28,6 +27,7 @@ AGES = [
     "nineteens",
 ]
 
+# Age groups how they are displayed on the CommonVoice website.
 AGE_STRINGS = [
     "",
     "< 19",
