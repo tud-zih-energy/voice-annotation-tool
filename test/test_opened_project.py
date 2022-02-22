@@ -113,6 +113,7 @@ def test_delete_removes_files(project_frame: OpenedProjectFrame):
     project_frame.delete_selected()
     assert not os.path.isfile(selected.path)
 
+
 def test_buttons_disabled_without_samples(project_frame: OpenedProjectFrame):
     project_frame.load_project(Project(""))
     assert not project_frame.ageInput.isEnabled()

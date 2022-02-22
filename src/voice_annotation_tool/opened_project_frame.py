@@ -9,7 +9,7 @@ import os
 from typing import Dict, List
 from PySide6.QtCore import QModelIndex, Slot, QTime, QUrl
 from PySide6.QtMultimedia import QAudioDecoder
-from PySide6.QtWidgets import QFrame, QFileDialog, QMessageBox, QPushButton
+from PySide6.QtWidgets import QFrame, QFileDialog, QMessageBox, QPushButton, QWidget
 
 from voice_annotation_tool.audio_playback_widget import AudioPlaybackWidget
 
@@ -135,6 +135,24 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         )
         if len(project.annotations):
             self.annotationList.setCurrentIndex(self.annotationList.model().index(0, 0))
+        widgets: List[QWidget] = self.get_metadata_inputs()
+        widgets += self.get_playback_buttons()
+        for widget in widgets:
+            widget.setEnabled(len(project.annotations) > 0)
+
+    def get_metadata_inputs(self) -> List[QWidget]:
+        """
+        Returns a list of the QComboBoxes, QLineEdits, and buttons that are
+        used to edit the annotation metadata.
+        """
+        return [
+            self.ageInput,
+            self.genderInput,
+            self.accentEdit,
+            self.clientIdEdit,
+            self.importButton,
+            self.markUnchangedButton,
+        ]
 
     def delete_selected(self):
         """Delete the selected annotations and audio files."""
