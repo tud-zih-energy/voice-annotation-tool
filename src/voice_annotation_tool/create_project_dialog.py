@@ -18,15 +18,15 @@ class CreateProjectDialog(QDialog, Ui_CreateProjectDialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.tsv_file: str = ""
-        self.project_file: str = ""
-        self.audio_folder: str = ""
-        self.current_folder: str = ""
+        self.tsv_file: Path | None = None
+        self.project_file: Path | None = None
+        self.audio_folder: Path | None = None
+        self.current_folder: Path | None = None
         self._update_buttons()
 
     def _update_buttons(self):
         """Enable the OK button when all paths are specified."""
-        all_set = all([self.tsv_file, self.tsv_file, self.project_file])
+        all_set = all([self.tsv_file, self.audio_folder, self.project_file])
         self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(all_set)
 
     def accept(self):
@@ -38,11 +38,11 @@ class CreateProjectDialog(QDialog, Ui_CreateProjectDialog):
 
     @Slot()
     def audio_files_button_clicked(self):
-        folder = QFileDialog.getExistingDirectory(self, "Open Audio Folder")
+        folder: str = QFileDialog.getExistingDirectory(self, "Open Audio Folder")
         if not folder:
             return
-        self.audio_folder = folder
-        self.current_folder = str(Path(folder).parent.absolute())
+        self.audio_folder = Path(folder)
+        self.current_folder = Path(folder).parent.absolute()
         self.audioPathEdit.setText(folder)
         self._update_buttons()
 
@@ -51,7 +51,7 @@ class CreateProjectDialog(QDialog, Ui_CreateProjectDialog):
         file, _ = QFileDialog.getSaveFileName(
             self,
             "Select TSV File Location",
-            self.current_folder,
+            str(self.current_folder),
             "TSV/CSV Files (*.tsv);;CSV Files (*.csv)",
             options=QFileDialog.DontConfirmOverwrite,
         )
@@ -64,7 +64,7 @@ class CreateProjectDialog(QDialog, Ui_CreateProjectDialog):
         file, _ = QFileDialog.getSaveFileName(
             self,
             "Select Location of Project File",
-            self.current_folder,
+            str(self.current_folder),
             "Json Files (*)",
         )
         if not file:
@@ -76,15 +76,15 @@ class CreateProjectDialog(QDialog, Ui_CreateProjectDialog):
 
     @Slot(str)
     def project_path_changed(self, path: str):
-        self.project_file = path
+        self.project_file = Path(path)
         self._update_buttons()
 
     @Slot(str)
     def audio_path_changed(self, path: str):
-        self.audio_folder = path
+        self.audio_folder = Path(path)
         self._update_buttons()
 
     @Slot(str)
     def tsv_path_changed(self, path: str):
-        self.tsv_file = path
+        self.tsv_file = Path(path)
         self._update_buttons()
