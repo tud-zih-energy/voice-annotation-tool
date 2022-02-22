@@ -26,7 +26,7 @@ class CreateProjectDialog(QDialog, Ui_CreateProjectDialog):
 
     def _update_buttons(self):
         """Enable the OK button when all paths are specified."""
-        all_set = all([self.tsv_file, self.tsv_file, self.project_file])
+        all_set = all([self.tsv_file, self.audio_folder, self.project_file])
         self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(all_set)
 
     def accept(self):
