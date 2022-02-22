@@ -18,10 +18,10 @@ class CreateProjectDialog(QDialog, Ui_CreateProjectDialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.tsv_file: Path
-        self.project_file: Path
-        self.audio_folder: Path
-        self.current_folder: Path
+        self.tsv_file: Path | None = None
+        self.project_file: Path | None = None
+        self.audio_folder: Path | None = None
+        self.current_folder: Path | None = None
         self._update_buttons()
 
     def _update_buttons(self):
