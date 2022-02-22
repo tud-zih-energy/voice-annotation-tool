@@ -6,13 +6,12 @@ Has two buttons to open and create projects.
 
 from PySide6.QtWidgets import QFrame, QListWidgetItem, QFileDialog
 from PySide6.QtCore import Signal, Slot, QModelIndex
-from .project import Project
 from .choose_project_frame_ui import Ui_ChooseProjectFrame
 
 
 class ChooseProjectFrame(QFrame, Ui_ChooseProjectFrame):
     create_project_pressed = Signal()
-    project_opened = Signal(Project)
+    project_opened = Signal(str)
 
     def __init__(self):
         super().__init__()
@@ -31,7 +30,7 @@ class ChooseProjectFrame(QFrame, Ui_ChooseProjectFrame):
         )
         if not files[0]:
             return
-        self.project_opened.emit(Project(files[0]))
+        self.project_opened.emit(files[0])
 
     @Slot()
     def create_project(self):
@@ -39,4 +38,4 @@ class ChooseProjectFrame(QFrame, Ui_ChooseProjectFrame):
 
     @Slot(QModelIndex)
     def select_recent_project(self, index):
-        self.project_opened.emit(Project(index.data()))
+        self.project_opened.emit(index.data())

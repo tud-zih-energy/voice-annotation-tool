@@ -30,6 +30,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.choose_project_frame = ChooseProjectFrame()
         self.original_title = self.windowTitle()
         self.project: Project
+        self.project_file: Path
         self.settings_file: Path
         self.recent_projects: List[str] = []
         self.shortcuts = []
@@ -44,7 +45,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.shortcut_settings_dialog.shortcuts_confirmed.connect(
             self.shortcuts_confirmed
         )
-        self.choose_project_frame.project_opened.connect(self.project_opened)
+        self.choose_project_frame.project_opened.connect(self.recent_project_chosen)
         self.choose_project_frame.create_project_pressed.connect(self.new_project)
         self.actionNewProject.triggered.connect(self.new_project)
         self.actionOpen.triggered.connect(self.open)
@@ -120,9 +121,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def project_opened(self, project: Project):
-        self.recent_projects.append(str(project.project_file))
+        self.recent_projects.append(str(self.project_file))
         self.save_settings()
-        self.setWindowTitle(os.path.basename(project.project_file))
+        self.setWindowTitle(os.path.basename(self.project_file))
         self.project = project
         self.opened_project_frame.show()
         self.choose_project_frame.hide()
@@ -168,23 +169,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self, self.tr("Open Project"), "", self.tr("Project Files (*.json)")
         )
         if file:
-            self.project_opened(Project(file))
+            self.project_opened(Project())
+
+    @Slot()
+    def recent_project_chosen(self, project: str):
+        path = Path(project)
+        if path.is_file():
+            self.project_file = path
+            self.project_opened(Project())
 
     @Slot()
     def save_project(self):
-        if not self.project.project_file:
+        if not self.project_file:
             return self.save_project_as()
-        self.project.save()
+        with open(self.project_file, "w") as file:
+            self.project.save(file)
+        with open(self.project.tsv_file, "w", newline="") as file:
+            self.project.save_annotations(file)
 
     @Slot()
     def save_project_as(self):
-        file, _ = QFileDialog.getSaveFileName(
+        path, _ = QFileDialog.getSaveFileName(
             self, self.tr("Save Project"), "", self.tr("Project Files (*.json)")
         )
-        if file:
-            self.project.project_file = file
-            self.project.save()
+        if path:
+            self.project_file = path
             self.project_opened(self.project)
+            self.save_project()
 
     @Slot()
     def delete_project(self):
@@ -199,7 +210,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             == QMessageBox.Cancel
         ):
             return
-        self.project.delete()
+        self.project.delete_tsv()
         self.setWindowTitle(self.original_title)
         self.opened_project_frame.hide()
         self.choose_project_frame.show()
