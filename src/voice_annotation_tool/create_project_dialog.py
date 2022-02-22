@@ -31,8 +31,8 @@ class CreateProjectDialog(QDialog, Ui_CreateProjectDialog):
 
     def accept(self):
         project = Project(self.project_file)
-        project.set_audio_folder(self.audio_folder)
-        project.set_tsv_file(self.tsv_file)
+        project.set_audio_folder(Path(self.audio_folder))
+        project.set_tsv_file(Path(self.tsv_file))
         self.project_created.emit(project)
         super().accept()
 
