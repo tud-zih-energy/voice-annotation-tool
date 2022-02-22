@@ -5,13 +5,9 @@ Contains the audio player controls, the list of audio samples and a field to
 edit the annotation.
 """
 
-import os
-from typing import Dict, List
-from PySide6.QtCore import QModelIndex, Slot, QTime, QUrl
-from PySide6.QtMultimedia import QAudioDecoder
-from PySide6.QtWidgets import QFrame, QFileDialog, QMessageBox, QPushButton
-
-from voice_annotation_tool.audio_playback_widget import AudioPlaybackWidget
+from typing import List
+from PySide6.QtCore import QModelIndex, Slot
+from PySide6.QtWidgets import QFrame, QFileDialog, QPushButton
 
 from .annotation_list_model import AnnotationListModel, ANNOTATION_ROLE
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
