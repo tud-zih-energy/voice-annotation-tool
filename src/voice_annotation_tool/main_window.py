@@ -5,7 +5,7 @@ opened.
 """
 
 from json.decoder import JSONDecodeError
-import os, json
+import json
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
@@ -135,10 +135,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for action in self.project_actions:
             action.setEnabled(True)
         if (
-            not self.project.audio_folder
-            or not self.project.tsv_file
+            self.project.tsv_file == Path()
+            or self.project.audio_folder == Path()
             or not self.project.audio_folder.is_dir()
-            or not self.project.tsv_file.is_file()
         ):
             result: int = QMessageBox.warning(
                 self,
@@ -165,11 +164,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.project = Project()
         with open(path) as file:
             self.project.load_json(file, self.project_file.parent)
-            with open(self.project_file.parent.joinpath(self.project.tsv_file)) as file:
+            with open(self.project.tsv_file) as file:
                 self.project.load_tsv_file(file)
-            self.project.load_audio_files(
-                self.project_file.parent.joinpath(self.project.audio_folder)
-            )
+            self.project.load_audio_files(self.project.audio_folder)
         self.set_current_project(self.project)
 
     def save_current_project(self):
@@ -303,6 +300,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def settings_confirmed(self, settings: Dict[str, Path]):
         self.project.tsv_file = settings["tsv"]
         self.project.audio_folder = settings["audio"]
+        if self.project.tsv_file.is_file():
+            with open(self.project.tsv_file) as file:
+                self.project.load_tsv_file(file)
+        self.project.load_audio_files(self.project.audio_folder)
+        self.set_current_project(self.project)
 
     @Slot()
     def configure_shortcuts(self):
