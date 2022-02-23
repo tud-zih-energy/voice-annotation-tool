@@ -113,7 +113,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         with open(self.settings_file, "w") as file:
             json.dump(
                 {
-                    "recent_projects": map(str, self.recent_projects),
+                    "recent_projects": list(map(str, self.recent_projects)),
                     "shortcuts": self.shortcuts,
                 },
                 file,
@@ -173,7 +173,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not self.project_file:
             return self.save_project_as()
         with open(self.project_file, "w") as file:
-            self.project.save(file)
+            self.project.save(file, self.project_file.parent)
         with open(self.project.tsv_file, "w", newline="") as file:
             self.project.save_annotations(file)
 

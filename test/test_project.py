@@ -45,22 +45,18 @@ def test_import_json(project):
 
 def test_save(project: Project):
     buffer = StringIO()
-    project.save(buffer)
+    project.save(buffer, Path("/tmp"))
     buffer.seek(0)
-    assert (
-        buffer.read()
-        == '{"tsv_file": "project.tsv", "audio_folder": "audio", "modified_annotations": []}'
-    )
+    content = '{"tsv_file": "project.tsv", "audio_folder": "audio", "modified_annotations": []}'
+    assert buffer.read() == content
 
 
 def test_save_annotations(project: Project):
     buffer = StringIO()
     project.save_annotations(buffer)
     buffer.seek(0)
-    assert (
-        buffer.read()
-        == "client_id\tpath\tsentence\tup_votes\tdown_votes\tage\tgender\taccent\r\n\tpath\ttext\t0\t0\t\t\t\r\n"
-    )
+    content = "client_id\tpath\tsentence\tup_votes\tdown_votes\tage\tgender\taccent\r\n\tpath\ttext\t0\t0\t\t\t\r\n"
+    assert buffer.read() == content
 
 
 def test_load(project: Project):

@@ -59,7 +59,7 @@ class Project:
         if annotation.path in self.modified_annotations:
             self.modified_annotations.remove(annotation.path)
 
-    def save(self, file: TextIO):
+    def save(self, file: TextIO, location: Path = Path()):
         """Saves this project to the given buffer. Paths to the audio
         folder and to the tsv file are saved relative to the project file.
         """
@@ -68,11 +68,11 @@ class Project:
             annotation_data.append(vars(annotation))
         tsv_path = ""
         if self.tsv_file:
-            tsv_path = str(self.tsv_file)
+            tsv_path = str(self.tsv_file.relative_to(location))
         json.dump(
             {
                 "tsv_file": tsv_path,
-                "audio_folder": str(self.audio_folder),
+                "audio_folder": str(self.audio_folder.relative_to(location)),
                 "modified_annotations": self.modified_annotations,
             },
             file,
