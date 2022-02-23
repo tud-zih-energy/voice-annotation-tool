@@ -120,10 +120,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             )
 
     def set_current_project(self, project: Project):
-        """Set the current project and load it into the GUI
-        """
+        """Set the current project and load it into the GUI"""
         self.project = project
-        self.setWindowTitle("Unsaved Project" if not self.project_file else self.project_file.name)
+        self.setWindowTitle(
+            "Unsaved Project" if not self.project_file else self.project_file.name
+        )
         if self.project_file:
             self.recent_projects.append(self.project_file)
             self.save_settings()
@@ -163,7 +164,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.project.load_json(file, self.project_file.parent)
             with open(self.project_file.parent.joinpath(self.project.tsv_file)) as file:
                 self.project.load_tsv_file(file)
-            self.project.load_audio_files(self.project_file.parent.joinpath(self.project.audio_folder))
+            self.project.load_audio_files(
+                self.project_file.parent.joinpath(self.project.audio_folder)
+            )
         self.set_current_project(self.project)
 
     def save_current_project(self):
@@ -213,16 +216,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def delete_project(self):
-        if (
-            QMessageBox.warning(
-                self,
-                self.tr("Warning"),
-                self.tr("Delete the TSV and project file?"),
-                QMessageBox.StandardButton.Ok,
-                QMessageBox.Cancel,
-            )
-            == QMessageBox.Cancel
-        ):
+        result: int = QMessageBox.warning(
+            self,
+            self.tr("Warning"),
+            self.tr("Delete the TSV and project file?"),
+            QMessageBox.Ok,
+            QMessageBox.Cancel,
+        )
+        if result != QMessageBox.Ok:
             return
         self.project.delete_tsv()
         self.project_file = None

@@ -47,14 +47,20 @@ def test_save(project: Project):
     buffer = StringIO()
     project.save(buffer)
     buffer.seek(0)
-    assert buffer.read() == '{"tsv_file": "project.tsv", "audio_folder": "audio", "modified_annotations": []}'
+    assert (
+        buffer.read()
+        == '{"tsv_file": "project.tsv", "audio_folder": "audio", "modified_annotations": []}'
+    )
 
 
 def test_save_annotations(project: Project):
     buffer = StringIO()
     project.save_annotations(buffer)
     buffer.seek(0)
-    assert buffer.read() == "client_id\tpath\tsentence\tup_votes\tdown_votes\tage\tgender\taccent\r\n\tpath\ttext\t0\t0\t\t\t\r\n"
+    assert (
+        buffer.read()
+        == "client_id\tpath\tsentence\tup_votes\tdown_votes\tage\tgender\taccent\r\n\tpath\ttext\t0\t0\t\t\t\r\n"
+    )
 
 
 def test_load(project: Project):

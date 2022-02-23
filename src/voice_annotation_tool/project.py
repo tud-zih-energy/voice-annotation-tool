@@ -22,7 +22,7 @@ class Project:
         self.annotations: List[Annotation] = []
         self.modified_annotations: List[str] = []
 
-    def load_json(self, file: TextIO, location: Path=Path()):
+    def load_json(self, file: TextIO, location: Path = Path()):
         """Loads a project from a json file. Paths to the audio folder and
         to the tsv file are loaded relative to the project file.
         """
