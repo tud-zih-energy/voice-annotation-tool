@@ -162,7 +162,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         project: Project = Project()
         self.project_file = Path(path)
         with open(path) as file:
-            project.load_json(file)
+            project.load_json(file, self.project_file.parent)
         project.load_audio_files(self.project_file.joinpath(project.audio_folder))
         with open(project.tsv_file) as file:
             project.load_tsv_file(file)
@@ -173,10 +173,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.project_file = Path(project_path)
         project: Project = Project()
         with open(project_path) as file:
-            project.load_json(file)
-            project.load_audio_files(self.project_file.parent.joinpath(project.audio_folder))
+            project.load_json(file, self.project_file.parent)
             with open(self.project_file.parent.joinpath(project.tsv_file)) as file:
                 project.load_tsv_file(file)
+            project.load_audio_files(self.project_file.parent.joinpath(project.audio_folder))
             self.load_project(project)
 
     @Slot()
@@ -195,7 +195,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         if not path:
             return
-        self.project_file = path
+        self.project_file = Path(path)
         self.load_project(self.project)
         self.save_project()
 

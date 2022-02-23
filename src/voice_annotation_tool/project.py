@@ -22,14 +22,14 @@ class Project:
         self.annotations: List[Annotation] = []
         self.modified_annotations: List[str] = []
 
-    def load_json(self, file: TextIO):
+    def load_json(self, file: TextIO, location: Path=Path()):
         """Loads a project from a json file. Paths to the audio folder and
         to the tsv file are loaded relative to the project file.
         """
         data = json.load(file)
         self.modified_annotations = data["modified_annotations"]
-        self.audio_folder = data.get("audio_folder")
-        self.tsv_file = data.get("tsv_file")
+        self.audio_folder = location.joinpath(data.get("audio_folder"))
+        self.tsv_file = location.joinpath(data.get("tsv_file"))
 
     def load_audio_files(self, folder: Path):
         """
@@ -94,6 +94,7 @@ class Project:
         reader = csv.DictReader(file, delimiter="\t")
         for row in reader:
             annotation = Annotation(row)
+            annotation.path = self.audio_folder.joinpath(annotation.path)
             if annotation.path.exists():
                 if annotation.path.name in self.modified_annotations:
                     annotation.modified = True

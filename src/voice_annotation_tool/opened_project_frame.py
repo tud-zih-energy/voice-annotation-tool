@@ -127,7 +127,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
             input.blockSignals(False)
 
     def load_project(self, project: Project):
-        """Loads the project's samples and annotations."""
+        """Loads the project's samples and annotations into the GUI."""
         self.project = project
         self.annotationList.setModel(AnnotationListModel(self.project))
         self.annotationList.selectionModel().selectionChanged.connect(
