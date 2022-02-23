@@ -23,8 +23,11 @@ class Project:
         self.modified_annotations: List[str] = []
 
     def load_json(self, file: TextIO, location: Path = Path()):
-        """Loads a project from a json file. Paths to the audio folder and
-        to the tsv file are loaded relative to the project file.
+        """Loads a project from a json file.
+
+        Paths to the audio folder and to the tsv file are loaded relative 
+        to the given location. This does not load the tsv file or the audio
+        folder.
         """
         data = json.load(file)
         self.modified_annotations = data["modified_annotations"]
@@ -45,7 +48,6 @@ class Project:
                     annotation = Annotation()
                     annotation.path = path
                     self.add_annotation(annotation)
-        print("loaded audio folder")
 
     def annotate(self, annotation: Annotation, text: str) -> None:
         """Changes the text of the given annotation."""

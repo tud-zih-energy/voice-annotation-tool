@@ -168,6 +168,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.project.load_tsv_file(file)
             self.project.load_audio_files(self.project.audio_folder)
         self.set_current_project(self.project)
+        print("loaded audio folder")
 
     def save_current_project(self):
         if not self.project_file:
@@ -304,7 +305,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             with open(self.project.tsv_file) as file:
                 self.project.load_tsv_file(file)
         self.project.load_audio_files(self.project.audio_folder)
-        self.set_current_project(self.project)
+        self.opened_project_frame.load_project(self.project)
 
     @Slot()
     def configure_shortcuts(self):
