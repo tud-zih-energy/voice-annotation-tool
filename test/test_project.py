@@ -8,9 +8,9 @@ from voice_annotation_tool.project import Project
 
 @pytest.fixture
 def project():
-    project = Project("/tmp/project.json")
-    project.set_audio_folder(Path("/tmp/audio"))
-    project.set_tsv_file(Path("/tmp/project.tsv"))
+    project = Project()
+    project.audio_folder = Path("/tmp/audio")
+    project.tsv_file = Path("/tmp/project.tsv")
     project.add_annotation(Annotation({"path": "path", "sentence": "text"}))
     return project
 
