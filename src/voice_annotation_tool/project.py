@@ -29,6 +29,7 @@ class Project:
         data = json.load(file)
         self.modified_annotations = data["modified_annotations"]
         self.audio_folder = data.get("audio_folder")
+        self.tsv_file = data.get("tsv_file")
 
     def load_audio_files(self, folder: Path):
         """

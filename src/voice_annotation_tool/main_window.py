@@ -29,8 +29,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.opened_project_frame = OpenedProjectFrame()
         self.choose_project_frame = ChooseProjectFrame()
         self.original_title = self.windowTitle()
-        self.project: Project
-        self.project_file: Path
+        self.project: Project = Project()
+        self.project_file: Path | None = None
         self.settings_file: Path
         self.recent_projects: List[str] = []
         self.shortcuts = []
@@ -119,18 +119,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 file,
             )
 
-    @Slot()
-    def project_opened(self, project: Project):
-        self.recent_projects.append(str(self.project_file))
-        self.save_settings()
-        self.setWindowTitle(os.path.basename(self.project_file))
+    def load_project(self, project: Project):
         self.project = project
         self.opened_project_frame.show()
         self.choose_project_frame.hide()
         self.opened_project_frame.load_project(project)
         for action in self.project_actions:
             action.setEnabled(True)
-        if not os.path.exists(project.audio_folder):
+        if not project.audio_folder.is_dir():
             result: int = QMessageBox.warning(
                 self,
                 self.tr("Warning"),
@@ -144,39 +140,44 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 )
                 if folder:
                     project.audio_folder = Path(folder)
-                    self.project_opened(project)
-        elif len(project.annotations) == 0:
-            message = QMessageBox()
-            message.setText(
-                self.tr("No samples found in the audio folder: {folder}").format(
-                    folder=project.audio_folder
-                )
-            )
-            message.exec()
+                    self.load_project(project)
         print("opened done")
 
     @Slot()
-    def project_created(self, project):
-        self.project_opened(project)
+    def project_created(self, project: Project):
+        self.load_project(project)
 
     @Slot()
     def new_project(self):
+        self.project_file = None
         self.create_project_dialog.exec()
 
     @Slot()
     def open(self):
-        file, _ = QFileDialog.getOpenFileName(
+        path, _ = QFileDialog.getOpenFileName(
             self, self.tr("Open Project"), "", self.tr("Project Files (*.json)")
         )
-        if file:
-            self.project_opened(Project())
+        if not path:
+            return
+        project: Project = Project()
+        self.project_file = Path(path)
+        with open(path) as file:
+            project.load_json(file)
+        project.load_audio_files(self.project_file.joinpath(project.audio_folder))
+        with open(project.tsv_file) as file:
+            project.load_tsv_file(file)
+        self.load_project(project)
 
     @Slot()
-    def recent_project_chosen(self, project: str):
-        path = Path(project)
-        if path.is_file():
-            self.project_file = path
-            self.project_opened(Project())
+    def recent_project_chosen(self, project_path: str):
+        self.project_file = Path(project_path)
+        project: Project = Project()
+        with open(project_path) as file:
+            project.load_json(file)
+            project.load_audio_files(self.project_file.parent.joinpath(project.audio_folder))
+            with open(self.project_file.parent.joinpath(project.tsv_file)) as file:
+                project.load_tsv_file(file)
+            self.load_project(project)
 
     @Slot()
     def save_project(self):
@@ -192,10 +193,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         path, _ = QFileDialog.getSaveFileName(
             self, self.tr("Save Project"), "", self.tr("Project Files (*.json)")
         )
-        if path:
-            self.project_file = path
-            self.project_opened(self.project)
-            self.save_project()
+        if not path:
+            return
+        self.project_file = path
+        self.load_project(self.project)
+        self.save_project()
 
     @Slot()
     def delete_project(self):
@@ -211,6 +213,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         ):
             return
         self.project.delete_tsv()
+        self.project_file = None
         self.setWindowTitle(self.original_title)
         self.opened_project_frame.hide()
         self.choose_project_frame.show()

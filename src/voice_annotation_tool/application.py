@@ -53,7 +53,7 @@ class Application(QApplication):
 
         args = parser.positionalArguments()
         if len(args) > 0:
-            self.main_window.project_opened(Project(args[0]))
+            self.main_window.load_project(Project(args[0]))
 
         self.main_window.show()
 
