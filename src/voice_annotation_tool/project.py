@@ -68,11 +68,11 @@ class Project:
             annotation_data.append(vars(annotation))
         tsv_path = ""
         if self.tsv_file:
-            tsv_path = str(self.tsv_file.relative_to(location))
+            tsv_path = str(os.path.relpath(self.tsv_file, location))
         json.dump(
             {
                 "tsv_file": tsv_path,
-                "audio_folder": str(self.audio_folder.relative_to(location)),
+                "audio_folder": str(os.path.relpath(self.audio_folder, location)),
                 "modified_annotations": self.modified_annotations,
             },
             file,
