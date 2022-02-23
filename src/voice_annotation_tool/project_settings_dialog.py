@@ -18,10 +18,15 @@ class ProjectSettingsDialog(QDialog, Ui_ProjectSettingsDialog):
         self.tsvPathEdit.setText(str(project.tsv_file))
 
     def accept(self):
+        audio: Path = Path(self.audioPathEdit.text())
+        tsv: Path = Path(self.tsvPathEdit.text())
+        if not audio.is_dir() or not tsv.parent.is_dir():
+            # TODO: Show an error dialog.
+            return
         self.settings_confirmed.emit(
             {
-                "audio": Path(self.audioPathEdit.text()),
-                "tsv": Path(self.tsvPathEdit.text()),
+                "audio": audio,
+                "tsv": tsv,
             }
         )
         super().accept()
