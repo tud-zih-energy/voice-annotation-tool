@@ -96,8 +96,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     ),
                 )
             for recent in data["recent_projects"]:
-                if os.path.exists(recent):
-                    self.recent_projects.append(Path(recent))
+                path = Path(recent)
+                if path.is_file():
+                    self.recent_projects.append(recent)
             self.choose_project_frame.load_recent_projects(self.recent_projects)
 
             self.shortcuts = data["shortcuts"]
@@ -125,7 +126,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowTitle(
             "Unsaved Project" if not self.project_file else self.project_file.name
         )
-        if self.project_file:
+        if self.project_file and not self.project_file in self.recent_projects:
             self.recent_projects.append(self.project_file)
             self.save_settings()
         self.opened_project_frame.show()
