@@ -39,4 +39,4 @@ class ChooseProjectFrame(QFrame, Ui_ChooseProjectFrame):
 
     @Slot(QModelIndex)
     def select_recent_project(self, index):
-        self.project_opened.emit(index.data())
+        self.project_opened.emit(Path(index.data()))
