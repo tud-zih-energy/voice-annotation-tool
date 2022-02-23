@@ -7,7 +7,7 @@ opened.
 from json.decoder import JSONDecodeError
 import os, json
 from pathlib import Path
-from typing import List
+from typing import Any, List, Tuple
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from PySide6.QtCore import Slot
 from .project import Project
@@ -32,7 +32,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.project: Project = Project()
         self.project_file: Path | None = None
         self.settings_file: Path
-        self.recent_projects: List[str] = []
+        self.recent_projects: List[Path] = []
         self.shortcuts = []
 
         # Layout
@@ -95,7 +95,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 )
             for recent in data["recent_projects"]:
                 if os.path.exists(recent):
-                    self.recent_projects.append(recent)
+                    self.recent_projects.append(Path(recent))
             self.choose_project_frame.load_recent_projects(self.recent_projects)
 
             self.shortcuts = data["shortcuts"]
@@ -113,20 +113,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         with open(self.settings_file, "w") as file:
             json.dump(
                 {
-                    "recent_projects": list(dict.fromkeys(self.recent_projects)),
+                    "recent_projects": map(str, self.recent_projects),
                     "shortcuts": self.shortcuts,
                 },
                 file,
             )
 
-    def load_project(self, project: Project):
+    def set_current_project(self, project: Project):
+        """Set the current project and load it into the GUI
+        """
         self.project = project
+        self.setWindowTitle("Unsaved Project" if not self.project_file else self.project_file.name)
+        if self.project_file:
+            self.recent_projects.append(self.project_file)
+            self.save_settings()
         self.opened_project_frame.show()
         self.choose_project_frame.hide()
-        self.opened_project_frame.load_project(project)
+        self.opened_project_frame.load_project(self.project)
         for action in self.project_actions:
             action.setEnabled(True)
-        if not project.audio_folder.is_dir():
+        if not self.project.audio_folder.is_dir():
             result: int = QMessageBox.warning(
                 self,
                 self.tr("Warning"),
@@ -139,13 +145,38 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     self, self.tr("Open Audio Folder")
                 )
                 if folder:
-                    project.audio_folder = Path(folder)
-                    self.load_project(project)
+                    self.project.audio_folder = Path(folder)
+                    self.set_current_project(self.project)
+        elif len(self.project.annotations) == 0:
+            message = QMessageBox()
+            message.setText(
+                self.tr("No samples found in the audio folder: {folder}").format(
+                    folder=self.project.audio_folder
+                )
+            )
         print("opened done")
+
+    def load_project_from_file(self, path: Path):
+        self.project_file = path
+        self.project = Project()
+        with open(path) as file:
+            self.project.load_json(file, self.project_file.parent)
+            with open(self.project_file.parent.joinpath(self.project.tsv_file)) as file:
+                self.project.load_tsv_file(file)
+            self.project.load_audio_files(self.project_file.parent.joinpath(self.project.audio_folder))
+        self.set_current_project(self.project)
+
+    def save_current_project(self):
+        if not self.project_file:
+            return self.save_project_as()
+        with open(self.project_file, "w") as file:
+            self.project.save(file)
+        with open(self.project.tsv_file, "w", newline="") as file:
+            self.project.save_annotations(file)
 
     @Slot()
     def project_created(self, project: Project):
-        self.load_project(project)
+        self.set_current_project(project)
 
     @Slot()
     def new_project(self):
@@ -154,39 +185,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def open(self):
-        path, _ = QFileDialog.getOpenFileName(
+        result: Tuple[str, Any] = QFileDialog.getOpenFileName(
             self, self.tr("Open Project"), "", self.tr("Project Files (*.json)")
         )
-        if not path:
+        if not result[0]:
             return
-        project: Project = Project()
-        self.project_file = Path(path)
-        with open(path) as file:
-            project.load_json(file, self.project_file.parent)
-        project.load_audio_files(self.project_file.joinpath(project.audio_folder))
-        with open(project.tsv_file) as file:
-            project.load_tsv_file(file)
-        self.load_project(project)
+        self.load_project_from_file(Path(result[0]))
 
     @Slot()
-    def recent_project_chosen(self, project_path: str):
-        self.project_file = Path(project_path)
-        project: Project = Project()
-        with open(project_path) as file:
-            project.load_json(file, self.project_file.parent)
-            with open(self.project_file.parent.joinpath(project.tsv_file)) as file:
-                project.load_tsv_file(file)
-            project.load_audio_files(self.project_file.parent.joinpath(project.audio_folder))
-            self.load_project(project)
+    def recent_project_chosen(self, path: Path):
+        self.load_project_from_file(path)
 
     @Slot()
     def save_project(self):
-        if not self.project_file:
-            return self.save_project_as()
-        with open(self.project_file, "w") as file:
-            self.project.save(file)
-        with open(self.project.tsv_file, "w", newline="") as file:
-            self.project.save_annotations(file)
+        self.save_current_project()
 
     @Slot()
     def save_project_as(self):
@@ -196,8 +208,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not path:
             return
         self.project_file = Path(path)
-        self.load_project(self.project)
-        self.save_project()
+        self.set_current_project(self.project)
+        self.save_current_project()
 
     @Slot()
     def delete_project(self):
