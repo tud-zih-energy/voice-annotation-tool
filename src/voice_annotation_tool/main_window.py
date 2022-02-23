@@ -72,6 +72,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionSaveProjectAs,
             self.actionDeleteProject,
             self.actionDeleteSelected,
+            self.actionProjectSettings,
         ]
 
     def load_settings(self, settings_file: Path):

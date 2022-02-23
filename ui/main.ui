@@ -188,6 +188,9 @@
    </property>
   </action>
   <action name="actionProjectSettings">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>&amp;Project Settings</string>
    </property>
