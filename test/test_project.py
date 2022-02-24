@@ -67,3 +67,19 @@ def test_load():
     project.load_json(StringIO(content), Path("/tmp"))
     assert project.audio_folder == Path("/tmp/audio")
     assert project.tsv_file.resolve() == Path("/file.tsv")
+
+
+def test_load_annotations():
+    project = Project()
+    project.audio_folder = Path("/tmp")
+    content = """client_id\tpath\tsentence\tup_votes\tdown_votes\tage\tgender\taccent
+abc\tsample.mp3\ttext\t2\t2\ttwenties\tother\taccent"""
+    project.load_tsv_file(StringIO(content))
+    annotation = project.annotations[0]
+    assert annotation.sentence == "text"
+    assert annotation.age == "twenties"
+    assert annotation.accent == "accent"
+    assert annotation.up_votes == 2
+    assert annotation.down_votes == 2
+    assert annotation.gender == "other"
+    assert annotation.path == Path("/tmp/sample.mp3")
