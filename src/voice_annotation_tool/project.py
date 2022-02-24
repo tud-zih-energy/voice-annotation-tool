@@ -25,7 +25,7 @@ class Project:
     def load_json(self, file: TextIO, location: Path = Path()):
         """Loads a project from a json file.
 
-        Paths to the audio folder and to the tsv file are loaded relative 
+        Paths to the audio folder and to the tsv file are loaded relative
         to the given location. This does not load the tsv file or the audio
         folder.
         """

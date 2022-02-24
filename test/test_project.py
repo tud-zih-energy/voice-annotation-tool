@@ -61,6 +61,9 @@ def test_save_annotations(project: Project):
 
 def test_load():
     project = Project()
-    project.load_json(StringIO('{"tsv_file":"../file.tsv","audio_folder":"audio","modified_annotations":[]}'), Path("/tmp"))
+    content = (
+        '{"tsv_file":"../file.tsv","audio_folder":"audio","modified_annotations":[]}'
+    )
+    project.load_json(StringIO(content), Path("/tmp"))
     assert project.audio_folder == Path("/tmp/audio")
     assert project.tsv_file.resolve() == Path("/file.tsv")
