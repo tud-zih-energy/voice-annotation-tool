@@ -124,9 +124,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def set_current_project(self, project: Project):
         """Set the current project and load it into the GUI"""
         self.project = project
-        self.setWindowTitle(
-            "Unsaved Project" if not self.project_file else self.project_file.name
-        )
+        if self.project_file:
+            self.setWindowTitle(self.project_file.name)
+        else:
+            self.setWindowTitle(self.tr("Unsaved Project"))
         if self.project_file and (not self.project_file in self.recent_projects):
             self.recent_projects.append(self.project_file)
             self.save_settings()
