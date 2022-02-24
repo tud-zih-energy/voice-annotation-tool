@@ -9,7 +9,7 @@ from io import StringIO
 import os, csv
 from pathlib import Path
 import json
-from typing import List, TextIO
+from typing import Iterable, List, TextIO
 
 from .annotation import Annotation
 
@@ -89,7 +89,7 @@ class Project:
         for annotation in self.annotations:
             writer.writerow(annotation.to_dict())
 
-    def load_tsv_file(self, file: TextIO):
+    def load_tsv_file(self, file: Iterable[str]):
         """
         Loads the annotations from the `tsv_file` into the annotations array.
         """
@@ -97,10 +97,9 @@ class Project:
         for row in reader:
             annotation = Annotation(row)
             annotation.path = self.audio_folder.joinpath(annotation.path)
-            if annotation.path.exists():
-                if annotation.path.name in self.modified_annotations:
-                    annotation.modified = True
-                self.add_annotation(annotation)
+            if annotation.path.name in self.modified_annotations:
+                annotation.modified = True
+            self.add_annotation(annotation)
         print("loaded csv")
 
     def delete_tsv(self):
