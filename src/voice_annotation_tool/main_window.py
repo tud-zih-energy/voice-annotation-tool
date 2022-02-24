@@ -166,7 +166,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.project = Project()
         with open(path) as file:
             self.project.load_json(file, self.project_file.parent)
-            with open(self.project.tsv_file) as file:
+            with open(self.project.tsv_file, newline="") as file:
                 self.project.load_tsv_file(file)
             self.project.load_audio_files(self.project.audio_folder)
         self.set_current_project(self.project)
@@ -304,7 +304,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.project.tsv_file = settings["tsv"]
         self.project.audio_folder = settings["audio"]
         if self.project.tsv_file.is_file():
-            with open(self.project.tsv_file) as file:
+            with open(self.project.tsv_file, newline="") as file:
                 self.project.load_tsv_file(file)
         self.project.load_audio_files(self.project.audio_folder)
         self.opened_project_frame.load_project(self.project)
