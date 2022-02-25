@@ -51,6 +51,7 @@
      <string>&amp;Edit</string>
     </property>
     <addaction name="actionConfigureShortcuts"/>
+    <addaction name="actionProjectSettings"/>
     <addaction name="actionExportCSV"/>
     <addaction name="actionImportCSV"/>
     <addaction name="actionExportJson"/>
@@ -184,6 +185,14 @@
    </property>
    <property name="shortcut">
     <string>Del</string>
+   </property>
+  </action>
+  <action name="actionProjectSettings">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Project Settings</string>
    </property>
   </action>
  </widget>

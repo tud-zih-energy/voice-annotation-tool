@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import List
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from PySide6.QtCore import Slot
+from voice_annotation_tool.project_settings_dialog import ProjectSettingsDialog
 from .project import Project
 from .opened_project_frame import OpenedProjectFrame
 from .shortcut_settings_dialog import ShortcutSettingsDialog
@@ -23,6 +24,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
+        self.project_settings_dialog = ProjectSettingsDialog()
+        self.project_settings_dialog.settings_confirmed.connect(self.settings_confirmed)
         self.shortcut_settings_dialog = ShortcutSettingsDialog()
         self.opened_project_frame = OpenedProjectFrame()
         self.choose_project_frame = ChooseProjectFrame()
@@ -50,6 +53,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionDeleteProject.triggered.connect(self.delete_project)
         self.actionQuit.triggered.connect(self.quit)
         self.actionAbout.triggered.connect(self.about)
+        self.actionProjectSettings.triggered.connect(self.show_project_settings)
         self.actionImportJson.triggered.connect(self.importJson)
         self.actionExportJson.triggered.connect(self.exportJson)
         self.actionImportCSV.triggered.connect(self.importCSV)
@@ -66,6 +70,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionSaveProjectAs,
             self.actionDeleteProject,
             self.actionDeleteSelected,
+            self.actionProjectSettings,
         ]
 
     def load_settings(self, settings_file: Path):
@@ -130,18 +135,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             result: int = QMessageBox.warning(
                 self,
                 self.tr("Warning"),
-                self.tr("The audio folder doesn't exist. Choose another one?"),
+                self.tr(
+                    "The audio folder or tsv file doesn't exist. Open project settings?"
+                ),
                 QMessageBox.StandardButton.Ok,
                 QMessageBox.Cancel,
             )
             if result == QMessageBox.Ok:
-                folder = QFileDialog.getExistingDirectory(
-                    self, self.tr("Open Audio Folder")
-                )
-                if folder:
-                    project.audio_folder = Path(folder)
-                    self.project_opened(project)
-        elif len(project.annotations) == 0:
+                self.show_project_settings()
+        elif len(self.project.annotations) == 0:
             message = QMessageBox()
             message.setText(
                 self.tr("No samples found in the audio folder: {folder}").format(
@@ -278,6 +280,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         if result == QMessageBox.Ok:
             self.opened_project_frame.delete_selected()
+
+    @Slot()
+    def show_project_settings(self):
+        self.project_settings_dialog.load_project(self.project)
+        self.project_settings_dialog.exec()
+
+    @Slot(dict)
+    def settings_confirmed(self, settings: Dict[str, Path]):
+        self.project.tsv_file = settings["tsv"]
+        self.project.audio_folder = settings["audio"]
+        if self.project.tsv_file.is_file():
+            with open(self.project.tsv_file, newline="") as file:
+                self.project.load_tsv_file(file)
+        self.project.load_audio_files(self.project.audio_folder)
+        self.opened_project_frame.load_project(self.project)
 
     @Slot()
     def configure_shortcuts(self):
