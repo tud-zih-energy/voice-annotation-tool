@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import List
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from PySide6.QtCore import Slot
+
 from voice_annotation_tool.project_settings_dialog import ProjectSettingsDialog
 from .project import Project
 from .opened_project_frame import OpenedProjectFrame
