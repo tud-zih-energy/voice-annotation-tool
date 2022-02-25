@@ -151,7 +151,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             message.exec()
         print("opened done")
 
+    def load_project_from_file(self, path: Path):
+        self.project_file = path
+        self.project = Project()
+        with open(path) as file:
+            self.project.load_json(file, self.project_file.parent)
+            if self.project.tsv_file:
+                with open(self.project.tsv_file, newline="") as file:
+                    self.project.load_tsv_file(file)
+            if self.project.audio_folder:
+                self.project.load_audio_files(self.project.audio_folder)
+        self.set_current_project(self.project)
         print("loaded audio folder")
+
+    def save_current_project(self):
+        if not self.project_file:
+            return self.save_project_as()
+        with open(self.project_file, "w") as file:
+            self.project.save(file, self.project_file.parent)
+        with open(self.project.tsv_file, "w", newline="") as file:
+            self.project.save_annotations(file)
 
     @Slot()
     def new_project(self):
@@ -162,13 +181,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self, self.tr("Open Project"), "", self.tr("Project Files (*.json)")
         )
         if file:
-            self.project_opened(Project(file))
+            self.load_project_from_file(Path(file))
 
     @Slot()
     def save_project(self):
         if not self.project.project_file:
             return self.save_project_as()
-        self.project.save()
+        self.save_current_project()
 
     @Slot()
     def save_project_as(self):
@@ -177,8 +196,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         if file:
             self.project.project_file = file
-            self.project.save()
             self.project_opened(self.project)
+            self.save_current_project()
 
     @Slot()
     def delete_project(self):
