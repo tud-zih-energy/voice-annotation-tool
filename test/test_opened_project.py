@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from PySide6.QtWidgets import QPushButton
 from PySide6.QtCore import Qt
@@ -23,11 +22,11 @@ annotation_data = {
 
 
 @pytest.fixture
-def project_frame():
+def project_frame(tmpdir):
     frame = OpenedProjectFrame()
     project = Project("")
     for annotation_num in range(3):
-        path = Path("/tmp/path_" + str(annotation_num))
+        path: Path = Path(tmpdir) / Path("path_" + str(annotation_num))
         path.touch()
         annotation_data["path"] = str(path)
         annotation_data["sentence"] = f"Sentence {annotation_num}"
@@ -108,4 +107,4 @@ def test_delete_removes_rows(project_frame: OpenedProjectFrame):
 def test_delete_removes_files(project_frame: OpenedProjectFrame):
     selected: Annotation = project_frame.get_selected_annotations()[0]
     project_frame.delete_selected()
-    assert not os.path.isfile(selected.path)
+    assert not selected.path.exists()
