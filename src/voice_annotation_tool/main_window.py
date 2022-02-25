@@ -189,9 +189,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def open(self):
-        file, _ = QFileDialog.getOpenFileName(
+        result: Tuple[str, Any] = QFileDialog.getOpenFileName(
             self, self.tr("Open Project"), "", self.tr("Project Files (*.json)")
         )
+        file = result[0]
         if file:
             self.load_project_from_file(Path(file))
 
@@ -213,16 +214,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def delete_project(self):
-        if (
-            QMessageBox.warning(
-                self,
-                self.tr("Warning"),
-                self.tr("Delete the TSV and project file?"),
-                QMessageBox.StandardButton.Ok,
-                QMessageBox.Cancel,
-            )
-            == QMessageBox.Cancel
-        ):
+        result: int = QMessageBox.warning(
+            self,
+            self.tr("Warning"),
+            self.tr("Delete the TSV and project file?"),
+            QMessageBox.Ok,
+            QMessageBox.Cancel,
+        )
+        if result != QMessageBox.Ok:
             return
         self.project.delete()
         self.setWindowTitle(self.original_title)
