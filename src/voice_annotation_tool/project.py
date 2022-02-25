@@ -31,8 +31,8 @@ class Project:
         """
         data = json.load(file)
         self.modified_annotations = data["modified_annotations"]
-        self.audio_folder = location.joinpath(data.get("audio_folder")).resolve()
-        self.tsv_file = location.joinpath(data.get("tsv_file")).resolve()
+        self.audio_folder = location.joinpath(data.get("audio_folder"))
+        self.tsv_file = location.joinpath(data.get("tsv_file"))
 
     def load_audio_files(self, folder: Path):
         """
@@ -93,9 +93,6 @@ class Project:
         reader = csv.DictReader(file, delimiter="\t")
         for row in reader:
             annotation = Annotation(row)
-            annotation.path = annotation.path
-            if self.audio_folder:
-                annotation.path = self.audio_folder.joinpath(annotation.path)
             if annotation.path.name in self.modified_annotations:
                 annotation.modified = True
             self.add_annotation(annotation)
@@ -129,7 +126,7 @@ class Project:
     def exportCSV(self, outfile: StringIO):
         writer = csv.writer(outfile, delimiter=";")
         for annotation in self.annotations:
-            writer.writerow([annotation.path, annotation.sentence])
+            writer.writerow([annotation.path.name, annotation.sentence])
 
     def importJson(self, infile: StringIO):
         data = json.load(infile)
