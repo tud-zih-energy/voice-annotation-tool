@@ -54,7 +54,6 @@ class Project:
                     annotation = Annotation()
                     annotation.path = path
                     self.add_annotation(annotation)
-        print("loaded audio folder")
 
     def annotate(self, annotation: Annotation, text: str) -> None:
         """Changes the text of the given annotation."""

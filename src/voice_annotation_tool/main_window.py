@@ -151,6 +151,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             message.exec()
         print("opened done")
 
+        print("loaded audio folder")
 
     @Slot()
     def new_project(self):
