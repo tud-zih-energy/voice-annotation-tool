@@ -11,7 +11,6 @@ from typing import List
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from PySide6.QtCore import Slot
 from .project import Project
-from .create_project_dialog import CreateProjectDialog
 from .opened_project_frame import OpenedProjectFrame
 from .shortcut_settings_dialog import ShortcutSettingsDialog
 from .choose_project_frame import ChooseProjectFrame
@@ -24,7 +23,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
-        self.create_project_dialog = CreateProjectDialog()
         self.shortcut_settings_dialog = ShortcutSettingsDialog()
         self.opened_project_frame = OpenedProjectFrame()
         self.choose_project_frame = ChooseProjectFrame()
@@ -40,7 +38,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.opened_project_frame.hide()
 
         # Connections
-        self.create_project_dialog.project_created.connect(self.project_created)
         self.shortcut_settings_dialog.shortcuts_confirmed.connect(
             self.shortcuts_confirmed
         )
@@ -154,13 +151,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             message.exec()
         print("opened done")
 
-    @Slot()
-    def project_created(self, project):
-        self.project_opened(project)
 
     @Slot()
     def new_project(self):
-        self.create_project_dialog.exec()
 
     @Slot()
     def open(self):
