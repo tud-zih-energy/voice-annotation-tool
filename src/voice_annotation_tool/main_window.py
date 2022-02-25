@@ -7,7 +7,7 @@ opened.
 from json.decoder import JSONDecodeError
 import json
 from pathlib import Path
-from typing import List
+from typing import Any, Dict, List, Tuple
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from PySide6.QtCore import Slot
 
