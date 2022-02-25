@@ -54,10 +54,7 @@ def test_annotation_list_has_rows(project_frame: OpenedProjectFrame):
 
 def test_annotation_list_shows_filename(project_frame: OpenedProjectFrame):
     model: AnnotationListModel = project_frame.annotationList.model()
-    assert (
-        model.data(model.index(0, 0), Qt.DisplayRole)
-        == project_frame.project.annotations[0].path.name
-    )
+    assert model.data(model.index(0, 0), Qt.DisplayRole) == "path_0"
 
 
 def test_metadata_header_filled_on_open(project_frame):
