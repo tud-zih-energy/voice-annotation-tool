@@ -6,29 +6,29 @@ audio folder.
 """
 
 from io import StringIO
-from os import PathLike
 import os, csv
 from pathlib import Path
 import json
-from typing import List, Union
+from typing import Iterable, List, TextIO
 
 from .annotation import Annotation
 
 
 class Project:
-    def __init__(self, file: Union[str, PathLike]):
-        self.tsv_file: Path = Path()
-        self.audio_folder: Path = Path()
-        self.project_file: Path = Path(file)
+    def __init__(self):
+        self.tsv_file: Path | None = None
+        self.audio_folder: Path | None = None
         self.annotations_by_path: dict[str, Annotation] = {}
         self.annotations: List[Annotation] = []
         self.modified_annotations: List[str] = []
         self.load()
 
-    def load(self):
-        """
-        Loads a project from the `project_file` json file. Paths to the audio
-        folder and to the tsv file are loaded relative to the project file.
+    def load_json(self, file: TextIO, location: Path = Path()):
+        """Loads a project from a json file.
+
+        Paths to the audio folder and to the tsv file are loaded relative
+        to the given location. This does not load the tsv file or the audio
+        folder.
         """
         if not self.project_file.is_file():
             return
@@ -41,11 +41,11 @@ class Project:
             self.set_tsv_file(self.project_file.parent.joinpath(data.get("tsv_file")))
             self.set_audio_folder(self.audio_folder)
 
-    def set_audio_folder(self, to: Path):
+    def load_audio_files(self, folder: Path):
         """
         Loads the samples from the audio folder of this project into files.
         """
-        self.audio_folder = to
+        self.audio_folder = folder
         if not self.audio_folder.is_dir():
             return
         for audio_file in os.listdir(self.audio_folder):
@@ -69,11 +69,9 @@ class Project:
         if annotation.path in self.modified_annotations:
             self.modified_annotations.remove(annotation.path)
 
-    def save(self):
-        """
-        Saves this project  to the `project_file` and the annotations to the
-        `tsv_file`. Paths to the audio folder and to the tsv file are saved
-        relative to the project file.
+    def save(self, file: TextIO, location: Path = Path()):
+        """Saves this project to the given buffer. Paths to the audio
+        folder and to the tsv file are saved relative to the project file.
         """
         with open(self.project_file, "w") as file:
             annotation_data = []
@@ -94,7 +92,7 @@ class Project:
             )
         self.save_annotations()
 
-    def save_annotations(self):
+    def save_annotations(self, file: TextIO):
         """
         Exports the project's annotations to its tab separated value (tsv) file.
         """
@@ -108,7 +106,7 @@ class Project:
             for annotation in self.annotations:
                 writer.writerow(annotation.to_dict())
 
-    def set_tsv_file(self, to: Path):
+    def load_tsv_file(self, file: Iterable[str]):
         """
         Loads the annotations from the `tsv_file` into the annotations array.
         """
@@ -125,11 +123,10 @@ class Project:
                     self.add_annotation(annotation)
         print("loaded csv")
 
-    def delete(self):
-        """Delete the TSV and project file."""
-        if self.tsv_file.is_file():
+    def delete_tsv(self):
+        """Delete the TSV file."""
+        if self.tsv_file and self.tsv_file.is_file():
             self.tsv_file.unlink()
-        self.project_file.unlink()
 
     def delete_annotation(self, annotation: Annotation):
         """Delete a stored annotation and the audio file on disk."""
