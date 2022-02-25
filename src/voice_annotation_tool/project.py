@@ -21,7 +21,6 @@ class Project:
         self.annotations_by_path: dict[str, Annotation] = {}
         self.annotations: List[Annotation] = []
         self.modified_annotations: List[str] = []
-        self.load()
 
     def load_json(self, file: TextIO, location: Path = Path()):
         """Loads a project from a json file.
