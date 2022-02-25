@@ -19,10 +19,9 @@ class ChooseProjectFrame(QFrame, Ui_ChooseProjectFrame):
         super().__init__()
         self.setupUi(self)
 
-    def load_recent_projects(self, projects):
-        for project in projects:
-            item = QListWidgetItem(project)
-            item.setData(0, project)
+    def load_recent_projects(self, paths: List[Path]):
+        for path in paths:
+            item = QListWidgetItem(str(path))
             self.recentProjectsList.addItem(item)
 
     @Slot()
