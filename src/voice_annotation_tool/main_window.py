@@ -185,6 +185,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     @Slot()
     def new_project(self):
         self.project_file = None
+        self.set_current_project(Project())
 
     @Slot()
     def open(self):
