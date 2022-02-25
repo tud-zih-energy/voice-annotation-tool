@@ -30,7 +30,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.opened_project_frame = OpenedProjectFrame()
         self.choose_project_frame = ChooseProjectFrame()
         self.original_title = self.windowTitle()
-        self.project: Project
+        self.project: Project = Project()
         self.project_file: Path | None = None
         self.settings_file: Path
         self.recent_projects: List[Path] = []
