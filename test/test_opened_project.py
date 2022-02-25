@@ -24,7 +24,7 @@ annotation_data = {
 @pytest.fixture
 def project_frame(tmpdir):
     frame = OpenedProjectFrame()
-    project = Project("")
+    project = Project()
     for annotation_num in range(3):
         path: Path = Path(tmpdir) / Path("path_" + str(annotation_num))
         path.touch()
