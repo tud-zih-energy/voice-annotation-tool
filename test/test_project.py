@@ -1,4 +1,5 @@
 from io import StringIO
+from pathlib import Path
 
 import pytest
 from voice_annotation_tool.annotation import Annotation
@@ -7,7 +8,9 @@ from voice_annotation_tool.project import Project
 
 @pytest.fixture
 def project():
-    project = Project("")
+    project = Project()
+    project.audio_folder = Path("tmp/audio")
+    project.tsv_file = Path("tmp/project.tsv")
     project.add_annotation(Annotation({"path": "path", "sentence": "text"}))
     return project
 
