@@ -121,8 +121,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def project_opened(self, project: Project):
-        self.setWindowTitle(os.path.basename(project.project_file))
         self.project = project
+        if self.project_file:
+            self.setWindowTitle(self.project_file.name)
+        else:
+            self.setWindowTitle(self.tr("Unsaved Project"))
         if self.project_file and (not self.project_file in self.recent_projects):
             self.recent_projects.append(self.project_file)
             self.save_settings()
