@@ -26,7 +26,7 @@ class ChooseProjectFrame(QFrame, Ui_ChooseProjectFrame):
 
     @Slot()
     def open_project(self):
-        files = QFileDialog.getOpenFileName(
+        files: Tuple[str, Any] = QFileDialog.getOpenFileName(
             self, "Open Project", "", "Project Files (*.json)"
         )
         if not files[0]:
