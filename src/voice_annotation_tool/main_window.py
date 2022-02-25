@@ -45,7 +45,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.shortcut_settings_dialog.shortcuts_confirmed.connect(
             self.shortcuts_confirmed
         )
-        self.choose_project_frame.project_opened.connect(self.project_opened)
+        self.choose_project_frame.project_opened.connect(self.recent_project_chosen)
         self.choose_project_frame.create_project_pressed.connect(self.new_project)
         self.actionNewProject.triggered.connect(self.new_project)
         self.actionOpen.triggered.connect(self.open)
@@ -195,6 +195,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         file = result[0]
         if file:
             self.load_project_from_file(Path(file))
+
+    @Slot()
+    def recent_project_chosen(self, path: Path):
+        self.load_project_from_file(path)
 
     @Slot()
     def save_project(self):
