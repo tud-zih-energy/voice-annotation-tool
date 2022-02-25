@@ -203,8 +203,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def save_project(self):
-        if not self.project.project_file:
-            return self.save_project_as()
         self.save_current_project()
 
     @Slot()
