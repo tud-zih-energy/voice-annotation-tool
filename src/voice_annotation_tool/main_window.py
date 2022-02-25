@@ -226,7 +226,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         if result != QMessageBox.Ok:
             return
-        self.project.delete()
+        self.project.delete_tsv()
+        if self.project_file:
+            self.project_file.unlink()
+        self.project_file = None
         self.setWindowTitle(self.original_title)
         self.opened_project_frame.hide()
         self.choose_project_frame.show()
