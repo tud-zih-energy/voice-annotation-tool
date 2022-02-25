@@ -120,8 +120,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             }
             json.dump(data, file)
 
-    @Slot()
-    def project_opened(self, project: Project):
+    def set_current_project(self, project: Project):
+        """Set the current project and load it into the GUI"""
         self.project = project
         if self.project_file:
             self.setWindowTitle(self.project_file.name)
