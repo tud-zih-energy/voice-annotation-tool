@@ -7,7 +7,7 @@ audio folder.
 
 from io import StringIO
 import os, csv
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 import json
 from typing import Iterable, List, TextIO
 
@@ -72,15 +72,9 @@ class Project:
             "modified_annotations": self.modified_annotations,
         }
         if self.tsv_file:
-            data["tsv_file"] = str(
-                os.path.relpath(PurePosixPath(self.tsv_file), PurePosixPath(location))
-            )
+            data["tsv_file"] = str(os.path.relpath(self.tsv_file, location))
         if self.audio_folder:
-            data["audio_folder"] = str(
-                os.path.relpath(
-                    PurePosixPath(self.audio_folder), PurePosixPath(location)
-                )
-            )
+            data["audio_folder"] = str(os.path.relpath(self.audio_folder, location))
         json.dump(data, file)
 
     def save_annotations(self, file: TextIO):
