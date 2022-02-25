@@ -31,6 +31,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.choose_project_frame = ChooseProjectFrame()
         self.original_title = self.windowTitle()
         self.project: Project
+        self.project_file: Path | None = None
         self.settings_file: Path
         self.recent_projects: List[Path] = []
         self.shortcuts = []
@@ -179,6 +180,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def new_project(self):
+        self.project_file = None
 
     @Slot()
     def open(self):
@@ -200,8 +202,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self, self.tr("Save Project"), "", self.tr("Project Files (*.json)")
         )
         if file:
-            self.project.project_file = file
             self.project_opened(self.project)
+            self.project_file = Path(file)
             self.save_current_project()
 
     @Slot()
