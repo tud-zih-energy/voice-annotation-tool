@@ -110,7 +110,8 @@ class Project:
         self.annotations.remove(annotation)
 
     def add_annotation(self, annotation: Annotation):
-        annotation.path = self.audio_folder.joinpath(annotation.path)
+        if self.audio_folder:
+            annotation.path = self.audio_folder.joinpath(annotation.path)
         self.annotations_by_path[annotation.path.name] = annotation
         self.annotations.append(annotation)
 
