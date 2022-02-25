@@ -137,8 +137,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for action in self.project_actions:
             action.setEnabled(True)
         if (
-            self.project.tsv_file == Path()
-            or self.project.audio_folder == Path()
+            not self.project.tsv_file
+            or not self.project.audio_folder
             or not self.project.audio_folder.is_dir()
         ):
             result: int = QMessageBox.warning(
@@ -166,9 +166,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.project = Project()
         with open(path) as file:
             self.project.load_json(file, self.project_file.parent)
-            with open(self.project.tsv_file, newline="") as file:
-                self.project.load_tsv_file(file)
-            self.project.load_audio_files(self.project.audio_folder)
+            if self.project.tsv_file:
+                with open(self.project.tsv_file, newline="") as file:
+                    self.project.load_tsv_file(file)
+            if self.project.audio_folder:
+                self.project.load_audio_files(self.project.audio_folder)
         self.set_current_project(self.project)
         print("loaded audio folder")
 

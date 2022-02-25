@@ -14,8 +14,10 @@ class ProjectSettingsDialog(QDialog, Ui_ProjectSettingsDialog):
         self.setupUi(self)
 
     def load_project(self, project: Project):
-        self.audioPathEdit.setText(str(project.audio_folder))
-        self.tsvPathEdit.setText(str(project.tsv_file))
+        if project.audio_folder:
+            self.audioPathEdit.setText(str(project.audio_folder))
+        if project.tsv_file:
+            self.tsvPathEdit.setText(str(project.tsv_file))
 
     def accept(self):
         audio: Path = Path(self.audioPathEdit.text())

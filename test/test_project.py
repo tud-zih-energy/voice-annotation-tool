@@ -65,8 +65,8 @@ def test_load():
         '{"tsv_file":"../file.tsv","audio_folder":"audio","modified_annotations":[]}'
     )
     project.load_json(StringIO(content), Path("/tmp"))
-    assert project.audio_folder == Path("/tmp/audio")
-    assert project.tsv_file.resolve() == Path("/file.tsv")
+    assert project.audio_folder and project.audio_folder.resolve() == Path("/tmp/audio")
+    assert project.tsv_file and project.tsv_file.resolve() == Path("/file.tsv")
 
 
 def test_load_annotations():

@@ -7,7 +7,7 @@ audio folder.
 
 from io import StringIO
 import os, csv
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import json
 from typing import Iterable, List, TextIO
 
@@ -16,8 +16,8 @@ from .annotation import Annotation
 
 class Project:
     def __init__(self):
-        self.tsv_file: Path = Path()
-        self.audio_folder: Path = Path()
+        self.tsv_file: Path | None = None
+        self.audio_folder: Path | None = None
         self.annotations_by_path: dict[str, Annotation] = {}
         self.annotations: List[Annotation] = []
         self.modified_annotations: List[str] = []
@@ -31,8 +31,8 @@ class Project:
         """
         data = json.load(file)
         self.modified_annotations = data["modified_annotations"]
-        self.audio_folder = location.joinpath(data.get("audio_folder"))
-        self.tsv_file = location.joinpath(data.get("tsv_file"))
+        self.audio_folder = location.joinpath(data.get("audio_folder")).resolve()
+        self.tsv_file = location.joinpath(data.get("tsv_file")).resolve()
 
     def load_audio_files(self, folder: Path):
         """
@@ -57,6 +57,7 @@ class Project:
         annotation.sentence = text
 
     def mark_unchanged(self, annotation: Annotation) -> None:
+        """Remove the modified mark of the given annotation."""
         annotation.modified = False
         if annotation.path in self.modified_annotations:
             self.modified_annotations.remove(annotation.path)
@@ -65,20 +66,22 @@ class Project:
         """Saves this project to the given buffer. Paths to the audio
         folder and to the tsv file are saved relative to the project file.
         """
-        annotation_data = []
-        for annotation in self.annotations:
-            annotation_data.append(vars(annotation))
-        tsv_path = ""
+        data = {
+            "tsv_file": "",
+            "audio_folder": "",
+            "modified_annotations": self.modified_annotations,
+        }
         if self.tsv_file:
-            tsv_path = str(os.path.relpath(self.tsv_file, location))
-        json.dump(
-            {
-                "tsv_file": tsv_path,
-                "audio_folder": str(os.path.relpath(self.audio_folder, location)),
-                "modified_annotations": self.modified_annotations,
-            },
-            file,
-        )
+            data["tsv_file"] = str(
+                os.path.relpath(PurePosixPath(self.tsv_file), PurePosixPath(location))
+            )
+        if self.audio_folder:
+            data["audio_folder"] = str(
+                os.path.relpath(
+                    PurePosixPath(self.audio_folder), PurePosixPath(location)
+                )
+            )
+        json.dump(data, file)
 
     def save_annotations(self, file: TextIO):
         """
@@ -96,7 +99,9 @@ class Project:
         reader = csv.DictReader(file, delimiter="\t")
         for row in reader:
             annotation = Annotation(row)
-            annotation.path = self.audio_folder.joinpath(annotation.path)
+            annotation.path = annotation.path
+            if self.audio_folder:
+                annotation.path = self.audio_folder.joinpath(annotation.path)
             if annotation.path.name in self.modified_annotations:
                 annotation.modified = True
             self.add_annotation(annotation)
@@ -104,7 +109,7 @@ class Project:
 
     def delete_tsv(self):
         """Delete the TSV file."""
-        if self.tsv_file.is_file():
+        if self.tsv_file and self.tsv_file.is_file():
             self.tsv_file.unlink()
 
     def delete_annotation(self, annotation: Annotation):
@@ -114,7 +119,8 @@ class Project:
         self.annotations.remove(annotation)
 
     def add_annotation(self, annotation: Annotation):
-        annotation.path = self.audio_folder.joinpath(annotation.path)
+        if self.audio_folder:
+            annotation.path = self.audio_folder.joinpath(annotation.path)
         self.annotations_by_path[annotation.path.name] = annotation
         self.annotations.append(annotation)
 
