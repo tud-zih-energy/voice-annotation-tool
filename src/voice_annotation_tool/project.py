@@ -125,7 +125,7 @@ class Project:
     def exportCSV(self, outfile: StringIO):
         writer = csv.writer(outfile, delimiter=";")
         for annotation in self.annotations:
-            writer.writerow([annotation.path, annotation.sentence])
+            writer.writerow([annotation.path.name, annotation.sentence])
 
     def importJson(self, infile: StringIO):
         data = json.load(infile)
