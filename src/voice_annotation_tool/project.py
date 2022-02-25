@@ -65,6 +65,7 @@ class Project:
         annotation.sentence = text
 
     def mark_unchanged(self, annotation: Annotation) -> None:
+        """Remove the modified mark of the given annotation."""
         annotation.modified = False
         if annotation.path in self.modified_annotations:
             self.modified_annotations.remove(annotation.path)
@@ -94,7 +95,7 @@ class Project:
 
     def save_annotations(self, file: TextIO):
         """
-        Exports the project's annotations to its tab separated value (tsv) file.
+        Exports the project's annotations to a tab separated value (tsv) file.
         """
         with open(
             self.tsv_file,
