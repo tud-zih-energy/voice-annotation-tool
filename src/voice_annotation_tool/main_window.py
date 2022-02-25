@@ -5,7 +5,7 @@ opened.
 """
 
 from json.decoder import JSONDecodeError
-import os, json
+import json
 from pathlib import Path
 from typing import List
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
