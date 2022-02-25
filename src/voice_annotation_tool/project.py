@@ -29,16 +29,10 @@ class Project:
         to the given location. This does not load the tsv file or the audio
         folder.
         """
-        if not self.project_file.is_file():
-            return
-        with open(self.project_file) as file:
-            data = json.load(file)
-            self.modified_annotations = data["modified_annotations"]
-            self.audio_folder = self.project_file.parent.joinpath(
-                data.get("audio_folder")
-            )
-            self.set_tsv_file(self.project_file.parent.joinpath(data.get("tsv_file")))
-            self.set_audio_folder(self.audio_folder)
+        data = json.load(file)
+        self.modified_annotations = data["modified_annotations"]
+        self.audio_folder = location.joinpath(data.get("audio_folder"))
+        self.tsv_file = location.joinpath(data.get("tsv_file"))
 
     def load_audio_files(self, folder: Path):
         """
@@ -72,54 +66,36 @@ class Project:
         """Saves this project to the given buffer. Paths to the audio
         folder and to the tsv file are saved relative to the project file.
         """
-        with open(self.project_file, "w") as file:
-            annotation_data = []
-            for annotation in self.annotations:
-                annotation_data.append(vars(annotation))
-            tsv_path = ""
-            if self.tsv_file:
-                tsv_path = str(self.tsv_file.relative_to(self.project_file.parent))
-            json.dump(
-                {
-                    "tsv_file": tsv_path,
-                    "audio_folder": str(
-                        self.audio_folder.relative_to(self.project_file.parent)
-                    ),
-                    "modified_annotations": self.modified_annotations,
-                },
-                file,
-            )
-        self.save_annotations()
+        data = {
+            "tsv_file": "",
+            "audio_folder": "",
+            "modified_annotations": self.modified_annotations,
+        }
+        if self.tsv_file:
+            data["tsv_file"] = str(os.path.relpath(self.tsv_file, location))
+        if self.audio_folder:
+            data["audio_folder"] = str(os.path.relpath(self.audio_folder, location))
+        json.dump(data, file)
 
     def save_annotations(self, file: TextIO):
         """
         Exports the project's annotations to a tab separated value (tsv) file.
         """
-        with open(
-            self.tsv_file,
-            "w",
-            newline="",
-        ) as file:
-            writer = csv.DictWriter(file, Annotation.TSV_HEADER_MEMBERS, delimiter="\t")
-            writer.writeheader()
-            for annotation in self.annotations:
-                writer.writerow(annotation.to_dict())
+        writer = csv.DictWriter(file, Annotation.TSV_HEADER_MEMBERS, delimiter="\t")
+        writer.writeheader()
+        for annotation in self.annotations:
+            writer.writerow(annotation.to_dict())
 
     def load_tsv_file(self, file: Iterable[str]):
         """
         Loads the annotations from the `tsv_file` into the annotations array.
         """
-        self.tsv_file = to
-        if not self.tsv_file.is_file():
-            return
-        with open(to, newline="") as file:
-            reader = csv.DictReader(file, delimiter="\t")
-            for row in reader:
-                annotation = Annotation(row)
-                if annotation.path.exists():
-                    if annotation.path.name in self.modified_annotations:
-                        annotation.modified = True
-                    self.add_annotation(annotation)
+        reader = csv.DictReader(file, delimiter="\t")
+        for row in reader:
+            annotation = Annotation(row)
+            if annotation.path.name in self.modified_annotations:
+                annotation.modified = True
+            self.add_annotation(annotation)
         print("loaded csv")
 
     def delete_tsv(self):
