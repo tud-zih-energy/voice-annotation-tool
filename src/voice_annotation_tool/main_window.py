@@ -29,7 +29,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.original_title = self.windowTitle()
         self.project: Project
         self.settings_file: Path
-        self.recent_projects: List[str] = []
+        self.recent_projects: List[Path] = []
         self.shortcuts = []
 
         # Layout
@@ -90,8 +90,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     ),
                 )
             for recent in data["recent_projects"]:
-                if os.path.exists(recent):
-                    self.recent_projects.append(recent)
+                path = Path(recent)
+                if path.is_file():
+                    self.recent_projects.append(path)
             self.choose_project_frame.load_recent_projects(self.recent_projects)
 
             self.shortcuts = data["shortcuts"]
@@ -107,20 +108,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Saves the `recent_projects` list and keyboard shortcuts to a json file
         """
         with open(self.settings_file, "w") as file:
-            json.dump(
-                {
-                    "recent_projects": list(dict.fromkeys(self.recent_projects)),
-                    "shortcuts": self.shortcuts,
-                },
-                file,
-            )
+            data = {
+                "recent_projects": list(map(str, self.recent_projects)),
+                "shortcuts": self.shortcuts,
+            }
+            json.dump(data, file)
 
     @Slot()
     def project_opened(self, project: Project):
-        self.recent_projects.append(str(project.project_file))
-        self.save_settings()
         self.setWindowTitle(os.path.basename(project.project_file))
         self.project = project
+        if self.project_file and (not self.project_file in self.recent_projects):
+            self.recent_projects.append(self.project_file)
+            self.save_settings()
         self.opened_project_frame.show()
         self.choose_project_frame.hide()
         self.opened_project_frame.load_project(project)
