@@ -135,7 +135,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.opened_project_frame.load_project(project)
         for action in self.project_actions:
             action.setEnabled(True)
-        if not os.path.exists(project.audio_folder):
+        if (
+            not self.project.tsv_file
+            or not self.project.audio_folder
+            or not self.project.audio_folder.is_dir()
+        ):
             result: int = QMessageBox.warning(
                 self,
                 self.tr("Warning"),
