@@ -15,11 +15,11 @@ jobs:
       matrix:
         include:
           - build-name: 'Windows 8.1+ 64-bit'
-            python-version: 3.10
+            python-version: 3.10.1
             platform: windows-latest
             arch: 'x64'
           - build-name: 'Ubuntu'
-            python-version: 3.10
+            python-version: 3.10.1
             platform: ubuntu-latest
             arch: 'x64'
 
