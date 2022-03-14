@@ -5,13 +5,14 @@ opened.
 """
 
 from json.decoder import JSONDecodeError
-import os, json
+import json
 from pathlib import Path
-from typing import List
+from typing import Any, Dict, List, Tuple
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from PySide6.QtCore import Slot
+
+from voice_annotation_tool.project_settings_dialog import ProjectSettingsDialog
 from .project import Project
-from .create_project_dialog import CreateProjectDialog
 from .opened_project_frame import OpenedProjectFrame
 from .shortcut_settings_dialog import ShortcutSettingsDialog
 from .choose_project_frame import ChooseProjectFrame
@@ -24,14 +25,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
-        self.create_project_dialog = CreateProjectDialog()
+        self.project_settings_dialog = ProjectSettingsDialog()
+        self.project_settings_dialog.settings_confirmed.connect(self.settings_confirmed)
         self.shortcut_settings_dialog = ShortcutSettingsDialog()
         self.opened_project_frame = OpenedProjectFrame()
         self.choose_project_frame = ChooseProjectFrame()
         self.original_title = self.windowTitle()
-        self.project: Project
+        self.project: Project = Project()
+        self.project_file: Path | None = None
         self.settings_file: Path
-        self.recent_projects: List[str] = []
+        self.recent_projects: List[Path] = []
         self.shortcuts = []
 
         # Layout
@@ -40,11 +43,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.opened_project_frame.hide()
 
         # Connections
-        self.create_project_dialog.project_created.connect(self.project_created)
         self.shortcut_settings_dialog.shortcuts_confirmed.connect(
             self.shortcuts_confirmed
         )
-        self.choose_project_frame.project_opened.connect(self.project_opened)
+        self.choose_project_frame.project_opened.connect(self.recent_project_chosen)
         self.choose_project_frame.create_project_pressed.connect(self.new_project)
         self.actionNewProject.triggered.connect(self.new_project)
         self.actionOpen.triggered.connect(self.open)
@@ -53,6 +55,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionDeleteProject.triggered.connect(self.delete_project)
         self.actionQuit.triggered.connect(self.quit)
         self.actionAbout.triggered.connect(self.about)
+        self.actionProjectSettings.triggered.connect(self.show_project_settings)
         self.actionImportJson.triggered.connect(self.importJson)
         self.actionExportJson.triggered.connect(self.exportJson)
         self.actionImportCSV.triggered.connect(self.importCSV)
@@ -69,6 +72,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionSaveProjectAs,
             self.actionDeleteProject,
             self.actionDeleteSelected,
+            self.actionProjectSettings,
         ]
 
     def load_settings(self, settings_file: Path):
@@ -93,8 +97,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     ),
                 )
             for recent in data["recent_projects"]:
-                if os.path.exists(recent):
-                    self.recent_projects.append(recent)
+                path = Path(recent)
+                if path.is_file():
+                    self.recent_projects.append(path)
             self.choose_project_frame.load_recent_projects(self.recent_projects)
 
             self.shortcuts = data["shortcuts"]
@@ -110,41 +115,44 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Saves the `recent_projects` list and keyboard shortcuts to a json file
         """
         with open(self.settings_file, "w") as file:
-            json.dump(
-                {
-                    "recent_projects": list(dict.fromkeys(self.recent_projects)),
-                    "shortcuts": self.shortcuts,
-                },
-                file,
-            )
+            data = {
+                "recent_projects": list(map(str, self.recent_projects)),
+                "shortcuts": self.shortcuts,
+            }
+            json.dump(data, file)
 
-    @Slot()
-    def project_opened(self, project: Project):
-        self.recent_projects.append(str(project.project_file))
-        self.save_settings()
-        self.setWindowTitle(os.path.basename(project.project_file))
+    def set_current_project(self, project: Project):
+        """Set the current project and load it into the GUI"""
         self.project = project
+        if self.project_file:
+            self.setWindowTitle(self.project_file.name)
+        else:
+            self.setWindowTitle(self.tr("Unsaved Project"))
+        if self.project_file and (not self.project_file in self.recent_projects):
+            self.recent_projects.append(self.project_file)
+            self.save_settings()
         self.opened_project_frame.show()
         self.choose_project_frame.hide()
         self.opened_project_frame.load_project(project)
         for action in self.project_actions:
             action.setEnabled(True)
-        if not os.path.exists(project.audio_folder):
+        if (
+            not self.project.tsv_file
+            or not self.project.audio_folder
+            or not self.project.audio_folder.is_dir()
+        ):
             result: int = QMessageBox.warning(
                 self,
                 self.tr("Warning"),
-                self.tr("The audio folder doesn't exist. Choose another one?"),
+                self.tr(
+                    "The audio folder or tsv file doesn't exist. Open project settings?"
+                ),
                 QMessageBox.StandardButton.Ok,
                 QMessageBox.Cancel,
             )
             if result == QMessageBox.Ok:
-                folder = QFileDialog.getExistingDirectory(
-                    self, self.tr("Open Audio Folder")
-                )
-                if folder:
-                    project.audio_folder = Path(folder)
-                    self.project_opened(project)
-        elif len(project.annotations) == 0:
+                self.show_project_settings()
+        elif len(self.project.annotations) == 0:
             message = QMessageBox()
             message.setText(
                 self.tr("No samples found in the audio folder: {folder}").format(
@@ -154,27 +162,48 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             message.exec()
         print("opened done")
 
-    @Slot()
-    def project_created(self, project):
-        self.project_opened(project)
+    def load_project_from_file(self, path: Path):
+        self.project_file = path
+        self.project = Project()
+        with open(path) as file:
+            self.project.load_json(file, self.project_file.parent)
+            if self.project.tsv_file:
+                with open(self.project.tsv_file, newline="") as file:
+                    self.project.load_tsv_file(file)
+            if self.project.audio_folder:
+                self.project.load_audio_files(self.project.audio_folder)
+        self.set_current_project(self.project)
+        print("loaded audio folder")
+
+    def save_current_project(self):
+        if not self.project_file:
+            return self.save_project_as()
+        with open(self.project_file, "w") as file:
+            self.project.save(file, self.project_file.parent)
+        with open(self.project.tsv_file, "w", newline="") as file:
+            self.project.save_annotations(file)
 
     @Slot()
     def new_project(self):
-        self.create_project_dialog.exec()
+        self.project_file = None
+        self.set_current_project(Project())
 
     @Slot()
     def open(self):
-        file, _ = QFileDialog.getOpenFileName(
+        result: Tuple[str, Any] = QFileDialog.getOpenFileName(
             self, self.tr("Open Project"), "", self.tr("Project Files (*.json)")
         )
+        file = result[0]
         if file:
-            self.project_opened(Project(file))
+            self.load_project_from_file(Path(file))
+
+    @Slot()
+    def recent_project_chosen(self, path: Path):
+        self.load_project_from_file(path)
 
     @Slot()
     def save_project(self):
-        if not self.project.project_file:
-            return self.save_project_as()
-        self.project.save()
+        self.save_current_project()
 
     @Slot()
     def save_project_as(self):
@@ -182,24 +211,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self, self.tr("Save Project"), "", self.tr("Project Files (*.json)")
         )
         if file:
-            self.project.project_file = Path(file)
-            self.project.save()
-            self.project_opened(self.project)
+            self.project_file = Path(file)
+            self.set_current_project(self.project)
+            self.save_current_project()
 
     @Slot()
     def delete_project(self):
-        if (
-            QMessageBox.warning(
-                self,
-                self.tr("Warning"),
-                self.tr("Delete the TSV and project file?"),
-                QMessageBox.StandardButton.Ok,
-                QMessageBox.Cancel,
-            )
-            == QMessageBox.Cancel
-        ):
+        result: int = QMessageBox.warning(
+            self,
+            self.tr("Warning"),
+            self.tr("Delete the TSV and project file?"),
+            QMessageBox.Ok,
+            QMessageBox.Cancel,
+        )
+        if result != QMessageBox.Ok:
             return
-        self.project.delete()
+        self.project.delete_tsv()
+        if self.project_file:
+            self.project_file.unlink()
+        self.project_file = None
         self.setWindowTitle(self.original_title)
         self.opened_project_frame.hide()
         self.choose_project_frame.show()
@@ -265,6 +295,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         if result == QMessageBox.Ok:
             self.opened_project_frame.delete_selected()
+
+    @Slot()
+    def show_project_settings(self):
+        self.project_settings_dialog.load_project(self.project)
+        self.project_settings_dialog.exec()
+
+    @Slot(dict)
+    def settings_confirmed(self, settings: Dict[str, Path]):
+        self.project.tsv_file = settings["tsv"]
+        self.project.audio_folder = settings["audio"]
+        if self.project.tsv_file.is_file():
+            with open(self.project.tsv_file, newline="") as file:
+                self.project.load_tsv_file(file)
+        self.project.load_audio_files(self.project.audio_folder)
+        self.opened_project_frame.load_project(self.project)
 
     @Slot()
     def configure_shortcuts(self):

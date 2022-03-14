@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ProjectSettingsDialog</class>
+ <widget class="QDialog" name="ProjectSettingsDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>430</width>
+    <height>143</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Project Settings</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="1" column="0">
+      <widget class="QLabel" name="audioFilesLabel">
+       <property name="text">
+        <string>Audio Folder</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QPushButton" name="audioFilesButton">
+       <property name="text">
+        <string>&amp;Open...</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="audioPathEdit"/>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="tsvPathEdit"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="tsvFileLabel">
+       <property name="text">
+        <string>TSV File</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QPushButton" name="selectTsvFileButton">
+       <property name="toolTip">
+        <string>Open or create the TSV that holds the annotations.</string>
+       </property>
+       <property name="text">
+        <string>Select...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>audioPathEdit</tabstop>
+  <tabstop>audioFilesButton</tabstop>
+  <tabstop>tsvPathEdit</tabstop>
+  <tabstop>selectTsvFileButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>ProjectSettingsDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>224</x>
+     <y>112</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>142</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>ProjectSettingsDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>292</x>
+     <y>118</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>142</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>audioFilesButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ProjectSettingsDialog</receiver>
+   <slot>open_audio_folder_pressed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>336</x>
+     <y>35</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>372</x>
+     <y>-130</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>selectTsvFileButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ProjectSettingsDialog</receiver>
+   <slot>select_tsv_file_pressed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>327</x>
+     <y>73</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>463</x>
+     <y>33</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>open_audio_folder_pressed()</slot>
+  <slot>select_tsv_file_pressed()</slot>
+ </slots>
+</ui>
