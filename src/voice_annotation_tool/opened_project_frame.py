@@ -5,20 +5,19 @@ Contains the audio player controls, the list of audio samples and a field to
 edit the annotation.
 """
 
-import os
-from typing import Dict, List
-from PySide6.QtCore import QModelIndex, Slot, QTime, QUrl
-from PySide6.QtMultimedia import QAudioDecoder
-from PySide6.QtWidgets import QFrame, QFileDialog, QMessageBox, QPushButton
+from typing import List
+from PySide6.QtCore import QModelIndex, Slot
+from PySide6.QtWidgets import QFrame, QFileDialog, QPushButton, QWidget
 
-from voice_annotation_tool.audio_playback_widget import AudioPlaybackWidget
+from typing import List
+from PySide6.QtCore import QModelIndex, Slot
+from PySide6.QtWidgets import QFrame, QFileDialog, QPushButton
 
 from .annotation_list_model import AnnotationListModel, ANNOTATION_ROLE
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
 from .project import Annotation, Project
 
-# Age groups how they are displayed on the CommonVoice website and how they are
-# stored in the exported tsv file.
+# Age groups how they are stored in the exported tsv file.
 AGES = [
     "",
     "teens",
@@ -32,6 +31,7 @@ AGES = [
     "nineteens",
 ]
 
+# Age groups how they are displayed on the CommonVoice website.
 AGE_STRINGS = [
     "",
     "< 19",
@@ -135,6 +135,24 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         )
         if len(project.annotations):
             self.annotationList.setCurrentIndex(self.annotationList.model().index(0, 0))
+        widgets: List[QWidget] = self.get_metadata_inputs()
+        widgets += self.get_playback_buttons()
+        for widget in widgets:
+            widget.setEnabled(len(project.annotations) > 0)
+
+    def get_metadata_inputs(self) -> List[QWidget]:
+        """
+        Returns a list of the QComboBoxes, QLineEdits, and buttons that are
+        used to edit the annotation metadata.
+        """
+        return [
+            self.ageInput,
+            self.genderInput,
+            self.accentEdit,
+            self.clientIdEdit,
+            self.importButton,
+            self.markUnchangedButton,
+        ]
 
     def delete_selected(self):
         """Delete the selected annotations and audio files."""

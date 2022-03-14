@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List
 from PySide6.QtCore import QSize, QTime, QUrl, Slot, Signal
 from PySide6.QtGui import QIcon
 from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer
@@ -42,7 +42,7 @@ class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
             self.buttonTooltips[button] = button.toolTip()
         return self.buttonTooltips[button]
 
-    def apply_shortcuts(self, shortcuts: Dict[int, str]):
+    def apply_shortcuts(self, shortcuts: List[str]):
         """
         Applies the shortcuts to the buttons.
         The shortcut is also added to the tooltip.

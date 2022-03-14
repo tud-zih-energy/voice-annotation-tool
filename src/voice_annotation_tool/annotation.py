@@ -53,8 +53,8 @@ class Annotation:
         self.path = Path(dict.get("path", ""))
         self.sentence = dict.get("sentence", "")
         self.age = dict.get("age", "")
-        self.gender = dict.get("gender")
-        self.accent = dict.get("accent")
+        self.gender = dict.get("gender", "")
+        self.accent = dict.get("accent", "")
         self.down_votes = int(dict.get("down_votes", 0))
         self.up_votes = int(dict.get("up_votes", 0))
 

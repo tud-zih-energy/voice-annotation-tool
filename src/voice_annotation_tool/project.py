@@ -46,7 +46,7 @@ class Project:
             if path.suffix in [".mp3", ".ogg", ".mp4", ".webm", ".avi", ".mkv", ".wav"]:
                 if not audio_file in self.annotations_by_path:
                     annotation = Annotation()
-                    annotation.path = path
+                    annotation.path = self.audio_folder.joinpath(path)
                     self.add_annotation(annotation)
 
     def annotate(self, annotation: Annotation, text: str) -> None:
