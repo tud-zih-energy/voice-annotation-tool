@@ -33,6 +33,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.original_title = self.windowTitle()
         self.project: Project = Project()
         self.project_file: Path | None = None
+        self.last_saved_hash: int = 0
         self.settings_file: Path
         self.recent_projects: List[Path] = []
         self.shortcuts = []
@@ -124,6 +125,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def set_current_project(self, project: Project):
         """Set the current project and load it into the GUI"""
         self.project = project
+        self.last_saved_hash = hash(project)
         if self.project_file:
             self.setWindowTitle(self.project_file.name)
         else:
@@ -178,6 +180,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def save_current_project(self):
         if not self.project_file:
             return self.save_project_as()
+        self.last_saved_hash = hash(self.project)
         with open(self.project_file, "w") as file:
             self.project.save(file, self.project_file.parent)
         with open(self.project.tsv_file, "w", newline="") as file:
@@ -226,6 +229,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         if result != QMessageBox.Ok:
             return
+        self.last_saved_hash = 0
         self.project.delete_tsv()
         if self.project_file:
             self.project_file.unlink()
@@ -238,6 +242,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def quit(self):
+        if self.last_saved_hash and hash(self.project) != self.last_saved_hash:
+            message = QMessageBox(self)
+            message.setWindowTitle(self.tr("Warning"))
+            message.setIcon(QMessageBox.Warning)
+            message.setText(self.tr("You have unsaved changes."))
+            message.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
+            result = message.exec()
+            if result == QMessageBox.Save:
+                self.save_current_project()
+                if not self.project_file:
+                    return
+            elif result == QMessageBox.Cancel:
+                return
         exit()
 
     @Slot()

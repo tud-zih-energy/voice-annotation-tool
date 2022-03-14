@@ -141,3 +141,6 @@ class Project:
         for annotation in self.annotations:
             data.append({annotation.path.name: annotation.sentence})
         json.dump(data, outfile)
+
+    def __hash__(self):
+        return hash(frozenset(map(hash, self.annotations)))
