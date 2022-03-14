@@ -11,16 +11,33 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        include:
+          - build-name: 'Windows 8.1+ 64-bit'
+            python-version: 3.10
+            platform: windows-latest
+            arch: 'x64'
+          - build-name: 'Ubuntu'
+            python-version: 3.10
+            platform: ubuntu-latest
+            arch: 'x64'
+
+    name: ${{ matrix.build-name }}
+
+    runs-on: ${{ matrix.platform }}
+
     runs-on: [ubuntu-latest, windows-latest]
     env:
       QT_QPA_PLATFORM: minimal
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.10
+    - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: "3.10"
-    - name: Install Linux dependencies
+        python-version: ${{ matrix.python-version }}
+        architecture: ${{ matrix.arch }}
+    - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install gstreamer1.0-qt5 libgstreamer1.0 libgstreamer-plugins-base1.0 ffmpeg libsm6 libxext6 libegl1-mesa xvfb -y
