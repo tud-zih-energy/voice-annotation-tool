@@ -301,7 +301,7 @@
     <message>
         <location filename="../ui/project_settings_dialog.ui" line="14"/>
         <source>Project Settings</source>
-        <translation>Projecteinstellungen</translation>
+        <translation>Projekteinstellungen</translation>
     </message>
     <message>
         <location filename="../ui/project_settings_dialog.ui" line="22"/>
