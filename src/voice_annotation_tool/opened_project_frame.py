@@ -5,20 +5,19 @@ Contains the audio player controls, the list of audio samples and a field to
 edit the annotation.
 """
 
-import os
-from typing import Dict, List
-from PySide6.QtCore import QModelIndex, Slot, QTime, QUrl
-from PySide6.QtMultimedia import QAudioDecoder
-from PySide6.QtWidgets import QFrame, QFileDialog, QMessageBox, QPushButton, QWidget
+from typing import List
+from PySide6.QtCore import QModelIndex, Slot
+from PySide6.QtWidgets import QFrame, QFileDialog, QPushButton, QWidget
 
-from voice_annotation_tool.audio_playback_widget import AudioPlaybackWidget
+from typing import List
+from PySide6.QtCore import QModelIndex, Slot
+from PySide6.QtWidgets import QFrame, QFileDialog, QPushButton
 
 from .annotation_list_model import AnnotationListModel, ANNOTATION_ROLE
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
 from .project import Annotation, Project
 
-# Age groups how they are displayed on the CommonVoice website and how they are
-# stored in the exported tsv file.
+# Age groups how they are stored in the exported tsv file.
 AGES = [
     "",
     "teens",
@@ -32,6 +31,7 @@ AGES = [
     "nineteens",
 ]
 
+# Age groups how they are displayed on the CommonVoice website.
 AGE_STRINGS = [
     "",
     "< 19",
