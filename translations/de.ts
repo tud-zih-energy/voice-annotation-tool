@@ -35,6 +35,19 @@
     </message>
 </context>
 <context>
+    <name>Application</name>
+    <message>
+        <location filename="../src/voice_annotation_tool/application.py" line="38"/>
+        <source>Utility to annotate short voice samples</source>
+        <translation>Werkzeug zum Annotieren von kurzen Audioaufnahmen</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/application.py" line="39"/>
+        <source>Project file to open.</source>
+        <translation>Zu öffnende Projektdatei.</translation>
+    </message>
+</context>
+<context>
     <name>AudioPlaybackWidget</name>
     <message>
         <location filename="../ui/audio_playback_widget.ui" line="44"/>
@@ -75,6 +88,11 @@
         <location filename="../ui/audio_playback_widget.ui" line="118"/>
         <source>Ctrl+PgDown</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/audio_playback_widget.py" line="72"/>
+        <source>Error playing audio: {error}</source>
+        <translation>Fehler beim abspielen: {error}</translation>
     </message>
 </context>
 <context>
@@ -123,9 +141,19 @@
         <translation>Projekt &amp;Öffnen...</translation>
     </message>
     <message>
+        <location filename="../ui/main.ui" line="77"/>
+        <source>Ctrl+O</source>
+        <translation></translation>
+    </message>
+    <message>
         <location filename="../ui/main.ui" line="82"/>
         <source>&amp;Quit</source>
         <translation>&amp;Beenden</translation>
+    </message>
+    <message>
+        <location filename="../ui/main.ui" line="85"/>
+        <source>Ctrl+Q</source>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="93"/>
@@ -133,14 +161,29 @@
         <translation>Projekt &amp;Speichern</translation>
     </message>
     <message>
+        <location filename="../ui/main.ui" line="96"/>
+        <source>Ctrl+S</source>
+        <translation></translation>
+    </message>
+    <message>
         <location filename="../ui/main.ui" line="104"/>
         <source>Save Project &amp;As...</source>
         <translation>Projekt Speichern &amp;Unter...</translation>
     </message>
     <message>
+        <location filename="../ui/main.ui" line="107"/>
+        <source>Ctrl+Shift+S</source>
+        <translation></translation>
+    </message>
+    <message>
         <location filename="../ui/main.ui" line="112"/>
         <source>&amp;New Project...</source>
         <translation>&amp;Neues Projekt...</translation>
+    </message>
+    <message>
+        <location filename="../ui/main.ui" line="115"/>
+        <source>Ctrl+N</source>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ui/main.ui" line="120"/>
@@ -188,7 +231,7 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="192"/>
+        <location filename="../ui/main.ui" line="195"/>
         <source>&amp;Project Settings</source>
         <translation>&amp;Projekteinstellungen</translation>
     </message>
@@ -203,34 +246,102 @@
         <translation>Über &amp;QT</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="77"/>
-        <source>Ctrl+O</source>
-        <translation></translation>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="93"/>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="148"/>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="223"/>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="245"/>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="308"/>
+        <source>Warning</source>
+        <translation>Warnung</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="85"/>
-        <source>Ctrl+Q</source>
-        <translation></translation>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="95"/>
+        <source>Failed to parse the configuration file: {error}</source>
+        <translation>Fehler beim Lesen der Konfigurationsdatei: {error}</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="96"/>
-        <source>Ctrl+S</source>
-        <translation></translation>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="132"/>
+        <source>Unsaved Project</source>
+        <translation>Ungespeichertes Projekt</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="107"/>
-        <source>Ctrl+Shift+S</source>
-        <translation></translation>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="149"/>
+        <source>The audio folder or tsv file doesn&apos;t exist. Open project settings?</source>
+        <translation>Der Audioordner oder die TSV-Datei existiert nicht. Projekteinstellungen öffnen?</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="115"/>
-        <source>Ctrl+N</source>
-        <translation></translation>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="158"/>
+        <source>No samples found in the audio folder: {folder}</source>
+        <translation>Keine Dateien im Audioordner gefunden: {folder}</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="195"/>
+        <source>Open Project</source>
+        <translation>Projekt Öffnen</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="196"/>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="213"/>
+        <source>Project Files (*.json)</source>
+        <translation>Projektdateien (*.json)</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="212"/>
+        <source>Save Project</source>
+        <translation>Projekt Speichern</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="224"/>
+        <source>Delete the TSV and project file?</source>
+        <translation>Die TSV und Projektdatei löschen?</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="247"/>
+        <source>You have unsaved changes.</source>
+        <translation>Es gibt ungespeicherte Änderungen.</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="267"/>
+        <source>Import CSV</source>
+        <translation>CSV Importieren</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="268"/>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="278"/>
+        <source>CSV Files (*.csv)</source>
+        <translation>CSV Dateien (*.csv)</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="277"/>
+        <source>Export CSV</source>
+        <translation>CSV Exportieren</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="287"/>
+        <source>Import Json</source>
+        <translation>Json Importieren</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="288"/>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="298"/>
+        <source>Json Files (*.json)</source>
+        <translation>Json Dateien (*.json)</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="297"/>
+        <source>Export Json</source>
+        <translation>Json Exportieren</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/main_window.py" line="309"/>
+        <source>Really delete selected annotations and audio files?</source>
+        <translation>Die ausgewählten Annotationen und Audiodateien wirklich löschen?</translation>
     </message>
 </context>
 <context>
     <name>OpenedProjectFrame</name>
     <message>
+        <location filename="../src/voice_annotation_tool/opened_project_frame.py" line="62"/>
         <location filename="../ui/opened_project_frame.ui" line="77"/>
         <source>[Multiple]</source>
         <translation>[Mehrere]</translation>
@@ -335,6 +446,11 @@
         <location filename="../ui/shortcut_settings_dialog.ui" line="14"/>
         <source>Shortcut Settings</source>
         <translation>Tastenkürzel-Einstellungen</translation>
+    </message>
+    <message>
+        <location filename="../src/voice_annotation_tool/shortcut_settings_dialog.py" line="73"/>
+        <source>{shortcut} is already used elsewhere in the application.</source>
+        <translation>{shortcut} wird bereits anderswo verwendet.</translation>
     </message>
 </context>
 </TS>
