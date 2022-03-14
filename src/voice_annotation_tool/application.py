@@ -14,7 +14,7 @@ from .project import Project
 
 def get_data_dir() -> Path:
     """Returns the directory where application data is stored."""
-    data_dirs = QStandardPaths.standardLocations(QStandardPaths.AppDataLocation)
+    data_dirs = QStandardPaths.standardLocations(QStandardPaths.AppLocalDataLocation)
     data_dir = Path(data_dirs[0]).parent.joinpath("voice-annotation-tool")
     if not data_dir.exists():
         data_dir.mkdir(parents=True)
