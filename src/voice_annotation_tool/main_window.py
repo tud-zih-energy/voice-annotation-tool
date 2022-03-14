@@ -182,7 +182,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self, self.tr("Save Project"), "", self.tr("Project Files (*.json)")
         )
         if file:
-            self.project.project_file = file
+            self.project.project_file = Path(file)
             self.project.save()
             self.project_opened(self.project)
 
