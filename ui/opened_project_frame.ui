@@ -195,6 +195,16 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>ageInput</tabstop>
+  <tabstop>genderInput</tabstop>
+  <tabstop>importButton</tabstop>
+  <tabstop>clientIdEdit</tabstop>
+  <tabstop>accentEdit</tabstop>
+  <tabstop>markUnchangedButton</tabstop>
+  <tabstop>annotationEdit</tabstop>
+  <tabstop>annotationList</tabstop>
+ </tabstops>
  <resources>
   <include location="../resources.qrc"/>
  </resources>

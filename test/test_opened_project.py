@@ -108,3 +108,9 @@ def test_delete_removes_files(project_frame: OpenedProjectFrame):
     selected: Annotation = project_frame.get_selected_annotations()[0]
     project_frame.delete_selected()
     assert not selected.path.exists()
+
+
+def test_buttons_disabled_without_samples(project_frame: OpenedProjectFrame):
+    project_frame.load_project(Project(""))
+    assert not project_frame.ageInput.isEnabled()
+    assert not project_frame.get_playback_buttons()[0].isEnabled()
