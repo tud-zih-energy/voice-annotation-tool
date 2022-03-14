@@ -247,7 +247,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             message.setWindowTitle(self.tr("Warning"))
             message.setIcon(QMessageBox.Warning)
             message.setText(self.tr("You have unsaved changes."))
-            message.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
+            message.setStandardButtons(
+                QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel
+            )
             result = message.exec()
             if result == QMessageBox.Save:
                 self.save_current_project()
