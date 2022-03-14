@@ -57,3 +57,6 @@ class Annotation:
         self.accent = dict.get("accent", "")
         self.down_votes = int(dict.get("down_votes", 0))
         self.up_votes = int(dict.get("up_votes", 0))
+
+    def __hash__(self):
+        return hash(frozenset(self.to_dict().items()))
