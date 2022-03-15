@@ -105,3 +105,15 @@ abc\tsample.mp3\ttext\t2\t2\ttwenties\tother\taccent
 abc\tsample.mp3\ttext\t2\t2\ttwenties\tother\taccent"""
     project.load_tsv_file(StringIO(content))
     assert len(project.annotations) == 1
+
+
+def test_duplicates_get_overwritten():
+    project = Project()
+    annotation = Annotation()
+    annotation.path = Path("sample.mp3")
+    project.add_annotation(annotation)
+    project.add_annotation(annotation)
+    content = """client_id\tpath\tsentence\tup_votes\tdown_votes\tage\tgender\taccent
+abc\tsample.mp3\ttext\t2\t2\ttwenties\tother\taccent"""
+    project.load_tsv_file(StringIO(content))
+    assert len(project.annotations) == 1
