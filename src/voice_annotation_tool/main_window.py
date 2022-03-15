@@ -168,7 +168,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.project_file = path
         self.project = Project()
         with open(path) as file:
-            self.project.load_json(file, self.project_file.parent)
             if not self.project.load_json(file, self.project_file.parent):
                 message = QMessageBox()
                 message.setIcon(QMessageBox.Critical)
