@@ -201,8 +201,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.last_saved_hash = hash(self.project)
         with open(self.project_file, "w") as file:
             self.project.save(file, self.project_file.parent)
-        with open(self.project.tsv_file, "w", newline="") as file:
-            self.project.save_annotations(file)
+        if self.project.tsv_file and self.project.tsv_file.parent.is_dir():
+            with open(self.project.tsv_file, "w", newline="") as file:
+                self.project.save_annotations(file)
+        else:
+            message = QMessageBox()
+            message.setText(self.tr("The TSV file path is invalid. Please change it in the project settings"))
+            message.setWindowTitle(self.tr("Warning"))
+            message.setIcon(QMessageBox.Warning)
+            message.exec()
 
     @Slot()
     def new_project(self):
