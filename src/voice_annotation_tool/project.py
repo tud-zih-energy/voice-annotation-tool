@@ -43,11 +43,11 @@ class Project:
             return
         for audio_file in os.listdir(self.audio_folder):
             path = Path(audio_file)
-            if path.suffix in [".mp3", ".ogg", ".mp4", ".webm", ".avi", ".mkv", ".wav"]:
-                if not audio_file in self.annotations_by_path:
-                    annotation = Annotation()
-                    annotation.path = self.audio_folder.joinpath(path)
-                    self.add_annotation(annotation)
+            if not path.suffix in [".mp3", ".ogg", ".mp4", ".webm", ".avi", ".mkv", ".wav"]:
+                continue
+            annotation = Annotation()
+            annotation.path = self.audio_folder.joinpath(path)
+            self.add_annotation(annotation)
 
     def annotate(self, annotation: Annotation, text: str) -> None:
         """Changes the text of the given annotation."""
@@ -110,10 +110,18 @@ class Project:
         self.annotations.remove(annotation)
 
     def add_annotation(self, annotation: Annotation):
+        """Adds the annotation to the project. If an annotation with
+        the same path already exists it is replaced. If the audio
+        folder is specified, it is added to the annotation path.
+        """
         if self.audio_folder:
             annotation.path = self.audio_folder.joinpath(annotation.path)
+        if annotation.path.name in self.annotations_by_path:
+            existing = self.annotations.index(self.annotations_by_path[annotation.path.name])
+            self.annotations[existing] = annotation
+        else:
+            self.annotations.append(annotation)
         self.annotations_by_path[annotation.path.name] = annotation
-        self.annotations.append(annotation)
 
     def importCSV(self, infile: StringIO):
         reader = csv.reader(infile, delimiter=";")
