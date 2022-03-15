@@ -95,7 +95,7 @@ class Project:
             annotation = Annotation(row)
             if annotation.path.name in self.modified_annotations:
                 annotation.modified = True
-            self.add_annotation(annotation)
+            self.add_annotation(annotation, overwrite=True)
         print("loaded csv")
 
     def delete_tsv(self):
@@ -109,16 +109,19 @@ class Project:
         self.annotations_by_path.pop(annotation.path.name)
         self.annotations.remove(annotation)
 
-    def add_annotation(self, annotation: Annotation):
+    def add_annotation(self, annotation: Annotation, overwrite=False):
         """Adds the annotation to the project. If an annotation with
-        the same path already exists it is replaced. If the audio
-        folder is specified, it is added to the annotation path.
+        the same path already exists and overwrite is true it is replaced.
+        If the audio folder is specified, it is added to the annotation path.
         """
         if self.audio_folder:
             annotation.path = self.audio_folder.joinpath(annotation.path)
         if annotation.path.name in self.annotations_by_path:
-            existing = self.annotations.index(self.annotations_by_path[annotation.path.name])
-            self.annotations[existing] = annotation
+            if overwrite:
+                existing = self.annotations.index(self.annotations_by_path[annotation.path.name])
+                self.annotations[existing] = annotation
+            else:
+                return
         else:
             self.annotations.append(annotation)
         self.annotations_by_path[annotation.path.name] = annotation
