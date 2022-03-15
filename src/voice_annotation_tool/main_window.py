@@ -169,11 +169,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.project = Project()
         with open(path) as file:
             self.project.load_json(file, self.project_file.parent)
-            if self.project.tsv_file:
+            if self.project.tsv_file and self.project.tsv_file.is_file():
                 with open(self.project.tsv_file, newline="") as file:
                     self.project.load_tsv_file(file)
+            else:
+                message = QMessageBox()
+                message.setText(self.tr("The TSV file doesn't exist. Please change it in the project settings"))
+                message.setWindowTitle(self.tr("Warning"))
+                message.setIcon(QMessageBox.Warning)
+                message.exec()
             if self.project.audio_folder:
                 self.project.load_audio_files(self.project.audio_folder)
+            else:
+                message = QMessageBox()
+                message.setText(self.tr("The audio folder doesn't exist. Please change it in the project settings"))
+                message.setWindowTitle(self.tr("Warning"))
+                message.setIcon(QMessageBox.Warning)
+                message.exec()
         self.set_current_project(self.project)
         print("loaded audio folder")
 
