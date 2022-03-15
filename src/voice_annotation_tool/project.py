@@ -22,7 +22,7 @@ class Project:
         self.annotations: List[Annotation] = []
         self.modified_annotations: List[str] = []
 
-    def load_json(self, file: TextIO, location: Path = Path()):
+    def load_json(self, file: TextIO, location: Path = Path()) -> bool:
         """Loads a project from a json file.
 
         Paths to the audio folder and to the tsv file are loaded relative
@@ -30,9 +30,13 @@ class Project:
         folder.
         """
         data = json.load(file)
+        if not all(["modified_annotations" in data, "audio_folder" in data,
+                "tsv_file" in data]):
+            return False
         self.modified_annotations = data["modified_annotations"]
         self.audio_folder = location.joinpath(data.get("audio_folder"))
         self.tsv_file = location.joinpath(data.get("tsv_file"))
+        return True
 
     def load_audio_files(self, folder: Path):
         """

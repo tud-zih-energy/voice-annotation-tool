@@ -169,6 +169,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.project = Project()
         with open(path) as file:
             self.project.load_json(file, self.project_file.parent)
+            if not self.project.load_json(file, self.project_file.parent):
+                message = QMessageBox()
+                message.setIcon(QMessageBox.Critical)
+                message.setWindowTitle(self.tr("Error"))
+                message.setText(self.tr("Invalid project."))
+                return message.exec()
             if self.project.tsv_file and self.project.tsv_file.is_file():
                 with open(self.project.tsv_file, newline="") as file:
                     self.project.load_tsv_file(file)
