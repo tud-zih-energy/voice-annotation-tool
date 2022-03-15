@@ -6,7 +6,7 @@ the GUI.
 import sys
 from pathlib import Path
 import traceback
-from PySide6.QtCore import QCommandLineParser, QStandardPaths
+from PySide6.QtCore import QCommandLineParser, QLocale, QStandardPaths, QTranslator
 from PySide6.QtWidgets import QApplication, QErrorMessage
 from .main_window import MainWindow
 
@@ -39,6 +39,10 @@ class Application(QApplication):
         parser.addHelpOption()
         parser.addVersionOption()
         parser.process(self)
+
+        translator = QTranslator()
+        translator.load(QLocale(), "translations/")
+        self.installTranslator(translator)
 
         self.main_window = MainWindow()
         self.main_window.load_settings(get_settings_file())
