@@ -85,3 +85,23 @@ abc\tsample.mp3\ttext\t2\t2\ttwenties\tother\taccent"""
     assert annotation.down_votes == 2
     assert annotation.gender == "other"
     assert annotation.path == Path("tmp/audio/sample.mp3")
+
+
+def test_no_duplicates_when_loading_files(tmpdir):
+    audio_dir = Path(tmpdir)
+    for file_num in range(5):
+        audio_dir.joinpath(str(file_num) + ".mp3").touch()
+    project = Project()
+    project.load_audio_files(audio_dir)
+    project.load_audio_files(audio_dir)
+    assert len(project.annotations) == 5
+
+
+def test_no_duplicates_when_loading_tsv():
+    project = Project()
+    content = """client_id\tpath\tsentence\tup_votes\tdown_votes\tage\tgender\taccent
+abc\tsample.mp3\ttext\t2\t2\ttwenties\tother\taccent
+abc\tsample.mp3\ttext\t2\t2\ttwenties\tother\taccent
+abc\tsample.mp3\ttext\t2\t2\ttwenties\tother\taccent"""
+    project.load_tsv_file(StringIO(content))
+    assert len(project.annotations) == 1
