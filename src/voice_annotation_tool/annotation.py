@@ -2,10 +2,11 @@ from pathlib import Path
 
 
 class Annotation:
-    """Stores the annotated properties for one sample."""
+    """Stores the metadata of one sample.
 
-    # An ordered list of the members of an annotation that are read and written
-    # to and from a tsv file.
+    The fields are taken from the CommonVoice dataset.
+    """
+
     TSV_HEADER_MEMBERS = [
         "client_id",
         "path",
@@ -16,10 +17,16 @@ class Annotation:
         "gender",
         "accent",
     ]
+    """An ordered list of the members of an annotation that are read
+    and written to and from a tsv file.
+    """
 
     def __init__(self, dict=None):
         self.client_id: str = "0"
         self.path: Path
+        """The path to the audio file of this annotation.
+
+        Only the file name is saved in the tsv file."""
         self.sentence: str = ""
         self.up_votes: int = 0
         self.down_votes: int = 0
@@ -27,13 +34,16 @@ class Annotation:
         self.gender: str = ""
         self.accent: str = ""
         self.modified: bool = False
+        """True if the text of this annotation was changed since the
+        project was created.
+        """
 
-        if dict is not None:
+        if dict:
             self.from_dict(dict)
 
     def to_dict(self):
-        """
-        Returns a dictionary ready to be written to a csv file by a DictWriter.
+        """Returns a dictionary ready to be written to a csv file by
+        a DictWriter.
         """
         properties = {
             "client_id": self.client_id,
@@ -48,7 +58,10 @@ class Annotation:
         return properties
 
     def from_dict(self, dict):
-        """Loads an annotation from deserialized csv row."""
+        """Loads an annotation from deserialized csv row.
+
+        It is not required that all fields are set.
+        """
         self.client_id = dict.get("client_id", "")
         self.path = Path(dict.get("path", ""))
         self.sentence = dict.get("sentence", "")

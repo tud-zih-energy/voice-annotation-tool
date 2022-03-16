@@ -1,9 +1,3 @@
-"""
-The main widget.
-Holds a project list on startup, and the project view when a project was
-opened.
-"""
-
 from json.decoder import JSONDecodeError
 import json
 from pathlib import Path
@@ -21,6 +15,12 @@ from .main_ui import Ui_MainWindow
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
+    """The main widget.
+
+    Holds a list of recent projects on startup, and the project view
+    when a project was opened. Handles loading and saving the settings.
+    """
+
     settings_changed = Signal()
 
     def __init__(self):
@@ -32,12 +32,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.shortcut_settings_dialog = ShortcutSettingsDialog()
         self.opened_project_frame = OpenedProjectFrame()
         self.choose_project_frame = ChooseProjectFrame()
+
         self.original_title = self.windowTitle()
+        "The window title before it was changed to the project name."
+
         self.project: Project = Project()
+        """The currently loaded project.
+
+        Even if the user didn't open a project, an empty unsaved project
+        is loaded.
+        """
+
         self.project_file: Path | None = None
+        """The path the current project was saved to.
+
+        None if the project was never saved."""
+
         self.last_saved_hash: int = 0
+        """The hash of the project when it was last saved.
+
+        Zero if no project is loaded."""
+
         self.recent_projects: List[Path] = []
-        self.shortcuts = []
+        """List of recently opened projects.
+
+        This list should only contain existing paths.
+        """
 
         # Layout
         self.verticalLayout.addWidget(self.opened_project_frame)
@@ -76,6 +96,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionDeleteSelected,
             self.actionProjectSettings,
         ]
+        "Actions that can only be used with a project open."
 
     def load_settings(self, file: TextIO):
         """Loads the recently used projects into the

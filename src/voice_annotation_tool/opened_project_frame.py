@@ -1,10 +1,3 @@
-"""
-The main interface used to edit a project.
-
-Contains the audio player controls, the list of audio samples and a field to
-edit the annotation.
-"""
-
 from typing import List
 from PySide6.QtCore import QModelIndex, Slot
 from PySide6.QtWidgets import QFrame, QFileDialog, QPushButton, QWidget
@@ -17,7 +10,6 @@ from .annotation_list_model import AnnotationListModel, ANNOTATION_ROLE
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
 from .project import Annotation, Project
 
-# Age groups how they are stored in the exported tsv file.
 AGES = [
     "",
     "teens",
@@ -30,8 +22,8 @@ AGES = [
     "eighties",
     "nineteens",
 ]
+"Age groups how they are stored in the exported tsv file."
 
-# Age groups how they are displayed on the CommonVoice website.
 AGE_STRINGS = [
     "",
     "< 19",
@@ -44,15 +36,22 @@ AGE_STRINGS = [
     "80 - 89",
     "> 89",
 ]
+"Age groups how they are displayed on the CommonVoice website."
 
 GENDERS = ["", "male", "female", "other"]
+"List of possible genders."
 
 
 class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
+    """The main interface used to edit a project.
+
+    Contains the audio player controls, the list of audio samples
+    and a text field where the annotation text can be edited.
+    """
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-
         self.audioPlaybackWidget.next_pressed.connect(self.next_pressed)
         self.audioPlaybackWidget.previous_pressed.connect(self.previous_pressed)
         self.project: Project
@@ -62,17 +61,22 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.ageInput.addItem(self.tr("[Multiple]"))
 
     def get_playback_buttons(self) -> List[QPushButton]:
+        """Returns a list of buttons used to control the audio playback."""
         return self.audioPlaybackWidget.playback_buttons
 
+    def get_shortcuts(self) -> List[str]:
+        """Returns a list of shortcuts for the audio playback buttons."""
+        return self.audioPlaybackWidget.get_shortcuts()
+
     def apply_shortcuts(self, shortcuts: List[str]):
-        """
-        Applies the shortcuts to the buttons.
+        """Applies the shortcuts to the buttons.
+
         The shortcut is also added to the tooltip.
         """
         self.audioPlaybackWidget.apply_shortcuts(shortcuts)
 
     def update_metadata_header(self):
-        """Loads the profile metadata of the selected files into the GUI."""
+        """Loads the metadata of the selected annotations into the GUI."""
         first = True
         age = None
         gender = None
@@ -127,23 +131,29 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
             input.blockSignals(False)
 
     def load_project(self, project: Project):
-        """Loads the project's samples and annotations into the GUI."""
+        """Loads the project's annotations into the GUI."""
         self.project = project
         self.annotationList.setModel(AnnotationListModel(self.project))
         self.annotationList.selectionModel().selectionChanged.connect(
             self.selection_changed
         )
+        self.annotationEdit.clear()
         if len(project.annotations):
             self.annotationList.setCurrentIndex(self.annotationList.model().index(0, 0))
+        self.update_metadata_widgets()
+
+    def update_metadata_widgets(self):
+        """Disables or enables the widgets used to edit the annotation
+        metadata depending on if there are any annotations in the project.
+        """
         widgets: List[QWidget] = self.get_metadata_inputs()
         widgets += self.get_playback_buttons()
         for widget in widgets:
-            widget.setEnabled(len(project.annotations) > 0)
+            widget.setEnabled(len(self.project.annotations) > 0)
 
     def get_metadata_inputs(self) -> List[QWidget]:
-        """
-        Returns a list of the QComboBoxes, QLineEdits, and buttons that are
-        used to edit the annotation metadata.
+        """Returns a list of the QComboBoxes, QLineEdits, and buttons
+        that are used to edit the annotation metadata.
         """
         return [
             self.ageInput,
@@ -152,6 +162,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
             self.clientIdEdit,
             self.importButton,
             self.markUnchangedButton,
+            self.annotationEdit,
         ]
 
     def delete_selected(self):
@@ -159,6 +170,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         for selected in self.get_selected_annotations():
             self.project.delete_annotation(selected)
         self.annotationList.model().layoutChanged.emit()
+        self.update_metadata_widgets()
 
     def get_selected_annotations(self) -> List[Annotation]:
         """Returns all the selected annotations in the annotation panel."""
@@ -215,11 +227,12 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
 
     @Slot()
     def text_changed(self):
-        text = self.annotationEdit.toPlainText()
+        text: str = self.annotationEdit.toPlainText()
         selected_annotation: Annotation = self.annotationList.currentIndex().data(
             ANNOTATION_ROLE
         )
-        self.project.annotate(selected_annotation, text)
+        if selected_annotation:
+            self.project.annotate(selected_annotation, text)
 
     @Slot()
     def selection_changed(self, selected, deselected):
@@ -230,6 +243,8 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
             index.row() < len(self.project.annotations) - 1
         )
         annotation: Annotation = index.data(ANNOTATION_ROLE)
+        if not annotation:
+            return
         self.annotationEdit.blockSignals(True)
         self.annotationEdit.setText(annotation.sentence)
         self.annotationEdit.blockSignals(False)

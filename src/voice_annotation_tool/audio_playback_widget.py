@@ -34,17 +34,24 @@ class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
         self.reload_button_tooltips()
 
     def get_button_tooltip(self, button: QPushButton) -> str:
-        """
-        Returns the original tooltip of a button.
+        """Returns the original tooltip of a button.
+
         Stores the current tooltip if it is accessed for the first time.
         """
         if not button in self.buttonTooltips:
             self.buttonTooltips[button] = button.toolTip()
         return self.buttonTooltips[button]
 
+    def get_shortcuts(self) -> List[str]:
+        """Returns a list of the shortcuts of the buttons."""
+        shortcuts: List[str] = []
+        for button in self.playback_buttons:
+            shortcuts.append(str(button.shortcut()))
+        return shortcuts
+
     def apply_shortcuts(self, shortcuts: List[str]):
-        """
-        Applies the shortcuts to the buttons.
+        """Applies the shortcuts to the buttons.
+
         The shortcut is also added to the tooltip.
         """
         for buttonNum in range(len(shortcuts)):
@@ -60,9 +67,8 @@ class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
             )
 
     def load_file(self, file: Path) -> None:
-        """
-        Loads the given audio file which can then be played by pressing
-        the pause/play button.
+        """Loads the given audio file which can then be played by
+        pressing the pause/play button.
         """
         self.player.setSource(QUrl.fromLocalFile(file))
 

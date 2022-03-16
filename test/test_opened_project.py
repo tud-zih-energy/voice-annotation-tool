@@ -114,3 +114,11 @@ def test_buttons_disabled_without_samples(project_frame: OpenedProjectFrame):
     project_frame.load_project(Project())
     assert not project_frame.ageInput.isEnabled()
     assert not project_frame.get_playback_buttons()[0].isEnabled()
+
+
+def test_text_cleared_after_opening_project(project_frame: OpenedProjectFrame):
+    project = Project()
+    project.add_annotation(Annotation({"sentence": "text"}))
+    project_frame.load_project(project)
+    project_frame.load_project(Project())
+    assert project_frame.annotationEdit.toPlainText() == ""
