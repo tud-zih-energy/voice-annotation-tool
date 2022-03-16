@@ -220,11 +220,12 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
 
     @Slot()
     def text_changed(self):
-        text = self.annotationEdit.toPlainText()
+        text: str = self.annotationEdit.toPlainText()
         selected_annotation: Annotation = self.annotationList.currentIndex().data(
             ANNOTATION_ROLE
         )
-        self.project.annotate(selected_annotation, text)
+        if selected_annotation:
+            self.project.annotate(selected_annotation, text)
 
     @Slot()
     def selection_changed(self, selected, deselected):
