@@ -6,20 +6,22 @@ from .choose_project_frame_ui import Ui_ChooseProjectFrame
 
 
 class ChooseProjectFrame(QFrame, Ui_ChooseProjectFrame):
-    """
-    Shown on startup, a list of recent projects.
+    """Shown on startup, a list of recent projects.
 
     Has two buttons to open and create projects.
     """
 
     create_project_pressed = Signal()
+    "Emitted when the create project button is pressed."
     project_opened = Signal(Path)
+    "Emitted when a recent project was selected."
 
     def __init__(self):
         super().__init__()
         self.setupUi(self)
 
     def load_recent_projects(self, paths: List[Path]):
+        """Loads the given paths into the list of recent projects."""
         for path in paths:
             item = QListWidgetItem(str(path))
             self.recentProjectsList.addItem(item)

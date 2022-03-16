@@ -16,17 +16,16 @@ def get_data_dir() -> Path:
 
 
 def get_settings_file() -> Path:
-    """
-    Returns the json file which stores a list of recently used projects and the
-    shortcuts.
+    """Returns the json file which stores a list of recently used
+    projects and the shortcuts.
     """
     return get_data_dir().joinpath("settings.json")
 
 
 class Application(QApplication):
-    """
-    The application that handles the initial program state and initialization of
-    the GUI.
+    """The QApplication instance that handles the initial program state,
+    command line arguments, translation, error handling and
+    initialization of the GUI.
     """
 
     def __init__(self, args) -> None:
@@ -58,6 +57,8 @@ class Application(QApplication):
         self.main_window.show()
 
     def excepthook(self, exc_type, exc_value, exc_tb):
+        """Method used to show occured exception in a dialog instead of
+        crashing the program."""
         if self.error_dialog:
             # Only show one error message to prevent dialog spam.
             self.error_dialog.close()

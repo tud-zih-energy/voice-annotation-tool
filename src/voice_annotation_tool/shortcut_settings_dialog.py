@@ -17,6 +17,7 @@ class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
     """Dialog used to configure the shortcuts of the buttons."""
 
     shortcuts_confirmed = Signal(object)
+    "Emitted when the dialog is closed by pressing ok."
 
     def __init__(self):
         super().__init__()
@@ -25,18 +26,15 @@ class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
         self.existing: List[str] = []
 
     def load_existing(self, widget: QWidget):
-        """
-        Load the shortcuts of the actions of the given widget into a list which
-        is used to determine if a shortcut is already used or not.
+        """Loads the shortcuts used by the given widget into a list.
+
+        This is used to determine if a shortcut is already used or not.
         """
         for action in widget.actions():
             self.existing.append(action.shortcut().toString())
 
     def load_buttons(self, buttons: List[QPushButton]):
-        """
-        Generates widgets to edit the shortcuts of the buttons inside the
-        given layout.
-        """
+        """Generates widgets which can be used to edit the shortcuts."""
         for button in buttons:
             if not isinstance(button, QPushButton):
                 continue
