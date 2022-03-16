@@ -1,4 +1,5 @@
 from io import StringIO
+import json
 from pathlib import Path
 from PySide6.QtGui import QKeySequence
 import pytest
@@ -18,11 +19,8 @@ def test_load_settings(main_window: MainWindow, tmpdir):
     second = folder / "other.json"
     first.touch()
     second.touch()
-    main_window.load_settings(
-        StringIO(
-            f'{{"shortcuts": ["Ctrl+L"],"recent_projects":["{str(first)}", "{str(second)}"]}}'
-        )
-    )
+    settings = {"shortcuts": ["Ctrl+L"], "recent_projects": [str(first), str(second)]}
+    main_window.load_settings(StringIO(json.dumps(settings)))
     playback_buttons = main_window.opened_project_frame.get_playback_buttons()
     assert main_window.recent_projects == [first, second]
     assert playback_buttons[0].shortcut() == QKeySequence("Ctrl+L")
