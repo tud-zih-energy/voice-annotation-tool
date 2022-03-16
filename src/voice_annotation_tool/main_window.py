@@ -1,9 +1,3 @@
-"""
-The main widget.
-Holds a project list on startup, and the project view when a project was
-opened.
-"""
-
 from json.decoder import JSONDecodeError
 import json
 from pathlib import Path
@@ -21,6 +15,12 @@ from .main_ui import Ui_MainWindow
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
+    """The main widget.
+
+    Holds a project list on startup, and the project view when a project was
+    opened. Handles loading and saving the settings.
+    """
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)

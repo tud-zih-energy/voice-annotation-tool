@@ -1,10 +1,3 @@
-"""
-The main interface used to edit a project.
-
-Contains the audio player controls, the list of audio samples and a field to
-edit the annotation.
-"""
-
 from typing import List
 from PySide6.QtCore import QModelIndex, Slot
 from PySide6.QtWidgets import QFrame, QFileDialog, QPushButton, QWidget
@@ -49,6 +42,12 @@ GENDERS = ["", "male", "female", "other"]
 
 
 class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
+    """The main interface used to edit a project.
+
+    Contains the audio player controls, the list of audio samples and a field to
+    edit the annotation.
+    """
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)

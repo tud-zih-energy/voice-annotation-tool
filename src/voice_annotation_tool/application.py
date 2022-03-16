@@ -1,8 +1,3 @@
-"""
-The application that handles the initial program state and initialization of
-the GUI.
-"""
-
 import sys
 from pathlib import Path
 import traceback
@@ -29,6 +24,11 @@ def get_settings_file() -> Path:
 
 
 class Application(QApplication):
+    """
+    The application that handles the initial program state and initialization of
+    the GUI.
+    """
+
     def __init__(self, args) -> None:
         super().__init__(args)
         parser = QCommandLineParser()

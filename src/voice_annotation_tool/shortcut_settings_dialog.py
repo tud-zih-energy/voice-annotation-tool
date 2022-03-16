@@ -1,7 +1,3 @@
-"""
-Dialog used to configure the shortcuts of the buttons.
-"""
-
 from typing import List
 from PySide6.QtCore import Slot, Signal
 from PySide6.QtWidgets import (
@@ -18,6 +14,8 @@ from .shortcut_settings_dialog_ui import Ui_ShortcutSettingsDialog
 
 
 class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
+    """Dialog used to configure the shortcuts of the buttons."""
+
     shortcuts_confirmed = Signal(object)
 
     def __init__(self):

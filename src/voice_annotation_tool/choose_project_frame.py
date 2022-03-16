@@ -1,9 +1,3 @@
-"""
-Shown on startup, a list of recent projects.
-
-Has two buttons to open and create projects.
-"""
-
 from pathlib import Path
 from typing import Any, List, Tuple
 from PySide6.QtWidgets import QFrame, QListWidgetItem, QFileDialog
@@ -12,6 +6,12 @@ from .choose_project_frame_ui import Ui_ChooseProjectFrame
 
 
 class ChooseProjectFrame(QFrame, Ui_ChooseProjectFrame):
+    """
+    Shown on startup, a list of recent projects.
+
+    Has two buttons to open and create projects.
+    """
+
     create_project_pressed = Signal()
     project_opened = Signal(Path)
 

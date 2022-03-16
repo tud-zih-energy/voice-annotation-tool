@@ -1,10 +1,3 @@
-"""
-Representation of a project file.
-
-Handles loading and saving projects as well as loading the samples from the
-audio folder.
-"""
-
 from io import StringIO
 import os, csv
 from pathlib import Path
@@ -15,6 +8,14 @@ from .annotation import Annotation
 
 
 class Project:
+    """Representation of a project file
+
+    Handles loading and saving projects as well as loading the
+    samples from the audio folder.
+    Provides methods for importing and exporting json, text and csv
+    files.
+    """
+
     def __init__(self):
         self.tsv_file: Path | None = None
         self.audio_folder: Path | None = None
@@ -30,8 +31,9 @@ class Project:
         folder.
         """
         data = json.load(file)
-        if not all(["modified_annotations" in data, "audio_folder" in data,
-                "tsv_file" in data]):
+        if not all(
+            ["modified_annotations" in data, "audio_folder" in data, "tsv_file" in data]
+        ):
             return False
         self.modified_annotations = data["modified_annotations"]
         self.audio_folder = location.joinpath(data.get("audio_folder"))
