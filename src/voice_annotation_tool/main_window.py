@@ -1,9 +1,9 @@
 from json.decoder import JSONDecodeError
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, TextIO, Tuple
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
-from PySide6.QtCore import Slot
+from PySide6.QtCore import Signal, Slot
 
 from voice_annotation_tool.project_settings_dialog import ProjectSettingsDialog
 from .project import Project
@@ -20,6 +20,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     Holds a list of recent projects on startup, and the project view
     when a project was opened. Handles loading and saving the settings.
     """
+
+    settings_changed = Signal()
 
     def __init__(self):
         super().__init__()
@@ -50,9 +52,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """The hash of the project when it was last saved.
 
         Zero if no project is loaded."""
-
-        self.settings_file: Path
-        "Path to the configuration file"
 
         self.recent_projects: List[Path] = []
         """List of recently opened projects.
@@ -99,49 +98,45 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         ]
         "Actions that can only be used with a project open."
 
-    def load_settings(self, settings_file: Path):
-        """Loads the recently used projects into the `recent_projects`
-        list and applies the shortcuts.
+    def load_settings(self, file: TextIO):
+        """Loads the recently used projects into the
+        `recent_projects` list and applies the shortcuts.
         """
-        self.settings_file = settings_file
-        if not settings_file.is_file():
-            return
-        with open(settings_file) as file:
-            try:
-                data = json.load(file)
-            except JSONDecodeError as error:
-                return QMessageBox.warning(
-                    self,
-                    self.tr("Warning"),
-                    self.tr(
-                        "Failed to parse the configuration file: {error}".format(
-                            error=error.msg
-                        )
-                    ),
-                )
-            for recent in data["recent_projects"]:
-                path = Path(recent)
-                if path.is_file():
-                    self.recent_projects.append(path)
-            self.choose_project_frame.load_recent_projects(self.recent_projects)
-
-            self.opened_project_frame.apply_shortcuts(data["shortcuts"])
-            self.shortcut_settings_dialog.load_buttons(
-                self.opened_project_frame.get_playback_buttons()
+        try:
+            data = json.load(file)
+        except JSONDecodeError as error:
+            return QMessageBox.warning(
+                self,
+                self.tr("Warning"),
+                self.tr(
+                    "Failed to parse the configuration file: {error}".format(
+                        error=error.msg
+                    )
+                ),
             )
-            self.shortcut_settings_dialog.load_existing(self.menuEdit)
-            self.shortcut_settings_dialog.load_existing(self.menuFile)
+        for recent in data["recent_projects"]:
+            path = Path(recent)
+            if path.is_file():
+                self.recent_projects.append(path)
+        self.choose_project_frame.load_recent_projects(self.recent_projects)
 
-    def save_settings(self):
-        """Saves the `recent_projects` list and keyboard shortcuts to
-        a json file
+        self.shortcuts = data["shortcuts"]
+        self.opened_project_frame.apply_shortcuts(self.shortcuts)
+        self.shortcut_settings_dialog.load_buttons(
+            self.opened_project_frame.get_playback_buttons()
+        )
+        self.shortcut_settings_dialog.load_existing(self.menuEdit)
+        self.shortcut_settings_dialog.load_existing(self.menuFile)
+
+    def save_settings(self, to: TextIO):
+        """Saves the `recent_projects` list and keyboard shortcuts
+        to a json file
         """
-        with open(self.settings_file, "w") as file:
-            data = {
-                "recent_projects": list(map(str, self.recent_projects)),
-                "shortcuts": self.opened_project_frame.get_shortcuts(),
-            }
-            json.dump(data, file)
+        data = {
+            "recent_projects": list(map(str, self.recent_projects)),
+            "shortcuts": self.shortcuts,
+        }
+        json.dump(data, to)
 
     def set_current_project(self, project: Project):
         """Set the current project and load it into the GUI"""
@@ -153,7 +148,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.setWindowTitle(self.tr("Unsaved Project"))
         if self.project_file and (not self.project_file in self.recent_projects):
             self.recent_projects.append(self.project_file)
-            self.save_settings()
+            self.settings_changed.emit()
         self.opened_project_frame.show()
         self.choose_project_frame.hide()
         self.opened_project_frame.load_project(project)
@@ -393,5 +388,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def shortcuts_confirmed(self, shortcuts):
+        self.shortcuts = shortcuts
+        self.settings_changed.emit()
         self.opened_project_frame.apply_shortcuts(shortcuts)
-        self.save_settings()

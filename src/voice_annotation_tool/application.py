@@ -44,7 +44,11 @@ class Application(QApplication):
         self.installTranslator(translator)
 
         self.main_window = MainWindow()
-        self.main_window.load_settings(get_settings_file())
+        self.main_window.settings_changed.connect(self.settings_changed)
+        settings_file = get_settings_file()
+        if settings_file.is_file():
+            with open(settings_file) as file:
+                self.main_window.load_settings(file)
         self.main_window.actionAboutQT.triggered.connect(self.aboutQt)
 
         sys.excepthook = self.excepthook
@@ -59,6 +63,10 @@ class Application(QApplication):
             self.main_window.load_project_from_file(path)
 
         self.main_window.show()
+
+    def settings_changed(self):
+        with open(get_settings_file(), "w") as file:
+            self.main_window.save_settings(file)
 
     def excepthook(self, exc_type, exc_value, exc_tb):
         """Method used to show occured exception in a dialog instead of
