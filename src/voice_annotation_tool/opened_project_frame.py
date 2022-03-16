@@ -137,6 +137,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.annotationList.selectionModel().selectionChanged.connect(
             self.selection_changed
         )
+        self.annotationEdit.clear()
         if len(project.annotations):
             self.annotationList.setCurrentIndex(self.annotationList.model().index(0, 0))
         widgets: List[QWidget] = self.get_metadata_inputs()
