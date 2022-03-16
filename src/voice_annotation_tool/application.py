@@ -52,7 +52,11 @@ class Application(QApplication):
 
         args = parser.positionalArguments()
         if len(args) > 0:
-            self.main_window.load_project_from_file(Path(args[0]))
+            path = Path(args[0])
+            if not path.is_file():
+                print("Project file not found.")
+                exit(2) # No such file or directory.
+            self.main_window.load_project_from_file(path)
 
         self.main_window.show()
 
