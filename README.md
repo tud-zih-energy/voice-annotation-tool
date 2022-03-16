@@ -28,7 +28,7 @@ The tsv file is exported when the project is saved. Samples added to the audio f
 To generate the translation file, run the following command:
 
 ```bash
-pyside6-lupdate . -ts translations/<LANGUAGE>.ts
+pyside6-lupdate src/voice_annotation_tool/* . -ts translations/<LANGUAGE>.ts
 ```
 
 Then open the file in QT Linguist and update the missing fields. After reinstalling the package the translation is updated.

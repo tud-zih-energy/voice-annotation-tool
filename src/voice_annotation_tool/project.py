@@ -1,10 +1,3 @@
-"""
-Representation of a project file.
-
-Handles loading and saving projects as well as loading the samples from the
-audio folder.
-"""
-
 from io import StringIO
 import os, csv
 from pathlib import Path
@@ -15,28 +8,50 @@ from .annotation import Annotation
 
 
 class Project:
+    """Representation of a project file.
+
+    Handles loading and saving the project to json files, loading and
+    writing the tsv file which holds the sample metadata as well as
+    loading the samples from the audio folder.
+    Provides methods for importing and exporting json, text and csv
+    files.
+    The tsv file and audio folder of a project can be None.
+    """
+
     def __init__(self):
         self.tsv_file: Path | None = None
+        "The file where the metadata of the samples is stored."
         self.audio_folder: Path | None = None
+        "The folder containing the speech samples."
         self.annotations_by_path: dict[str, Annotation] = {}
+        """A dictionary that maps the name of the sample file to the
+        annotations"""
         self.annotations: List[Annotation] = []
+        "The annotations of the project."
         self.modified_annotations: List[str] = []
+        """A list of sample file names whose text was modified since
+        the project was created."""
 
-    def load_json(self, file: TextIO, location: Path = Path()):
+    def load_json(self, file: TextIO, location: Path = Path()) -> bool:
         """Loads a project from a json file.
 
         Paths to the audio folder and to the tsv file are loaded relative
-        to the given location. This does not load the tsv file or the audio
-        folder.
+        to the given location. This does not load the contents of the
+        tsv file or the audio folder.
         """
         data = json.load(file)
+        if not all(
+            ["modified_annotations" in data, "audio_folder" in data, "tsv_file" in data]
+        ):
+            return False
         self.modified_annotations = data["modified_annotations"]
         self.audio_folder = location.joinpath(data.get("audio_folder"))
         self.tsv_file = location.joinpath(data.get("tsv_file"))
+        return True
 
     def load_audio_files(self, folder: Path):
-        """
-        Loads the samples from the audio folder of this project into files.
+        """Creates empty annotations for the audio files in the given
+        folder which are not already loaded from a tsv file.
         """
         self.audio_folder = folder
         if not self.audio_folder.is_dir():
@@ -50,7 +65,9 @@ class Project:
             self.add_annotation(annotation)
 
     def annotate(self, annotation: Annotation, text: str) -> None:
-        """Changes the text of the given annotation."""
+        """Changes the text of the given annotation and marks it as
+        modified.
+        """
         if not annotation.modified:
             self.modified_annotations.append(annotation.path.name)
         annotation.modified = True
@@ -78,8 +95,8 @@ class Project:
         json.dump(data, file)
 
     def save_annotations(self, file: TextIO):
-        """
-        Exports the project's annotations to a tab separated value (tsv) file.
+        """Exports the project's annotations to a tab separated
+        value (tsv) file.
         """
         writer = csv.DictWriter(file, Annotation.TSV_HEADER_MEMBERS, delimiter="\t")
         writer.writeheader()
@@ -87,8 +104,8 @@ class Project:
             writer.writerow(annotation.to_dict())
 
     def load_tsv_file(self, file: Iterable[str]):
-        """
-        Loads the annotations from the `tsv_file` into the annotations array.
+        """Loads the annotations from the `tsv_file` into the
+        annotations array.
         """
         reader = csv.DictReader(file, delimiter="\t")
         for row in reader:
@@ -99,12 +116,12 @@ class Project:
         print("loaded csv")
 
     def delete_tsv(self):
-        """Delete the TSV file."""
+        """Deletes the TSV file."""
         if self.tsv_file and self.tsv_file.is_file():
             self.tsv_file.unlink()
 
     def delete_annotation(self, annotation: Annotation):
-        """Delete a stored annotation and the audio file on disk."""
+        """Deletes a stored annotation and the audio file on disk."""
         annotation.path.unlink(missing_ok=True)
         self.annotations_by_path.pop(annotation.path.name)
         self.annotations.remove(annotation)
@@ -112,6 +129,7 @@ class Project:
     def add_annotation(self, annotation: Annotation, overwrite=False):
         """Adds the annotation to the project. If an annotation with
         the same path already exists and overwrite is true it is replaced.
+
         If the audio folder is specified, it is added to the annotation path.
         """
         if self.audio_folder:
@@ -127,6 +145,7 @@ class Project:
         self.annotations_by_path[annotation.path.name] = annotation
 
     def importCSV(self, infile: StringIO):
+        """Imports a CSV file created using the export function."""
         reader = csv.reader(infile, delimiter=";")
         for row in reader:
             path = row[0]
@@ -135,11 +154,15 @@ class Project:
             self.annotate(self.annotations_by_path[path], row[1])
 
     def exportCSV(self, outfile: StringIO):
+        """Exports a CSV file with the path and text of the annotations
+        as columns.
+        """
         writer = csv.writer(outfile, delimiter=";")
         for annotation in self.annotations:
             writer.writerow([annotation.path.name, annotation.sentence])
 
     def importJson(self, infile: StringIO):
+        """Imports a Json file created using the exportJson function."""
         data = json.load(infile)
         for row in data:
             for filename in row:
@@ -148,7 +171,10 @@ class Project:
                 self.annotate(self.annotations_by_path[filename], row[filename])
 
     def exportJson(self, outfile: StringIO):
-        data = []
+        """Exports a Json file with a list of dictionaries containing
+        the annotation path as key and the text as value.
+        """
+        data: List[dict[str,str]] = []
         for annotation in self.annotations:
             data.append({annotation.path.name: annotation.sentence})
         json.dump(data, outfile)

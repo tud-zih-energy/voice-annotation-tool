@@ -1,9 +1,3 @@
-"""
-The main widget.
-Holds a project list on startup, and the project view when a project was
-opened.
-"""
-
 from json.decoder import JSONDecodeError
 import json
 from pathlib import Path
@@ -21,6 +15,12 @@ from .main_ui import Ui_MainWindow
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
+    """The main widget.
+
+    Holds a list of recent projects on startup, and the project view
+    when a project was opened. Handles loading and saving the settings.
+    """
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -30,13 +30,35 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.shortcut_settings_dialog = ShortcutSettingsDialog()
         self.opened_project_frame = OpenedProjectFrame()
         self.choose_project_frame = ChooseProjectFrame()
+
         self.original_title = self.windowTitle()
+        "The window title before it was changed to the project name."
+
         self.project: Project = Project()
+        """The currently loaded project.
+
+        Even if the user didn't open a project, an empty unsaved project
+        is loaded.
+        """
+
         self.project_file: Path | None = None
+        """The path the current project was saved to.
+
+        None if the project was never saved."""
+
         self.last_saved_hash: int = 0
+        """The hash of the project when it was last saved.
+
+        Zero if no project is loaded."""
+
         self.settings_file: Path
+        "Path to the configuration file"
+
         self.recent_projects: List[Path] = []
-        self.shortcuts = []
+        """List of recently opened projects.
+
+        This list should only contain existing paths.
+        """
 
         # Layout
         self.verticalLayout.addWidget(self.opened_project_frame)
@@ -75,11 +97,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionDeleteSelected,
             self.actionProjectSettings,
         ]
+        "Actions that can only be used with a project open."
 
     def load_settings(self, settings_file: Path):
-        """
-        Loads the recently used projects into the `recent_projects` list and
-        applies the shortcuts.
+        """Loads the recently used projects into the `recent_projects`
+        list and applies the shortcuts.
         """
         self.settings_file = settings_file
         if not settings_file.is_file():
@@ -103,8 +125,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     self.recent_projects.append(path)
             self.choose_project_frame.load_recent_projects(self.recent_projects)
 
-            self.shortcuts = data["shortcuts"]
-            self.opened_project_frame.apply_shortcuts(self.shortcuts)
+            self.opened_project_frame.apply_shortcuts(data["shortcuts"])
             self.shortcut_settings_dialog.load_buttons(
                 self.opened_project_frame.get_playback_buttons()
             )
@@ -112,13 +133,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.shortcut_settings_dialog.load_existing(self.menuFile)
 
     def save_settings(self):
-        """
-        Saves the `recent_projects` list and keyboard shortcuts to a json file
+        """Saves the `recent_projects` list and keyboard shortcuts to
+        a json file
         """
         with open(self.settings_file, "w") as file:
             data = {
                 "recent_projects": list(map(str, self.recent_projects)),
-                "shortcuts": self.shortcuts,
+                "shortcuts": self.opened_project_frame.get_shortcuts(),
             }
             json.dump(data, file)
 
@@ -168,12 +189,37 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.project_file = path
         self.project = Project()
         with open(path) as file:
-            self.project.load_json(file, self.project_file.parent)
-            if self.project.tsv_file:
+            if not self.project.load_json(file, self.project_file.parent):
+                message = QMessageBox()
+                message.setIcon(QMessageBox.Critical)
+                message.setWindowTitle(self.tr("Error"))
+                message.setText(self.tr("Invalid project."))
+                return message.exec()
+            if self.project.tsv_file and self.project.tsv_file.is_file():
                 with open(self.project.tsv_file, newline="") as file:
                     self.project.load_tsv_file(file)
+            else:
+                message = QMessageBox()
+                message.setText(
+                    self.tr(
+                        "The TSV file doesn't exist. Please change it in the project settings"
+                    )
+                )
+                message.setWindowTitle(self.tr("Warning"))
+                message.setIcon(QMessageBox.Warning)
+                message.exec()
             if self.project.audio_folder:
                 self.project.load_audio_files(self.project.audio_folder)
+            else:
+                message = QMessageBox()
+                message.setText(
+                    self.tr(
+                        "The audio folder doesn't exist. Please change it in the project settings"
+                    )
+                )
+                message.setWindowTitle(self.tr("Warning"))
+                message.setIcon(QMessageBox.Warning)
+                message.exec()
         self.set_current_project(self.project)
         print("loaded audio folder")
 
@@ -183,8 +229,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.last_saved_hash = hash(self.project)
         with open(self.project_file, "w") as file:
             self.project.save(file, self.project_file.parent)
-        with open(self.project.tsv_file, "w", newline="") as file:
-            self.project.save_annotations(file)
+        if self.project.tsv_file and self.project.tsv_file.parent.is_dir():
+            with open(self.project.tsv_file, "w", newline="") as file:
+                self.project.save_annotations(file)
+        else:
+            message = QMessageBox()
+            message.setText(
+                self.tr(
+                    "The TSV file path is invalid. Please change it in the project settings"
+                )
+            )
+            message.setWindowTitle(self.tr("Warning"))
+            message.setIcon(QMessageBox.Warning)
+            message.exec()
 
     @Slot()
     def new_project(self):
@@ -336,6 +393,5 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def shortcuts_confirmed(self, shortcuts):
-        self.shortcuts = shortcuts
-        self.save_settings()
         self.opened_project_frame.apply_shortcuts(shortcuts)
+        self.save_settings()
