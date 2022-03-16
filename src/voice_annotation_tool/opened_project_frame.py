@@ -140,10 +140,16 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.annotationEdit.clear()
         if len(project.annotations):
             self.annotationList.setCurrentIndex(self.annotationList.model().index(0, 0))
+        self.update_metadata_widgets()
+
+    def update_metadata_widgets(self):
+        """Disables or enables the widgets used to edit the annotation
+        metadata depending on if there are any annotations in the project.
+        """
         widgets: List[QWidget] = self.get_metadata_inputs()
         widgets += self.get_playback_buttons()
         for widget in widgets:
-            widget.setEnabled(len(project.annotations) > 0)
+            widget.setEnabled(len(self.project.annotations) > 0)
 
     def get_metadata_inputs(self) -> List[QWidget]:
         """Returns a list of the QComboBoxes, QLineEdits, and buttons
@@ -164,6 +170,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         for selected in self.get_selected_annotations():
             self.project.delete_annotation(selected)
         self.annotationList.model().layoutChanged.emit()
+        self.update_metadata_widgets()
 
     def get_selected_annotations(self) -> List[Annotation]:
         """Returns all the selected annotations in the annotation panel."""
@@ -236,6 +243,8 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
             index.row() < len(self.project.annotations) - 1
         )
         annotation: Annotation = index.data(ANNOTATION_ROLE)
+        if not annotation:
+            return
         self.annotationEdit.blockSignals(True)
         self.annotationEdit.setText(annotation.sentence)
         self.annotationEdit.blockSignals(False)
