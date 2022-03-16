@@ -432,7 +432,7 @@
     <message>
         <location filename="../ui/opened_project_frame.ui" line="166"/>
         <source>Samples</source>
-        <translation>Samples</translation>
+        <translation>Aufnahmen</translation>
     </message>
 </context>
 <context>
