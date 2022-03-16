@@ -7,9 +7,9 @@ opened.
 from json.decoder import JSONDecodeError
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, TextIO, Tuple
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
-from PySide6.QtCore import Slot
+from PySide6.QtCore import Signal, Slot
 
 from voice_annotation_tool.project_settings_dialog import ProjectSettingsDialog
 from .project import Project
@@ -21,6 +21,8 @@ from .main_ui import Ui_MainWindow
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
+    settings_changed = Signal()
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -34,7 +36,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.project: Project = Project()
         self.project_file: Path | None = None
         self.last_saved_hash: int = 0
-        self.settings_file: Path
         self.recent_projects: List[Path] = []
         self.shortcuts = []
 
@@ -76,51 +77,45 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionProjectSettings,
         ]
 
-    def load_settings(self, settings_file: Path):
+    def load_settings(self, file: TextIO):
+        """Loads the recently used projects into the
+        `recent_projects` list and applies the shortcuts.
         """
-        Loads the recently used projects into the `recent_projects` list and
-        applies the shortcuts.
-        """
-        self.settings_file = settings_file
-        if not settings_file.is_file():
-            return
-        with open(settings_file) as file:
-            try:
-                data = json.load(file)
-            except JSONDecodeError as error:
-                return QMessageBox.warning(
-                    self,
-                    self.tr("Warning"),
-                    self.tr(
-                        "Failed to parse the configuration file: {error}".format(
-                            error=error.msg
-                        )
-                    ),
-                )
-            for recent in data["recent_projects"]:
-                path = Path(recent)
-                if path.is_file():
-                    self.recent_projects.append(path)
-            self.choose_project_frame.load_recent_projects(self.recent_projects)
-
-            self.shortcuts = data["shortcuts"]
-            self.opened_project_frame.apply_shortcuts(self.shortcuts)
-            self.shortcut_settings_dialog.load_buttons(
-                self.opened_project_frame.get_playback_buttons()
+        try:
+            data = json.load(file)
+        except JSONDecodeError as error:
+            return QMessageBox.warning(
+                self,
+                self.tr("Warning"),
+                self.tr(
+                    "Failed to parse the configuration file: {error}".format(
+                        error=error.msg
+                    )
+                ),
             )
-            self.shortcut_settings_dialog.load_existing(self.menuEdit)
-            self.shortcut_settings_dialog.load_existing(self.menuFile)
+        for recent in data["recent_projects"]:
+            path = Path(recent)
+            if path.is_file():
+                self.recent_projects.append(path)
+        self.choose_project_frame.load_recent_projects(self.recent_projects)
 
-    def save_settings(self):
+        self.shortcuts = data["shortcuts"]
+        self.opened_project_frame.apply_shortcuts(self.shortcuts)
+        self.shortcut_settings_dialog.load_buttons(
+            self.opened_project_frame.get_playback_buttons()
+        )
+        self.shortcut_settings_dialog.load_existing(self.menuEdit)
+        self.shortcut_settings_dialog.load_existing(self.menuFile)
+
+    def save_settings(self, to: TextIO):
+        """Saves the `recent_projects` list and keyboard shortcuts
+        to a json file
         """
-        Saves the `recent_projects` list and keyboard shortcuts to a json file
-        """
-        with open(self.settings_file, "w") as file:
-            data = {
-                "recent_projects": list(map(str, self.recent_projects)),
-                "shortcuts": self.shortcuts,
-            }
-            json.dump(data, file)
+        data = {
+            "recent_projects": list(map(str, self.recent_projects)),
+            "shortcuts": self.shortcuts,
+        }
+        json.dump(data, to)
 
     def set_current_project(self, project: Project):
         """Set the current project and load it into the GUI"""
@@ -132,7 +127,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.setWindowTitle(self.tr("Unsaved Project"))
         if self.project_file and (not self.project_file in self.recent_projects):
             self.recent_projects.append(self.project_file)
-            self.save_settings()
+            self.settings_changed.emit()
         self.opened_project_frame.show()
         self.choose_project_frame.hide()
         self.opened_project_frame.load_project(project)
@@ -179,7 +174,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     self.project.load_tsv_file(file)
             else:
                 message = QMessageBox()
-                message.setText(self.tr("The TSV file doesn't exist. Please change it in the project settings"))
+                message.setText(
+                    self.tr(
+                        "The TSV file doesn't exist. Please change it in the project settings"
+                    )
+                )
                 message.setWindowTitle(self.tr("Warning"))
                 message.setIcon(QMessageBox.Warning)
                 message.exec()
@@ -187,7 +186,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.project.load_audio_files(self.project.audio_folder)
             else:
                 message = QMessageBox()
-                message.setText(self.tr("The audio folder doesn't exist. Please change it in the project settings"))
+                message.setText(
+                    self.tr(
+                        "The audio folder doesn't exist. Please change it in the project settings"
+                    )
+                )
                 message.setWindowTitle(self.tr("Warning"))
                 message.setIcon(QMessageBox.Warning)
                 message.exec()
@@ -205,7 +208,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.project.save_annotations(file)
         else:
             message = QMessageBox()
-            message.setText(self.tr("The TSV file path is invalid. Please change it in the project settings"))
+            message.setText(
+                self.tr(
+                    "The TSV file path is invalid. Please change it in the project settings"
+                )
+            )
             message.setWindowTitle(self.tr("Warning"))
             message.setIcon(QMessageBox.Warning)
             message.exec()
@@ -361,5 +368,5 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     @Slot()
     def shortcuts_confirmed(self, shortcuts):
         self.shortcuts = shortcuts
-        self.save_settings()
+        self.settings_changed.emit()
         self.opened_project_frame.apply_shortcuts(shortcuts)
