@@ -156,6 +156,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
             self.clientIdEdit,
             self.importButton,
             self.markUnchangedButton,
+            self.annotationEdit,
         ]
 
     def delete_selected(self):
