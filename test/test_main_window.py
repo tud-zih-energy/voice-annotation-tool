@@ -26,6 +26,15 @@ def test_load_settings(main_window: MainWindow, tmpdir):
     assert playback_buttons[0].shortcut() == QKeySequence("Ctrl+L")
 
 
+def test_save_settings(main_window: MainWindow):
+    settings = {"shortcuts": ["Ctrl+L"], "recent_projects": []}
+    main_window.load_settings(StringIO(json.dumps(settings)))
+    output = StringIO()
+    main_window.save_settings(output)
+    output.seek(0)
+    assert json.loads(output.read())["shortcuts"][0] == "Ctrl+L"
+
+
 def test_set_current_project(main_window: MainWindow, tmpdir):
     folder = Path(tmpdir)
     audio_folder = folder / "audio"
