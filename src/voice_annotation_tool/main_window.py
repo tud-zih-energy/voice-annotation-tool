@@ -120,8 +120,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.recent_projects.append(path)
         self.choose_project_frame.load_recent_projects(self.recent_projects)
 
-        self.shortcuts = data["shortcuts"]
-        self.opened_project_frame.apply_shortcuts(self.shortcuts)
+        self.opened_project_frame.apply_shortcuts(data["shortcuts"])
         self.shortcut_settings_dialog.load_buttons(
             self.opened_project_frame.get_playback_buttons()
         )
@@ -134,7 +133,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         data = {
             "recent_projects": list(map(str, self.recent_projects)),
-            "shortcuts": self.shortcuts,
+            "shortcuts": self.opened_project_frame.get_shortcuts(),
         }
         json.dump(data, to)
 
@@ -388,6 +387,5 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def shortcuts_confirmed(self, shortcuts):
-        self.shortcuts = shortcuts
         self.settings_changed.emit()
         self.opened_project_frame.apply_shortcuts(shortcuts)

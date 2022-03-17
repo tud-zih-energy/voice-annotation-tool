@@ -44,11 +44,12 @@ class Application(QApplication):
         self.installTranslator(translator)
 
         self.main_window = MainWindow()
-        self.main_window.settings_changed.connect(self.settings_changed)
+        self.main_window.settings_changed.connect(self.save_settings)
         settings_file = get_settings_file()
         if settings_file.is_file():
             with open(settings_file) as file:
                 self.main_window.load_settings(file)
+        self.save_settings()
         self.main_window.actionAboutQT.triggered.connect(self.aboutQt)
 
         sys.excepthook = self.excepthook
@@ -64,7 +65,7 @@ class Application(QApplication):
 
         self.main_window.show()
 
-    def settings_changed(self):
+    def save_settings(self):
         with open(get_settings_file(), "w") as file:
             self.main_window.save_settings(file)
 

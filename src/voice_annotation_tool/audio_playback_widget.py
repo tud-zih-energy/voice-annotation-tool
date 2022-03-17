@@ -46,7 +46,7 @@ class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
         """Returns a list of the shortcuts of the buttons."""
         shortcuts: List[str] = []
         for button in self.playback_buttons:
-            shortcuts.append(str(button.shortcut()))
+            shortcuts.append(button.shortcut().toString())
         return shortcuts
 
     def apply_shortcuts(self, shortcuts: List[str]):
