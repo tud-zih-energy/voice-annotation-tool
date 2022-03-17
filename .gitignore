@@ -17,3 +17,6 @@ resources_rc.py
 
 # Binary Translations
 *.qm
+
+# Built Documentation
+docs/_build
