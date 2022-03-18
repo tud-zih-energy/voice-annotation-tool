@@ -2,7 +2,7 @@ from io import StringIO
 import os, csv
 from pathlib import Path
 import json
-from typing import Iterable, List, TextIO
+from typing import List, TextIO
 
 from .annotation import Annotation
 
@@ -58,7 +58,15 @@ class Project:
             return
         for audio_file in os.listdir(self.audio_folder):
             path = Path(audio_file)
-            if not path.suffix in [".mp3", ".ogg", ".mp4", ".webm", ".avi", ".mkv", ".wav"]:
+            if not path.suffix in [
+                ".mp3",
+                ".ogg",
+                ".mp4",
+                ".webm",
+                ".avi",
+                ".mkv",
+                ".wav",
+            ]:
                 continue
             annotation = Annotation()
             annotation.path = self.audio_folder.joinpath(path)
@@ -103,7 +111,7 @@ class Project:
         for annotation in self.annotations:
             writer.writerow(annotation.to_dict())
 
-    def load_tsv_file(self, file: Iterable[str]):
+    def load_tsv_file(self, file: TextIO):
         """Loads the annotations from the `tsv_file` into the
         annotations array.
         """
@@ -136,7 +144,9 @@ class Project:
             annotation.path = self.audio_folder.joinpath(annotation.path)
         if annotation.path.name in self.annotations_by_path:
             if overwrite:
-                existing = self.annotations.index(self.annotations_by_path[annotation.path.name])
+                existing = self.annotations.index(
+                    self.annotations_by_path[annotation.path.name]
+                )
                 self.annotations[existing] = annotation
             else:
                 return
@@ -146,18 +156,18 @@ class Project:
 
     def importCSV(self, infile: StringIO):
         """Imports a CSV file created using the export function."""
-        reader = csv.reader(infile, delimiter=";")
+        reader = csv.DictReader(infile, delimiter=";")
         for row in reader:
-            path = row[0]
-            if not path in self.annotations_by_path:
+            if not row["file"] in self.annotations_by_path:
                 return
-            self.annotate(self.annotations_by_path[path], row[1])
+            self.annotate(self.annotations_by_path[row["file"]], row["text"])
 
     def exportCSV(self, outfile: StringIO):
         """Exports a CSV file with the path and text of the annotations
         as columns.
         """
         writer = csv.writer(outfile, delimiter=";")
+        writer.writerow(["file", "text"])
         for annotation in self.annotations:
             writer.writerow([annotation.path.name, annotation.sentence])
 
@@ -165,18 +175,18 @@ class Project:
         """Imports a Json file created using the exportJson function."""
         data = json.load(infile)
         for row in data:
-            for filename in row:
-                if not filename in self.annotations_by_path:
+            if "file" in row and "text" in row:
+                if not row["file"] in self.annotations_by_path:
                     continue
-                self.annotate(self.annotations_by_path[filename], row[filename])
+                self.annotate(self.annotations_by_path[row["file"]], row["text"])
 
     def exportJson(self, outfile: StringIO):
         """Exports a Json file with a list of dictionaries containing
         the annotation path as key and the text as value.
         """
-        data: List[dict[str,str]] = []
+        data: List[dict[str, str]] = []
         for annotation in self.annotations:
-            data.append({annotation.path.name: annotation.sentence})
+            data.append({"file": annotation.path.name, "text": annotation.sentence})
         json.dump(data, outfile)
 
     def __hash__(self):
