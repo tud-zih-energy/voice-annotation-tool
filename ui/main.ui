@@ -178,6 +178,9 @@
    </property>
   </action>
   <action name="actionDeleteSelected">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>&amp;Delete Selected</string>
    </property>
