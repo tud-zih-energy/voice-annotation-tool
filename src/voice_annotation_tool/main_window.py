@@ -2,6 +2,7 @@ from json.decoder import JSONDecodeError
 import json
 from pathlib import Path
 from typing import Any, Dict, List, TextIO, Tuple
+from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from PySide6.QtCore import Signal, Slot
 
@@ -84,6 +85,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionExportCSV.triggered.connect(self.exportCSV)
         self.actionDeleteSelected.triggered.connect(self.deleteSelected)
         self.actionConfigureShortcuts.triggered.connect(self.configure_shortcuts)
+        self.actionDocumentation.triggered.connect(self.open_documentation)
 
         self.project_actions = [
             self.actionImportCSV,
@@ -389,3 +391,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def shortcuts_confirmed(self, shortcuts):
         self.settings_changed.emit()
         self.opened_project_frame.apply_shortcuts(shortcuts)
+
+    @Slot()
+    def open_documentation(self):
+        QDesktopServices.openUrl(self.tr("https://voice-annotation-tool.readthedocs.io/en/latest/"))

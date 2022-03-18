@@ -64,6 +64,7 @@
     </property>
     <addaction name="actionAbout"/>
     <addaction name="actionAboutQT"/>
+    <addaction name="actionDocumentation"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -193,6 +194,14 @@
    </property>
    <property name="text">
     <string>&amp;Project Settings</string>
+   </property>
+  </action>
+  <action name="actionDocumentation">
+   <property name="text">
+    <string>Online &amp;Documentation</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
    </property>
   </action>
  </widget>
