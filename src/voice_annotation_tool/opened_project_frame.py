@@ -138,9 +138,9 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
             self.selection_changed
         )
         self.annotationEdit.clear()
+        self.update_metadata_widgets()
         if len(project.annotations):
             self.annotationList.setCurrentIndex(self.annotationList.model().index(0, 0))
-        self.update_metadata_widgets()
 
     def update_metadata_widgets(self):
         """Disables or enables the widgets used to edit the annotation
@@ -248,7 +248,10 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.annotationEdit.blockSignals(True)
         self.annotationEdit.setText(annotation.sentence)
         self.annotationEdit.blockSignals(False)
-        self.audioPlaybackWidget.load_file(annotation.path)
+        if annotation.path.is_file():
+            self.audioPlaybackWidget.load_file(annotation.path)
+        for buttons in self.get_playback_buttons():
+            buttons.setEnabled(annotation.path.is_file())
 
     @Slot()
     def import_profile_pressed(self):
