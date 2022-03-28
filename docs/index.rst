@@ -9,6 +9,8 @@ Contents
 .. toctree::
 
    usage
-   api
-   import_export
+   interface
    shortcuts
+   tsv_format
+   import_export
+   api
