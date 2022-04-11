@@ -8,19 +8,19 @@ In this list you can select the sample you want to annotate.
 
 You can delete the selected samples under ``Edit > Delete Selected`` or pressing ``Delete``.
 
+When you change the annotation of a sample it is highlighted in green. To remove this highlight select the samples and press the ``Mark Unchanged``.
+
 Metadata Section
 ----------------
 
 In this region you can edit the metadata of all selected annotations.
 
-You can also import the metadata exported from the CommonVoice account page.
+You can also import the profile metadata exported from the `CommonVoice account page <https://commonvoice.mozilla.org/en/profile/download>`_.
 
 Annotation Field
 ----------------
 
-Here you can edit the annotated text of the selected sample.
-
-When you modify the text, the sample will be highlighted in green to show the change. You can remove this by pressing the ``Mark Unchanged`` buttons.
+Here you can edit the annotation of the selected sample.
 
 Audio Playback Controls
 -----------------------
