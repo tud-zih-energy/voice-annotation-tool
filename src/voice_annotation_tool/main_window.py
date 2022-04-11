@@ -394,4 +394,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def open_documentation(self):
-        QDesktopServices.openUrl(self.tr("https://voice-annotation-tool.readthedocs.io/en/latest/"))
+        QDesktopServices.openUrl(
+            self.tr("https://voice-annotation-tool.readthedocs.io/en/latest/")
+        )
