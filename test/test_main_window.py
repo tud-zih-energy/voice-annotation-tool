@@ -78,3 +78,19 @@ abc\taudio.mp3\ttext\t2\t2\ttwenties\tother\taccent"""
     assert main_window.project.annotations[0].path == audio_file
     assert main_window.project.annotations[1].sentence == ""
     assert main_window.project.annotations[1].path == other_audio_file
+
+
+def test_save_project(main_window: MainWindow, tmpdir):
+    folder = Path(tmpdir)
+    audio_folder = folder / "audio"
+    audio_folder.mkdir()
+    audio_file = audio_folder / "audio.mp3"
+    audio_file.touch()
+    project = Project()
+    project.load_audio_files(audio_folder)
+    project.tsv_file = folder / "project.tsv"
+    main_window.set_current_project(project)
+    main_window.project_file = Path(tmpdir / "project.json")
+    main_window.save_current_project()
+    assert main_window.project_file.is_file()
+    assert project.tsv_file.is_file()
