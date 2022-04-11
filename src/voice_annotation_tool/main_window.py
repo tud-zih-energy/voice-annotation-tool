@@ -1,7 +1,7 @@
 from json.decoder import JSONDecodeError
 import json
 from pathlib import Path
-from typing import Any, Dict, List, TextIO, Tuple
+from typing import Any, Dict, TextIO, Tuple
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from PySide6.QtCore import Signal, Slot
@@ -54,7 +54,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         Zero if no project is loaded."""
 
-        self.recent_projects: List[Path] = []
+        self.recent_projects: list[Path] = []
         """List of recently opened projects.
 
         This list should only contain existing paths.
@@ -131,9 +131,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def save_settings(self, to: TextIO):
         """
-        data = {
         Saves the `recent_projects` list and keyboard shortcuts to a json file.
         """
+        data: dict[str, str | list[str]] = {
             "recent_projects": list(map(str, self.recent_projects)),
             "shortcuts": self.opened_project_frame.get_shortcuts(),
         }

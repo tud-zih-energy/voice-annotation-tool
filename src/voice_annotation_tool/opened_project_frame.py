@@ -1,10 +1,5 @@
-from typing import List
 from PySide6.QtCore import QModelIndex, Slot
 from PySide6.QtWidgets import QFrame, QFileDialog, QPushButton, QWidget
-
-from typing import List
-from PySide6.QtCore import QModelIndex, Slot
-from PySide6.QtWidgets import QFrame, QFileDialog, QPushButton
 
 from .annotation_list_model import AnnotationListModel, ANNOTATION_ROLE
 from .opened_project_frame_ui import Ui_OpenedProjectFrame
@@ -60,15 +55,15 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
             self.ageInput.addItem(age)
         self.ageInput.addItem(self.tr("[Multiple]"))
 
-    def get_playback_buttons(self) -> List[QPushButton]:
+    def get_playback_buttons(self) -> list[QPushButton]:
         """Returns a list of buttons used to control the audio playback."""
         return self.audioPlaybackWidget.playback_buttons
 
-    def get_shortcuts(self) -> List[str]:
+    def get_shortcuts(self) -> list[str]:
         """Returns a list of shortcuts for the audio playback buttons."""
         return self.audioPlaybackWidget.get_shortcuts()
 
-    def apply_shortcuts(self, shortcuts: List[str]):
+    def apply_shortcuts(self, shortcuts: list[str]):
         """Applies the shortcuts to the buttons.
 
         The shortcut is also added to the tooltip.
@@ -146,12 +141,12 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         """Disables or enables the widgets used to edit the annotation
         metadata depending on if there are any annotations in the project.
         """
-        widgets: List[QWidget] = self.get_metadata_inputs()
+        widgets: list[QWidget] = self.get_metadata_inputs()
         widgets += self.get_playback_buttons()
         for widget in widgets:
             widget.setEnabled(len(self.project.annotations) > 0)
 
-    def get_metadata_inputs(self) -> List[QWidget]:
+    def get_metadata_inputs(self) -> list[QWidget]:
         """Returns a list of the QComboBoxes, QLineEdits, and buttons
         that are used to edit the annotation metadata.
         """
@@ -172,9 +167,9 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.annotationList.model().layoutChanged.emit()
         self.update_metadata_widgets()
 
-    def get_selected_annotations(self) -> List[Annotation]:
+    def get_selected_annotations(self) -> list[Annotation]:
         """Returns all the selected annotations in the annotation panel."""
-        annotations: List[Annotation] = []
+        annotations: list[Annotation] = []
         for selected_index in self.annotationList.selectionModel().selectedIndexes():
             annotations.append(selected_index.data(ANNOTATION_ROLE))
         return annotations
