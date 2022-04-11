@@ -7,13 +7,12 @@ This program allows annotation of a list of audio files and exporting it in a si
 Install the package system-wide:
 
 ```bash
-git clone https://github.com/tud-zih-energy/voice-annotation-tool.git
-pip3 install voice-annotation-tool
+pip install voice-annotation-tool
 ```
 
 ## Usage
 
-Launching the program:
+Launch the program:
 
 ```bash
 voice-annotation-tool
