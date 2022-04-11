@@ -116,13 +116,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     )
                 ),
             )
-        for recent in data["recent_projects"]:
+        for recent in data.get("recent_projects", []):
             path = Path(recent)
             if path.is_file():
                 self.recent_projects.append(path)
         self.choose_project_frame.load_recent_projects(self.recent_projects)
 
-        self.opened_project_frame.apply_shortcuts(data["shortcuts"])
+        self.opened_project_frame.apply_shortcuts(data.get("shortcuts", []))
         self.shortcut_settings_dialog.load_buttons(
             self.opened_project_frame.get_playback_buttons()
         )
