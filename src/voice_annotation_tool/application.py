@@ -66,12 +66,14 @@ class Application(QApplication):
         self.main_window.show()
 
     def save_settings(self):
+        """Saves the current program settings to a json file."""
         with open(get_settings_file(), "w") as file:
             self.main_window.save_settings(file)
 
     def excepthook(self, exc_type, exc_value, exc_tb):
         """Method used to show occured exception in a dialog instead of
-        crashing the program."""
+        crashing the program.
+        """
         if self.error_dialog:
             # Only show one error message to prevent dialog spam.
             self.error_dialog.close()

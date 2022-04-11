@@ -101,8 +101,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         "Actions that can only be used with a project open."
 
     def load_settings(self, file: TextIO):
-        """Loads the recently used projects into the
-        `recent_projects` list and applies the shortcuts.
+        """Loads the recently used projects into the `recent_projects` list
+        and applies the shortcuts.
         """
         try:
             data = json.load(file)
@@ -130,17 +130,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.shortcut_settings_dialog.load_existing(self.menuFile)
 
     def save_settings(self, to: TextIO):
-        """Saves the `recent_projects` list and keyboard shortcuts
-        to a json file
         """
         data = {
+        Saves the `recent_projects` list and keyboard shortcuts to a json file.
+        """
             "recent_projects": list(map(str, self.recent_projects)),
             "shortcuts": self.opened_project_frame.get_shortcuts(),
         }
         json.dump(data, to)
 
     def set_current_project(self, project: Project):
-        """Set the current project and load it into the GUI"""
+        """Sets the current project and loads it into the GUI."""
         self.project = project
         self.last_saved_hash = hash(project)
         if self.project_file:
@@ -220,6 +220,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print("loaded audio folder")
 
     def save_current_project(self):
+        """Saves the annotations and project file of the current project."""
         if not self.project_file:
             return self.save_project_as()
         self.last_saved_hash = hash(self.project)
