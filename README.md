@@ -22,6 +22,8 @@ To get started, create a project by providing the folder with the audio samples 
 
 The tsv file is exported when the project is saved. Samples added to the audio folder after the project is created are added when the project is opened.
 
+For a more detailed overview of the interface and API please refer to the [documentation](https://voice-annotation-tool.readthedocs.io/en/latest/).
+
 ## Translation
 
 To generate the translation file, run the following command:
