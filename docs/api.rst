@@ -26,7 +26,6 @@ The voice-annotation-tool package also includes an API to load, modify and save 
    
    project = Project()
    project.load_audio_files(Path('audio'))
-   project.add_annotation(annotation, )
 
    annotation = project.annotations[0]
    annotation.sentence = 'Annotated text'
