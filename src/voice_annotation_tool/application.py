@@ -23,9 +23,9 @@ def get_settings_file() -> Path:
 
 
 class Application(QApplication):
-    """The QApplication instance that handles the initial program state,
-    command line arguments, translation, error handling and
-    initialization of the GUI.
+    """The QApplication instance that handles the initial
+    program state, command line arguments, error handling
+    and initialization of the GUI.
     """
 
     def __init__(self, args) -> None:
@@ -38,10 +38,6 @@ class Application(QApplication):
         parser.addHelpOption()
         parser.addVersionOption()
         parser.process(self)
-
-        translator = QTranslator()
-        translator.load(QLocale(), "translations/")
-        self.installTranslator(translator)
 
         self.main_window = MainWindow()
         self.main_window.settings_changed.connect(self.save_settings)
