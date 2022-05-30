@@ -33,3 +33,7 @@ pyside6-lupdate src/voice_annotation_tool/* . -ts translations/<LANGUAGE>.ts
 ```
 
 Then open the file in QT Linguist and update the missing fields. After reinstalling the package the translation is updated.
+
+## Screenshots
+
+![opened_project](images/screenshot.png) 
