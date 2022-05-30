@@ -24,6 +24,10 @@ The tsv file is exported when the project is saved. Samples added to the audio f
 
 For a more detailed overview of the interface and API please refer to the [documentation](https://voice-annotation-tool.readthedocs.io/en/latest/).
 
+## Screenshots
+
+![opened_project](images/screenshot.png) 
+
 ## Translation
 
 To generate the translation file, run the following command:
