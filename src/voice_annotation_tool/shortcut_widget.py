@@ -19,6 +19,8 @@ MODIFIER_KEYS = {
 }
 
 class ShortcutWidget(QFrame, Ui_ShortcutWidget):
+    """Widget used to record a shortcut."""
+
     def __init__(self, name: str, shortcut: QKeySequence):
         super().__init__()
         self.setupUi(self)
@@ -33,7 +35,7 @@ class ShortcutWidget(QFrame, Ui_ShortcutWidget):
         """Returns the currently set shortcut."""
         return self.shortcut
 
-    def _update_button_text(self):
+    def _update_button_text(self) -> None:
         self.pushButton.setText(self.shortcut.toString())
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
@@ -43,7 +45,7 @@ class ShortcutWidget(QFrame, Ui_ShortcutWidget):
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         key = event.key()
-        if key in MODIFIER_KEYS:
+        if key in MODIFIER_KEYS or key == Qt.Key_unknown:
             return
         for modifier in MODIFIERS:
             if event.modifiers() & modifier:
