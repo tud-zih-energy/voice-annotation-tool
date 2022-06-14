@@ -1,6 +1,6 @@
 from pathlib import Path
 from PySide6.QtCore import QSize, QTime, QUrl, Slot, Signal
-from PySide6.QtGui import QIcon, QKeySequence
+from PySide6.QtGui import QIcon
 from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PySide6.QtWidgets import QMessageBox, QPushButton, QWidget
 from voice_annotation_tool.audio_playback_widget_ui import Ui_AudioPlaybackWidget
@@ -45,14 +45,14 @@ class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
             self.buttonTooltips[button] = button.toolTip()
         return self.buttonTooltips[button]
 
-    def get_shortcuts(self) -> list[QKeySequence]:
+    def get_shortcuts(self) -> list[str]:
         """Returns a list of the shortcuts of the buttons."""
-        shortcuts: list[QKeySequence] = []
+        shortcuts: list[str] = []
         for button in self.playback_buttons:
-            shortcuts.append(button.shortcut())
+            shortcuts.append(button.shortcut().toString())
         return shortcuts
 
-    def apply_shortcuts(self, shortcuts: list[QKeySequence]):
+    def apply_shortcuts(self, shortcuts: list[str]):
         """Applies the shortcuts to the buttons.
 
         The shortcut is also added to the tooltip.
