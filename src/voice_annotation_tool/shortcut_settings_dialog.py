@@ -50,7 +50,7 @@ class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
         for widget in self.shortcut_widgets:
             shortcut = widget.get_shortcut()
             shortcuts.append(shortcut)
-            if shortcut in self.existing:
+            if not shortcut.isEmpty() and shortcut in self.existing:
                 error = QErrorMessage(self)
                 message = self.tr(
                     "{shortcut} is already used elsewhere in the application."
