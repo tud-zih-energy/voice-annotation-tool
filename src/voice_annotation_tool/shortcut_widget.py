@@ -1,4 +1,4 @@
-from PySide6.QtGui import QKeyEvent, QKeySequence
+from PySide6.QtGui import QKeyEvent, QKeySequence, QMouseEvent
 from PySide6.QtWidgets import QFrame
 from PySide6.QtCore import Qt
 
@@ -35,6 +35,11 @@ class ShortcutWidget(QFrame, Ui_ShortcutWidget):
 
     def _update_button_text(self):
         self.pushButton.setText(self.shortcut.toString())
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        if event.button() == Qt.MouseButton.RightButton:
+            self.shortcut = QKeySequence()
+            self._update_button_text()
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         key = event.key()

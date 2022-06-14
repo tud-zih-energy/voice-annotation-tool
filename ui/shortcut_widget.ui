@@ -38,6 +38,9 @@
    </item>
    <item>
     <widget class="QPushButton" name="pushButton">
+     <property name="toolTip">
+      <string>Click and press any key to change the shortcut. Right click to reset.</string>
+     </property>
      <property name="text">
       <string/>
      </property>
