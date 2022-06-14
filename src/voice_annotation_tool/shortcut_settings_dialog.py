@@ -1,11 +1,8 @@
 from typing import List
 from PySide6.QtCore import Slot, Signal
+from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import (
     QDialog,
-    QHBoxLayout,
-    QLineEdit,
-    QLabel,
-    QSizePolicy,
     QPushButton,
     QErrorMessage,
     QWidget,
@@ -41,13 +38,15 @@ class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
             if not isinstance(button, QPushButton):
                 continue
             shortcut = button.shortcut().toString()
-            shortcut_widget = ShortcutWidget(button.toolTip().replace(shortcut, ""))
+            shortcut_widget = ShortcutWidget(
+                button.toolTip().replace(shortcut, ""), button.shortcut()
+            )
             self.shortcut_widgets.append(shortcut_widget)
             self.settings.addWidget(shortcut_widget)
 
     @Slot()
     def accept(self):
-        shortcuts: List[str] = []
+        shortcuts: List[QKeySequence] = []
         for widget in self.shortcut_widgets:
             shortcut = widget.get_shortcut()
             shortcuts.append(shortcut)
