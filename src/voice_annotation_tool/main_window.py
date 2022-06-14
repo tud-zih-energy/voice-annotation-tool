@@ -430,7 +430,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self,
                 self.tr("No model found"),
                 self.tr(
-                    "No language model specified. Choose a model under Edit>Select Language Model.."
+                    "No language model specified. Choose a model under Edit>Select Language Model... Pretrained models can be downloaded from <a href='https://coqui.ai/models'>https://coqui.ai/models</a>."
                 ),
             )
         model = Model(str(self.language_model))
