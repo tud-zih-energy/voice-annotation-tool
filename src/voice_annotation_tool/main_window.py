@@ -421,6 +421,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not path:
             return
         self.language_model = Path(path)
+        self.settings_changed.emit()
 
     @Slot()
     def auto_generate_annotations(self):
@@ -433,14 +434,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 ),
             )
         model = Model(str(self.language_model))
+        wrong_sample_rate = []
         for annotation in self.project.annotations:
             if annotation.sentence or not annotation.path.is_file():
                 continue
             audio = wave.open(annotation.path.open("rb"), "rb")
             framerate = audio.getframerate()
             if framerate != model.sampleRate():
-                print(f"Wrong sample rate {framerate}, {model.sampleRate()} required")
+                print(
+                    f"{annotation.path} has wrong sample rate {framerate}, {model.sampleRate()} required"
+                )
+                wrong_sample_rate.append(annotation.path.name)
                 continue
             audio = numpy.frombuffer(audio.readframes(audio.getnframes()), numpy.int16)
             annotation.sentence = model.stt(audio)
+        if wrong_sample_rate:
+            QMessageBox.warning(
+                self,
+                self.tr("Wrong Sample Rate"),
+                self.tr(
+                    "The following audio files had the wrong sample rate:\n{files}.\nUse an external tool to convert them to the sample rate written in the console output."
+                ).format(files=", ".join(wrong_sample_rate)),
+            )
         self.opened_project_frame.update_selected_annotation()
