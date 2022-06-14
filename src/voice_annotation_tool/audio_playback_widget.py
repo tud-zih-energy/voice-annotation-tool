@@ -1,13 +1,16 @@
 from pathlib import Path
-from typing import Dict, List
 from PySide6.QtCore import QSize, QTime, QUrl, Slot, Signal
-from PySide6.QtGui import QIcon
+from PySide6.QtGui import QIcon, QKeySequence
 from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PySide6.QtWidgets import QMessageBox, QPushButton, QWidget
 from .audio_playback_widget_ui import Ui_AudioPlaybackWidget
 
 
 class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
+    """
+    Widget to play audio.
+    """
+
     next_pressed = Signal()
     previous_pressed = Signal()
 
@@ -17,7 +20,7 @@ class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
         self.output = QAudioOutput()
         self.player = QMediaPlayer()
         self.player.setAudioOutput(self.output)
-        self.buttonTooltips: Dict[QPushButton, str] = {}
+        self.buttonTooltips: dict[QPushButton, str] = {}
         self.playback_buttons = [
             self.playPauseButton,
             self.previousButton,
@@ -42,14 +45,14 @@ class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):
             self.buttonTooltips[button] = button.toolTip()
         return self.buttonTooltips[button]
 
-    def get_shortcuts(self) -> List[str]:
+    def get_shortcuts(self) -> list[QKeySequence]:
         """Returns a list of the shortcuts of the buttons."""
-        shortcuts: List[str] = []
+        shortcuts: list[QKeySequence] = []
         for button in self.playback_buttons:
-            shortcuts.append(button.shortcut().toString())
+            shortcuts.append(button.shortcut())
         return shortcuts
 
-    def apply_shortcuts(self, shortcuts: List[str]):
+    def apply_shortcuts(self, shortcuts: list[QKeySequence]):
         """Applies the shortcuts to the buttons.
 
         The shortcut is also added to the tooltip.

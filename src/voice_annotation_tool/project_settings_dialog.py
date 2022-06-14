@@ -7,7 +7,7 @@ from .project_settings_dialog_ui import Ui_ProjectSettingsDialog
 
 
 class ProjectSettingsDialog(QDialog, Ui_ProjectSettingsDialog):
-    settings_confirmed = Signal(dict)
+    settings_confirmed = Signal(dict[str, Path])
 
     def __init__(self):
         super().__init__()

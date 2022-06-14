@@ -1,4 +1,4 @@
-from typing import Any, Union, Dict
+from typing import Any, Union
 from PySide6.QtCore import QAbstractListModel, QModelIndex
 from PySide6.QtGui import QBrush, Qt
 
@@ -44,7 +44,7 @@ class AnnotationListModel(QAbstractListModel):
     def index(self, row: int, column: int = 0, parent=QModelIndex()) -> QModelIndex:
         return self.createIndex(row, column)
 
-    def roleNames(self) -> Dict[int, str]:
+    def roleNames(self) -> dict[int, str]:
         role_names = super.roleNames()
         role_names[ANNOTATION_ROLE] = "annotation"
         return role_names

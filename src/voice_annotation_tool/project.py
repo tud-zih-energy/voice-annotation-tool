@@ -2,7 +2,7 @@ from io import StringIO
 import os, csv
 from pathlib import Path
 import json
-from typing import List, TextIO
+from typing import TextIO
 
 from .annotation import Annotation
 
@@ -26,9 +26,9 @@ class Project:
         self.annotations_by_path: dict[str, Annotation] = {}
         """A dictionary that maps the name of the sample file to the
         annotations"""
-        self.annotations: List[Annotation] = []
+        self.annotations: list[Annotation] = []
         "The annotations of the project."
-        self.modified_annotations: List[str] = []
+        self.modified_annotations: list[str] = []
         """A list of sample file names whose text was modified since
         the project was created."""
 
@@ -184,7 +184,7 @@ class Project:
         """Exports a Json file with a list of dictionaries containing
         the annotation path as key and the text as value.
         """
-        data: List[dict[str, str]] = []
+        data: list[dict[str, str]] = []
         for annotation in self.annotations:
             data.append({"file": annotation.path.name, "text": annotation.sentence})
         json.dump(data, outfile)

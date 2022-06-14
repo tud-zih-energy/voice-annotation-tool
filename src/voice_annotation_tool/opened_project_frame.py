@@ -1,4 +1,5 @@
 from PySide6.QtCore import QModelIndex, Slot
+from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import QFrame, QFileDialog, QPushButton, QWidget
 
 from .annotation_list_model import AnnotationListModel, ANNOTATION_ROLE
@@ -59,11 +60,11 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         """Returns a list of buttons used to control the audio playback."""
         return self.audioPlaybackWidget.playback_buttons
 
-    def get_shortcuts(self) -> list[str]:
+    def get_shortcuts(self) -> list[QKeySequence]:
         """Returns a list of shortcuts for the audio playback buttons."""
         return self.audioPlaybackWidget.get_shortcuts()
 
-    def apply_shortcuts(self, shortcuts: list[str]):
+    def apply_shortcuts(self, shortcuts: list[QKeySequence]):
         """Applies the shortcuts to the buttons.
 
         The shortcut is also added to the tooltip.

@@ -1,7 +1,7 @@
 from json.decoder import JSONDecodeError
 import json
 from pathlib import Path
-from typing import Any, Dict, TextIO, Tuple
+from typing import Any, TextIO
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from PySide6.QtCore import Signal, Slot
@@ -247,7 +247,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def open(self):
-        result: Tuple[str, Any] = QFileDialog.getOpenFileName(
+        result: tuple[str, Any] = QFileDialog.getOpenFileName(
             self, self.tr("Open Project"), "", self.tr("Project Files (*.json)")
         )
         file = result[0]
