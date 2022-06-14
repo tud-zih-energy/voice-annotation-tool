@@ -1,5 +1,8 @@
 from json.decoder import JSONDecodeError
 import json
+import wave
+import numpy
+from stt import Model
 from pathlib import Path
 from typing import Any, TextIO
 from PySide6.QtGui import QDesktopServices
@@ -60,6 +63,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         This list should only contain existing paths.
         """
 
+        self.language_model: Path | None = None
+
         # Layout
         self.verticalLayout.addWidget(self.opened_project_frame)
         self.verticalLayout.addWidget(self.choose_project_frame)
@@ -86,6 +91,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionDeleteSelected.triggered.connect(self.deleteSelected)
         self.actionConfigureShortcuts.triggered.connect(self.configure_shortcuts)
         self.actionDocumentation.triggered.connect(self.open_documentation)
+        self.actionSelectLanguageModel.triggered.connect(self.select_language_model)
+        self.actionAutoGenerate.triggered.connect(self.auto_generate_annotations)
 
         self.project_actions = [
             self.actionImportCSV,
@@ -97,6 +104,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionDeleteProject,
             self.actionDeleteSelected,
             self.actionProjectSettings,
+            self.actionAutoGenerate,
         ]
         "Actions that can only be used with a project open."
 
@@ -122,6 +130,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.recent_projects.append(path)
         self.choose_project_frame.load_recent_projects(self.recent_projects)
 
+        if "language_model" in data:
+            self.language_model = Path(data["language_model"])
         self.opened_project_frame.apply_shortcuts(data.get("shortcuts", []))
         self.shortcut_settings_dialog.load_buttons(
             self.opened_project_frame.get_playback_buttons()
@@ -136,6 +146,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         data: dict[str, str | list[str]] = {
             "recent_projects": list(map(str, self.recent_projects)),
             "shortcuts": self.opened_project_frame.get_shortcuts(),
+            "language_model": str(self.language_model),
         }
         json.dump(data, to)
 
@@ -398,3 +409,38 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QDesktopServices.openUrl(
             self.tr("https://voice-annotation-tool.readthedocs.io/en/latest/")
         )
+
+    @Slot()
+    def select_language_model(self):
+        path, _ = QFileDialog.getOpenFileName(
+            self,
+            self.tr("Open Language Model"),
+            "",
+            self.tr("TFLite Models (*.tflite)"),
+        )
+        if not path:
+            return
+        self.language_model = Path(path)
+
+    @Slot()
+    def auto_generate_annotations(self):
+        if not self.language_model or not self.language_model.is_file():
+            return QMessageBox.warning(
+                self,
+                self.tr("No model found"),
+                self.tr(
+                    "No language model specified. Choose a model under Edit>Select Language Model.."
+                ),
+            )
+        model = Model(str(self.language_model))
+        for annotation in self.project.annotations:
+            if annotation.sentence or not annotation.path.is_file():
+                continue
+            audio = wave.open(annotation.path.open("rb"), "rb")
+            framerate = audio.getframerate()
+            if framerate != model.sampleRate():
+                print(f"Wrong sample rate {framerate}, {model.sampleRate()} required")
+                continue
+            audio = numpy.frombuffer(audio.readframes(audio.getnframes()), numpy.int16)
+            annotation.sentence = model.stt(audio)
+        self.opened_project_frame.update_selected_annotation()

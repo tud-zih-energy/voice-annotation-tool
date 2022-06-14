@@ -69,7 +69,7 @@ class Project:
             ]:
                 continue
             annotation = Annotation()
-            annotation.path = self.audio_folder.joinpath(path)
+            annotation.path = path
             self.add_annotation(annotation)
 
     def annotate(self, annotation: Annotation, text: str) -> None:
@@ -140,7 +140,7 @@ class Project:
 
         If the audio folder is specified, it is added to the annotation path.
         """
-        if self.audio_folder:
+        if self.audio_folder and self.audio_folder not in annotation.path.parents:
             annotation.path = self.audio_folder.joinpath(annotation.path)
         if annotation.path.name in self.annotations_by_path:
             if overwrite:

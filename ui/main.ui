@@ -51,12 +51,14 @@
      <string>&amp;Edit</string>
     </property>
     <addaction name="actionConfigureShortcuts"/>
+    <addaction name="actionSelectLanguageModel"/>
     <addaction name="actionProjectSettings"/>
     <addaction name="actionExportCSV"/>
     <addaction name="actionImportCSV"/>
     <addaction name="actionExportJson"/>
     <addaction name="actionImportJson"/>
     <addaction name="actionDeleteSelected"/>
+    <addaction name="actionAutoGenerate"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -205,6 +207,25 @@
    </property>
    <property name="shortcut">
     <string>F1</string>
+   </property>
+  </action>
+  <action name="actionAutoGenerate">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Auto-Generate Annotation Text</string>
+   </property>
+  </action>
+  <action name="actionSelectLanguageModel">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Select &amp;Language Model...</string>
    </property>
   </action>
  </widget>
