@@ -254,8 +254,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def new_project(self):
-        if self.last_saved_hash != hash(self.project):
-
         self.project_file = None
         self.set_current_project(Project())
 
