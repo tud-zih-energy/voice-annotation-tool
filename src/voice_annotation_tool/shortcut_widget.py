@@ -18,6 +18,7 @@ MODIFIER_KEYS = {
     Qt.Key_Meta,
 }
 
+
 class ShortcutWidget(QFrame, Ui_ShortcutWidget):
     """Widget used to record a shortcut."""
 
