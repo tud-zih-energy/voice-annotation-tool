@@ -3,7 +3,7 @@ from PySide6.QtCore import QSize, QTime, QUrl, Slot, Signal
 from PySide6.QtGui import QIcon, QKeySequence
 from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PySide6.QtWidgets import QMessageBox, QPushButton, QWidget
-from .audio_playback_widget_ui import Ui_AudioPlaybackWidget
+from voice_annotation_tool.audio_playback_widget_ui import Ui_AudioPlaybackWidget
 
 
 class AudioPlaybackWidget(QWidget, Ui_AudioPlaybackWidget):

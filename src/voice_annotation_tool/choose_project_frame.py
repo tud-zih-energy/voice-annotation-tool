@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Any
 from PySide6.QtWidgets import QFrame, QListWidgetItem, QFileDialog
 from PySide6.QtCore import Signal, Slot, QModelIndex
-from .choose_project_frame_ui import Ui_ChooseProjectFrame
+from voice_annotation_tool.choose_project_frame_ui import Ui_ChooseProjectFrame
 
 
 class ChooseProjectFrame(QFrame, Ui_ChooseProjectFrame):

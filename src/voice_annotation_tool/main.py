@@ -5,7 +5,7 @@ The entrypoint for the annotation tool.
 import sys
 
 from PySide6.QtCore import QLocale, QTranslator
-from .application import Application
+from voice_annotation_tool.application import Application
 
 
 def main():

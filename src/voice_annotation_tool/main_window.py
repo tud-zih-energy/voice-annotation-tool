@@ -7,12 +7,12 @@ from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 from PySide6.QtCore import Signal, Slot
 
 from voice_annotation_tool.project_settings_dialog import ProjectSettingsDialog
-from .project import Project
-from .opened_project_frame import OpenedProjectFrame
-from .shortcut_settings_dialog import ShortcutSettingsDialog
-from .choose_project_frame import ChooseProjectFrame
-from .about_dialog import AboutDialog
-from .main_ui import Ui_MainWindow
+from voice_annotation_tool.project import Project
+from voice_annotation_tool.opened_project_frame import OpenedProjectFrame
+from voice_annotation_tool.shortcut_settings_dialog import ShortcutSettingsDialog
+from voice_annotation_tool.choose_project_frame import ChooseProjectFrame
+from voice_annotation_tool.about_dialog import AboutDialog
+from voice_annotation_tool.main_ui import Ui_MainWindow
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -375,7 +375,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.project_settings_dialog.exec()
 
     @Slot(dict)
-    def settings_confirmed(self, settings: Dict[str, Path]):
+    def settings_confirmed(self, settings: dict[str, Path]):
         self.project.tsv_file = settings["tsv"]
         self.project.audio_folder = settings["audio"]
         if self.project.tsv_file.is_file():

@@ -4,7 +4,7 @@ from pathlib import Path
 import json
 from typing import TextIO
 
-from .annotation import Annotation
+from voice_annotation_tool.annotation import Annotation
 
 
 class Project:

@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
     QErrorMessage,
     QWidget,
 )
-from .shortcut_settings_dialog_ui import Ui_ShortcutSettingsDialog
+from voice_annotation_tool.shortcut_settings_dialog_ui import Ui_ShortcutSettingsDialog
 
 
 class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):

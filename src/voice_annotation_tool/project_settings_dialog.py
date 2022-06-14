@@ -2,8 +2,8 @@ from pathlib import Path
 from PySide6.QtCore import Signal, Slot
 from PySide6.QtWidgets import QDialog, QFileDialog
 
-from .project import Project
-from .project_settings_dialog_ui import Ui_ProjectSettingsDialog
+from voice_annotation_tool.project import Project
+from voice_annotation_tool.project_settings_dialog_ui import Ui_ProjectSettingsDialog
 
 
 class ProjectSettingsDialog(QDialog, Ui_ProjectSettingsDialog):

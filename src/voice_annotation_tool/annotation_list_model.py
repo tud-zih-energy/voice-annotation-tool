@@ -2,7 +2,7 @@ from typing import Any, Union
 from PySide6.QtCore import QAbstractListModel, QModelIndex
 from PySide6.QtGui import QBrush, Qt
 
-from .project import Project, Annotation
+from voice_annotation_tool.project import Project, Annotation
 
 ANNOTATION_ROLE = Qt.UserRole + 1
 
