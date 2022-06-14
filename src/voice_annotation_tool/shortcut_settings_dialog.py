@@ -1,4 +1,3 @@
-from typing import List
 from PySide6.QtCore import Slot, Signal
 from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import (
@@ -21,8 +20,8 @@ class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.shortcut_widgets: List[ShortcutWidget] = []
-        self.existing: List[str] = []
+        self.shortcut_widgets: list[ShortcutWidget] = []
+        self.existing: list[str] = []
 
     def load_existing(self, widget: QWidget):
         """Loads the shortcuts used by the given widget into a list.
@@ -32,7 +31,7 @@ class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
         for action in widget.actions():
             self.existing.append(action.shortcut().toString())
 
-    def load_buttons(self, buttons: List[QPushButton]):
+    def load_buttons(self, buttons: list[QPushButton]):
         """Generates widgets which can be used to edit the shortcuts."""
         for button in buttons:
             if not isinstance(button, QPushButton):
@@ -46,7 +45,7 @@ class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
 
     @Slot()
     def accept(self):
-        shortcuts: List[QKeySequence] = []
+        shortcuts: list[QKeySequence] = []
         for widget in self.shortcut_widgets:
             shortcut = widget.get_shortcut()
             shortcuts.append(shortcut)
