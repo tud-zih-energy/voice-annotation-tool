@@ -2,6 +2,7 @@ from json.decoder import JSONDecodeError
 import json
 import wave
 import numpy
+import ffmpeg
 from stt import Model
 from pathlib import Path
 from typing import Any, TextIO
@@ -253,6 +254,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def new_project(self):
+        if self.last_saved_hash != hash(self.project):
+
         self.project_file = None
         self.set_current_project(Project())
 
@@ -434,26 +437,39 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 ),
             )
         model = Model(str(self.language_model))
-        wrong_sample_rate = []
         for annotation in self.project.annotations:
             if annotation.sentence or not annotation.path.is_file():
                 continue
+            if annotation.path.suffix != ".wav":
+                (
+                    ffmpeg.input(annotation.path)
+                    .output(
+                        str(annotation.path.with_suffix(".wav")),
+                        **{"ar": str(model.sampleRate())},
+                    )
+                    .run()
+                )
             audio = wave.open(annotation.path.open("rb"), "rb")
             framerate = audio.getframerate()
             if framerate != model.sampleRate():
                 print(
-                    f"{annotation.path} has wrong sample rate {framerate}, {model.sampleRate()} required"
+                    f"{annotation.path} has wrong sample rate {framerate}, converting to {model.sampleRate()}..."
                 )
-                wrong_sample_rate.append(annotation.path.name)
-                continue
+                output_file = annotation.path.with_name(annotation.path.name + "_auto")
+                if not output_file.exists():
+                    (
+                        ffmpeg.input(annotation.path)
+                        .output(output_file, **{"ar": str(model.sampleRate())})
+                        .run()
+                    )
+            audio = wave.open(annotation.path.open("rb"), "rb")
             audio = numpy.frombuffer(audio.readframes(audio.getnframes()), numpy.int16)
             annotation.sentence = model.stt(audio)
-        if wrong_sample_rate:
-            QMessageBox.warning(
-                self,
-                self.tr("Wrong Sample Rate"),
-                self.tr(
-                    "The following audio files had the wrong sample rate:\n{files}.\nUse an external tool to convert them to the sample rate written in the console output."
-                ).format(files=", ".join(wrong_sample_rate)),
-            )
         self.opened_project_frame.update_selected_annotation()
+        return QMessageBox.information(
+            self,
+            self.tr("Done"),
+            self.tr(
+                "Samples without an annotated sentence have been automatically annotated."
+            ),
+        )
