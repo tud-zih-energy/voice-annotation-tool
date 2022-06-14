@@ -1,7 +1,7 @@
 import pkg_resources
 from PySide6.QtWidgets import QDialog
 from PySide6.QtCore import Slot
-from .about_ui import Ui_AboutDialog
+from voice_annotation_tool.about_ui import Ui_AboutDialog
 
 
 class AboutDialog(QDialog, Ui_AboutDialog):

@@ -1,9 +1,9 @@
 from PySide6.QtCore import QModelIndex, Slot
 from PySide6.QtWidgets import QFrame, QFileDialog, QPushButton, QWidget
 
-from .annotation_list_model import AnnotationListModel, ANNOTATION_ROLE
-from .opened_project_frame_ui import Ui_OpenedProjectFrame
-from .project import Annotation, Project
+from voice_annotation_tool.annotation_list_model import AnnotationListModel, ANNOTATION_ROLE
+from voice_annotation_tool.opened_project_frame_ui import Ui_OpenedProjectFrame
+from voice_annotation_tool.project import Annotation, Project
 
 AGES = [
     "",
