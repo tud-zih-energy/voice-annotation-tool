@@ -4,6 +4,19 @@ from PySide6.QtCore import Qt
 
 from voice_annotation_tool.shortcut_widget_ui import Ui_ShortcutWidget
 
+MODIFIERS = {
+    Qt.ShiftModifier,
+    Qt.ControlModifier,
+    Qt.AltModifier,
+    Qt.MetaModifier,
+}
+
+MODIFIER_KEYS = {
+    Qt.Key_Shift,
+    Qt.Key_Control,
+    Qt.Key_Alt,
+    Qt.Key_Meta,
+}
 
 class ShortcutWidget(QFrame, Ui_ShortcutWidget):
     def __init__(self, name: str, shortcut: QKeySequence):
@@ -25,12 +38,9 @@ class ShortcutWidget(QFrame, Ui_ShortcutWidget):
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         key = event.key()
-        for modifier in [
-            Qt.ShiftModifier,
-            Qt.ControlModifier,
-            Qt.AltModifier,
-            Qt.MetaModifier,
-        ]:
+        if key in MODIFIER_KEYS:
+            return
+        for modifier in MODIFIERS:
             if event.modifiers() & modifier:
                 key += modifier
         self.shortcut = QKeySequence(key)
