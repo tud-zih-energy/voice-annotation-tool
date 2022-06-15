@@ -451,9 +451,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             except FileNotFoundError:
                 return QMessageBox.warning(
                     self,
-                    self.tr("No FFMPEG installation found"),
+                    self.tr("No FFmpeg installation found"),
                     self.tr(
-                        "No FFMPEG installation found. FFMPEG is required to process the audio files so they can be used by the speech to text module."
+                        "No FFmpeg installation found. FFmpeg is required to process the audio files so they can be used by the speech to text module."
                     ),
                 )
             audio = wave.open(temp_file.open("rb"), "rb")

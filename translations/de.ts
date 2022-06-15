@@ -412,13 +412,13 @@
     </message>
     <message>
         <location filename="../src/voice_annotation_tool/main_window.py" line="454"/>
-        <source>No FFMPEG installation found</source>
-        <translation>Keine FFMPEG-Installation gefunden</translation>
+        <source>No FFmpeg installation found</source>
+        <translation>Keine FFmpeg-Installation gefunden</translation>
     </message>
     <message>
         <location filename="../src/voice_annotation_tool/main_window.py" line="457"/>
-        <source>No FFMPEG installation found. FFMPEG is required to process the audio files so they can be used by the speech to text module.</source>
-        <translation>Keine FFMPEG-Installation gefunden. FFMPEG wird benötigt, um die Audiodateien zu prozessieren, damit sie vom Sprach-zu-Text-Modul verwendet werden können.</translation>
+        <source>No FFmpeg installation found. FFmpeg is required to process the audio files so they can be used by the speech to text module.</source>
+        <translation>Keine FFmpeg-Installation gefunden. FFmpeg wird benötigt, um die Audiodateien zu prozessieren, damit sie vom Sprach-zu-Text-Modul verwendet werden können.</translation>
     </message>
     <message>
         <location filename="../src/voice_annotation_tool/main_window.py" line="466"/>
