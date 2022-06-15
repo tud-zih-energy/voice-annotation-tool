@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any, TextIO
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
-from PySide6.QtCore import Signal, Slot
+from PySide6.QtCore import QStandardPaths, Signal, Slot
 
 from voice_annotation_tool.project_settings_dialog import ProjectSettingsDialog
 from voice_annotation_tool.project import Project
@@ -438,31 +438,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for annotation in self.project.annotations:
             if annotation.sentence or not annotation.path.is_file():
                 continue
-            if annotation.path.suffix != ".wav":
-                (
-                    ffmpeg.input(annotation.path)
-                    .output(
-                        str(annotation.path.with_suffix(".wav")),
-                        **{"ar": str(model.sampleRate())},
-                    )
-                    .run()
-                )
-            audio = wave.open(annotation.path.open("rb"), "rb")
-            framerate = audio.getframerate()
-            if framerate != model.sampleRate():
-                print(
-                    f"{annotation.path} has wrong sample rate {framerate}, converting to {model.sampleRate()}..."
-                )
-                output_file = annotation.path.with_name(annotation.path.name + "_auto")
-                if not output_file.exists():
-                    (
-                        ffmpeg.input(annotation.path)
-                        .output(output_file, **{"ar": str(model.sampleRate())})
-                        .run()
-                    )
-            audio = wave.open(annotation.path.open("rb"), "rb")
+            temp_file = (
+                Path(QStandardPaths.writableLocation(QStandardPaths.TempLocation))
+                / "converted_sample.wav"
+            )
+            stream = ffmpeg.input(str(annotation.path))
+            output = ffmpeg.output(stream, str(temp_file), **{"ar": str(model.sampleRate())})
+            ffmpeg.run(output)
+            audio = wave.open(temp_file.open("rb"), "rb")
             audio = numpy.frombuffer(audio.readframes(audio.getnframes()), numpy.int16)
             annotation.sentence = model.stt(audio)
+            temp_file.unlink()
         self.opened_project_frame.update_selected_annotation()
         return QMessageBox.information(
             self,
