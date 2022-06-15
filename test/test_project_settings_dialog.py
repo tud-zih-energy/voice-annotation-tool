@@ -11,3 +11,8 @@ def test_load_project_shows_paths():
     dialog.load_project(project)
     assert dialog.audioPathEdit.text() == "audio"
     assert dialog.tsvPathEdit.text() == "tsv"
+
+
+def test_accept():
+    dialog = ProjectSettingsDialog()
+    dialog.accept()
