@@ -53,7 +53,7 @@ class Project:
         if not all(
             ["modified_annotations" in data, "audio_folder" in data, "tsv_file" in data]
         ):
-            return False
+            raise ValueError
         self.modified_annotations = data["modified_annotations"]
         self.audio_folder = location.joinpath(data.get("audio_folder"))
         self.tsv_file = location.joinpath(data.get("tsv_file"))

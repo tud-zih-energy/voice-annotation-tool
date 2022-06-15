@@ -176,7 +176,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.project_file = path
         self.project = Project()
         with open(path) as file:
-            if not self.project.load_json(file, self.project_file.parent):
+            try:
+                self.project.load_json(file, self.project_file.parent)
+            except (ValueError, JSONDecodeError):
                 message = QMessageBox()
                 message.setIcon(QMessageBox.Critical)
                 message.setWindowTitle(self.tr("Error"))
