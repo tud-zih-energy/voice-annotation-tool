@@ -30,7 +30,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.project_settings_dialog = ProjectSettingsDialog()
         self.project_settings_dialog.settings_confirmed.connect(self.settings_confirmed)
-        self.shortcut_settings_dialog = ShortcutSettingsDialog()
         self.opened_project_frame = OpenedProjectFrame()
         self.choose_project_frame = ChooseProjectFrame()
 
@@ -66,9 +65,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.opened_project_frame.hide()
 
         # Connections
-        self.shortcut_settings_dialog.shortcuts_confirmed.connect(
-            self.shortcuts_confirmed
-        )
         self.choose_project_frame.project_opened.connect(self.recent_project_chosen)
         self.choose_project_frame.create_project_pressed.connect(self.new_project)
         self.actionNewProject.triggered.connect(self.new_project)
@@ -123,11 +119,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.choose_project_frame.load_recent_projects(self.recent_projects)
 
         self.opened_project_frame.apply_shortcuts(data.get("shortcuts", []))
-        self.shortcut_settings_dialog.load_buttons(
-            self.opened_project_frame.get_playback_buttons()
-        )
-        self.shortcut_settings_dialog.load_existing(self.menuEdit)
-        self.shortcut_settings_dialog.load_existing(self.menuFile)
 
     def save_settings(self, to: TextIO):
         """
@@ -386,7 +377,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def configure_shortcuts(self):
-        self.shortcut_settings_dialog.exec()
+        shortcut_settings_dialog = ShortcutSettingsDialog()
+        shortcut_settings_dialog.load_buttons(
+            self.opened_project_frame.get_playback_buttons()
+        )
+        shortcut_settings_dialog.load_existing(self.menuEdit)
+        shortcut_settings_dialog.load_existing(self.menuFile)
+        shortcut_settings_dialog.shortcuts_confirmed.connect(
+            self.shortcuts_confirmed
+        )
+        shortcut_settings_dialog.exec()
 
     @Slot()
     def shortcuts_confirmed(self, shortcuts):

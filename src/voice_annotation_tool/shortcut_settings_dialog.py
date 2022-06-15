@@ -1,15 +1,13 @@
-from typing import List
 from PySide6.QtCore import Slot, Signal
+from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import (
     QDialog,
-    QHBoxLayout,
-    QLineEdit,
-    QLabel,
-    QSizePolicy,
     QPushButton,
     QErrorMessage,
     QWidget,
 )
+
+from voice_annotation_tool.shortcut_widget import ShortcutWidget
 from voice_annotation_tool.shortcut_settings_dialog_ui import Ui_ShortcutSettingsDialog
 
 
@@ -22,8 +20,8 @@ class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.shortcut_edits: List[QLineEdit] = []
-        self.existing: List[str] = []
+        self.shortcut_widgets: list[ShortcutWidget] = []
+        self.existing: list[str] = []
 
     def load_existing(self, widget: QWidget):
         """Loads the shortcuts used by the given widget into a list.
@@ -33,40 +31,29 @@ class ShortcutSettingsDialog(QDialog, Ui_ShortcutSettingsDialog):
         for action in widget.actions():
             self.existing.append(action.shortcut().toString())
 
-    def load_buttons(self, buttons: List[QPushButton]):
+    def load_buttons(self, buttons: list[QPushButton]):
         """Generates widgets which can be used to edit the shortcuts."""
         for button in buttons:
             if not isinstance(button, QPushButton):
                 continue
             shortcut = button.shortcut().toString()
-            layout = QHBoxLayout()
-            label = QLabel(self)
-            label.setText(button.toolTip().replace(shortcut, ""))
-            label.setSizePolicy(
-                QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred
+            shortcut_widget = ShortcutWidget(
+                button.toolTip().replace(shortcut, ""), button.shortcut()
             )
-            line_edit = QLineEdit(self)
-            line_edit.setText(shortcut)
-            line_edit.setSizePolicy(
-                QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred
-            )
-            layout.addWidget(label)
-            layout.addWidget(line_edit)
-            self.shortcut_edits.append(line_edit)
-            self.settings.addLayout(layout)
+            self.shortcut_widgets.append(shortcut_widget)
+            self.settings.addWidget(shortcut_widget)
 
     @Slot()
     def accept(self):
-        shortcuts: List[str] = []
-        for edit in self.findChildren(QLineEdit):
-            shortcuts.append(edit.text())
-        for shortcut in shortcuts:
-            if shortcut in self.existing:
+        shortcuts: list[QKeySequence] = []
+        for widget in self.shortcut_widgets:
+            shortcut = widget.get_shortcut()
+            shortcuts.append(shortcut)
+            if not shortcut.isEmpty() and shortcut in self.existing:
                 error = QErrorMessage(self)
                 message = self.tr(
                     "{shortcut} is already used elsewhere in the application."
                 )
-                error.showMessage(message.format(shortcut=shortcut))
-                return
+                return error.showMessage(message.format(shortcut=shortcut))
         self.shortcuts_confirmed.emit(shortcuts)
         super().accept()
