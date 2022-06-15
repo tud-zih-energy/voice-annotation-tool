@@ -444,7 +444,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             )
             stream = ffmpeg.input(str(annotation.path))
             output = ffmpeg.output(stream, str(temp_file), **{"ar": str(model.sampleRate())})
-            ffmpeg.run(output)
+            try:
+                ffmpeg.run(output)
+            except FileNotFoundError:
+                return QMessageBox.warning(
+                    self,
+                    self.tr("No FFMPEG installation found"),
+                    self.tr(
+                        "No FFMPEG installation found. FFMPEG is required to process the audio files so they can be used by the speech to text module."
+                    ),
+                )
             audio = wave.open(temp_file.open("rb"), "rb")
             audio = numpy.frombuffer(audio.readframes(audio.getnframes()), numpy.int16)
             annotation.sentence = model.stt(audio)
