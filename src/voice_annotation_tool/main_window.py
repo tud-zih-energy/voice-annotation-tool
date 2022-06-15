@@ -443,7 +443,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 / "converted_sample.wav"
             )
             stream = ffmpeg.input(str(annotation.path))
-            output = ffmpeg.output(stream, str(temp_file), **{"ar": str(model.sampleRate())})
+            output = ffmpeg.output(
+                stream, str(temp_file), **{"ar": str(model.sampleRate())}
+            )
             try:
                 ffmpeg.run(output)
             except FileNotFoundError:
