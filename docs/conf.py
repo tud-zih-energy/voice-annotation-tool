@@ -22,7 +22,10 @@ copyright = "2022, Feliks Weber"
 author = "Feliks Weber"
 
 # The full version, including alpha/beta/rc tags
-release = "1.8.0"
+import configparser
+config = configparser.ConfigParser()
+config.read("setup.cfg")
+release = config.get("metadata", "version")
 
 
 # -- General configuration ---------------------------------------------------
