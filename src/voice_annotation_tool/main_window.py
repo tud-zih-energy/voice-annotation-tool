@@ -435,13 +435,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 ),
             )
         model = Model(str(self.language_model))
+        tmp_dir = Path(QStandardPaths.writableLocation(QStandardPaths.TempLocation))
         for annotation in self.project.annotations:
             if annotation.sentence or not annotation.path.is_file():
                 continue
-            temp_file = (
-                Path(QStandardPaths.writableLocation(QStandardPaths.TempLocation))
-                / "converted_sample.wav"
-            )
+            temp_file = tmp_dir / "converted_sample.wav"
             stream = ffmpeg.input(str(annotation.path))
             output = ffmpeg.output(
                 stream, str(temp_file), **{"ar": str(model.sampleRate())}
