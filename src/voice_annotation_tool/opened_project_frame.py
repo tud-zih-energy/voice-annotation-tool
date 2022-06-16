@@ -189,7 +189,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         """Delete the selected annotations and audio files."""
         for selected in self.get_selected_annotations():
             self.project.delete_annotation(selected)
-        self.annotationList.model().layoutChanged.emit()
+        self.update_sample_list()
         self.update_metadata_widgets()
 
     def get_selected_annotations(self) -> list[Annotation]:
@@ -198,6 +198,11 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         for selected_index in self.annotationList.selectionModel().selectedIndexes():
             annotations.append(selected_index.data(ANNOTATION_ROLE))
         return annotations
+
+    def update_sample_list(self):
+        """Update the graphical representation of the
+        AnnotationListModel after it changed."""
+        self.annotationList.model().layoutChanged.emit()
 
     @Slot()
     def previous_pressed(self):
@@ -314,3 +319,5 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         else:
             self.recorder.stop()
             self.recordButton.setText(self.tr("Record Sample"))
+            self.project.load_audio_files(self.project.audio_folder)
+            self.update_sample_list()
