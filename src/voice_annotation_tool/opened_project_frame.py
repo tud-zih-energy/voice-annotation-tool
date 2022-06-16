@@ -5,6 +5,7 @@ from PySide6.QtCore import QModelIndex, QUrl, Slot
 from PySide6.QtMultimedia import (
     QAudioInput,
     QMediaCaptureSession,
+    QMediaDevices,
     QMediaFormat,
     QMediaRecorder,
 )
@@ -79,6 +80,9 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.recorder.setAudioSampleRate(16000)
         self.recorder.setAudioBitRate(32)
         self.recorder.setQuality(QMediaRecorder.HighQuality)
+
+        for device in QMediaDevices.audioInputs():
+            self.deviceComboBox.addItem(device.description())
 
     def get_playback_buttons(self) -> list[QPushButton]:
         """Returns a list of buttons used to control the audio playback."""
@@ -321,3 +325,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
             self.recordButton.setText(self.tr("Record Sample"))
             self.project.load_audio_files(self.project.audio_folder)
             self.update_sample_list()
+
+    @Slot()
+    def device_selected(self, device: int):
+        self.input.setDevice(QMediaDevices.audioInputs()[device])
