@@ -456,7 +456,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 )
             audio = wave.open(temp_file.open("rb"), "rb")
             audio = numpy.frombuffer(audio.readframes(audio.getnframes()), numpy.int16)
-            annotation.sentence = model.stt(audio)
+            annotation.sentence = model.stt(audio).capitalize() + "."
             temp_file.unlink()
         self.opened_project_frame.update_selected_annotation()
         return QMessageBox.information(
