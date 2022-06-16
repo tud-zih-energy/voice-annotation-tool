@@ -1,7 +1,19 @@
-from PySide6.QtCore import QModelIndex, Slot
+import os
+import random
+import string
+from PySide6.QtCore import QModelIndex, QUrl, Slot
+from PySide6.QtMultimedia import (
+    QAudioInput,
+    QMediaCaptureSession,
+    QMediaFormat,
+    QMediaRecorder,
+)
 from PySide6.QtWidgets import QFrame, QFileDialog, QPushButton, QWidget
 
-from voice_annotation_tool.annotation_list_model import AnnotationListModel, ANNOTATION_ROLE
+from voice_annotation_tool.annotation_list_model import (
+    AnnotationListModel,
+    ANNOTATION_ROLE,
+)
 from voice_annotation_tool.opened_project_frame_ui import Ui_OpenedProjectFrame
 from voice_annotation_tool.project import Annotation, Project
 
@@ -51,9 +63,22 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.audioPlaybackWidget.previous_pressed.connect(self.previous_pressed)
         self.project: Project
         self.annotationList.installEventFilter(self)
+
         for age in AGE_STRINGS:
             self.ageInput.addItem(age)
         self.ageInput.addItem(self.tr("[Multiple]"))
+
+        self.recorder = QMediaRecorder()
+        self.input = QAudioInput()
+        self.session = QMediaCaptureSession()
+        self.session.setAudioInput(self.input)
+        self.recorder = QMediaRecorder()
+        self.session.setRecorder(self.recorder)
+        self.recorder.setMediaFormat(QMediaFormat.Wave)
+        self.recorder.setEncodingMode(QMediaRecorder.ConstantBitRateEncoding)
+        self.recorder.setAudioSampleRate(16000)
+        self.recorder.setAudioBitRate(32)
+        self.recorder.setQuality(QMediaRecorder.HighQuality)
 
     def get_playback_buttons(self) -> list[QPushButton]:
         """Returns a list of buttons used to control the audio playback."""
@@ -273,3 +298,19 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def mark_unchanged_pressed(self):
         for annotation in self.get_selected_annotations():
             self.project.mark_unchanged(annotation)
+
+    @Slot()
+    def record_pressed(self):
+        if not self.project.audio_folder or not self.project.audio_folder.is_dir():
+            return
+        if self.recorder.recorderState() == QMediaRecorder.StoppedState:
+            name = "".join(
+                random.choices(string.ascii_lowercase + string.digits * 2, k=129)
+            )
+            path = QUrl.fromLocalFile(os.fspath(self.project.audio_folder / name))
+            self.recorder.setOutputLocation(path)
+            self.recorder.record()
+            self.recordButton.setText(self.tr("Stop Recording"))
+        else:
+            self.recorder.stop()
+            self.recordButton.setText(self.tr("Record Sample"))

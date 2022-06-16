@@ -189,6 +189,16 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="recordButton">
+       <property name="toolTip">
+        <string>Start recording a new sample and save it to the audio folder selected in the project settings. Click the button again to stop recording.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Record Sample</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
@@ -270,8 +280,8 @@
    <slot>gender_selected(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>542</x>
-     <y>34</y>
+     <x>540</x>
+     <y>43</y>
     </hint>
     <hint type="destinationlabel">
      <x>1062</x>
@@ -286,8 +296,8 @@
    <slot>accent_changed(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>542</x>
-     <y>86</y>
+     <x>540</x>
+     <y>90</y>
     </hint>
     <hint type="destinationlabel">
      <x>1047</x>
@@ -327,6 +337,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>recordButton</sender>
+   <signal>pressed()</signal>
+   <receiver>OpenedProjectFrame</receiver>
+   <slot>record_pressed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>819</x>
+     <y>709</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1234</x>
+     <y>392</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>previous_pressed()</slot>
@@ -342,5 +368,6 @@
   <slot>play_pause_pressed()</slot>
   <slot>mark_unchanged_pressed()</slot>
   <slot>metadata_changed(QString)</slot>
+  <slot>record_pressed()</slot>
  </slots>
 </ui>
