@@ -5,4 +5,6 @@ Keyboard Shortcuts
 
 Keyboard shortcuts can be configured under ``Settings > Keyboard Shortcuts.``
 
-Examples of possible shortcuts are ``Ctrl+L``, ``Alt+2``, ``Esc``, ``Ctrl+Shift+Enter``, ``Ctrl+Right``.
+To change a shortcut, click the button and press the shortcut you want to assign.
+
+Right-click the button to clear the shortcut.

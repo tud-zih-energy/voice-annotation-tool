@@ -7,6 +7,16 @@ from typing import TextIO
 from voice_annotation_tool.annotation import Annotation
 
 
+def relative_or_absolute(path: Path, relative_to: Path) -> Path:
+    """Returns the path relative to a second path, or the
+    absolute path if that isn't possible.
+    """
+    try:
+        return path.relative_to(relative_to)
+    except ValueError:
+        return path
+
+
 class Project:
     """Representation of a project file.
 
@@ -43,7 +53,7 @@ class Project:
         if not all(
             ["modified_annotations" in data, "audio_folder" in data, "tsv_file" in data]
         ):
-            return False
+            raise ValueError
         self.modified_annotations = data["modified_annotations"]
         self.audio_folder = location.joinpath(data.get("audio_folder"))
         self.tsv_file = location.joinpath(data.get("tsv_file"))
@@ -97,9 +107,11 @@ class Project:
             "modified_annotations": self.modified_annotations,
         }
         if self.tsv_file:
-            data["tsv_file"] = str(os.path.relpath(self.tsv_file, location))
+            data["tsv_file"] = str(relative_or_absolute(self.tsv_file, location))
         if self.audio_folder:
-            data["audio_folder"] = str(os.path.relpath(self.audio_folder, location))
+            data["audio_folder"] = str(
+                relative_or_absolute(self.audio_folder, location)
+            )
         json.dump(data, file)
 
     def save_annotations(self, file: TextIO):

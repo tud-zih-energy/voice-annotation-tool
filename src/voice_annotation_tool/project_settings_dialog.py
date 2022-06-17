@@ -7,7 +7,7 @@ from voice_annotation_tool.project_settings_dialog_ui import Ui_ProjectSettingsD
 
 
 class ProjectSettingsDialog(QDialog, Ui_ProjectSettingsDialog):
-    settings_confirmed = Signal(dict[str, Path])
+    settings_confirmed = Signal(object)
 
     def __init__(self):
         super().__init__()

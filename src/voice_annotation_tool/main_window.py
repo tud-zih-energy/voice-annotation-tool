@@ -34,30 +34,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.project_settings_dialog = ProjectSettingsDialog()
         self.project_settings_dialog.settings_confirmed.connect(self.settings_confirmed)
-        self.shortcut_settings_dialog = ShortcutSettingsDialog()
         self.opened_project_frame = OpenedProjectFrame()
         self.choose_project_frame = ChooseProjectFrame()
 
         self.original_title = self.windowTitle()
-        "The window title before it was changed to the project name."
-
+        """The window title before it was changed to the
+        project name.
+        """
         self.project: Project = Project()
         """The currently loaded project.
 
-        Even if the user didn't open a project, an empty unsaved project
-        is loaded.
+        Even if the user didn't open a project, an empty
+        unsaved project is loaded.
         """
-
         self.project_file: Path | None = None
         """The path the current project was saved to.
 
-        None if the project was never saved."""
-
+        None if the project was never saved.
+        """
         self.last_saved_hash: int = 0
         """The hash of the project when it was last saved.
 
-        Zero if no project is loaded."""
-
+        Zero if no project is loaded.
+        """
         self.recent_projects: list[Path] = []
         """List of recently opened projects.
 
@@ -71,10 +70,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.verticalLayout.addWidget(self.choose_project_frame)
         self.opened_project_frame.hide()
 
-        # Connections
-        self.shortcut_settings_dialog.shortcuts_confirmed.connect(
-            self.shortcuts_confirmed
-        )
         self.choose_project_frame.project_opened.connect(self.recent_project_chosen)
         self.choose_project_frame.create_project_pressed.connect(self.new_project)
         self.actionNewProject.triggered.connect(self.new_project)
@@ -110,8 +105,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         "Actions that can only be used with a project open."
 
     def load_settings(self, file: TextIO):
-        """Loads the recently used projects into the `recent_projects` list
-        and applies the shortcuts.
+        """Loads the recently used projects into the
+        `recent_projects` list and applies the shortcuts.
         """
         try:
             data = json.load(file)
@@ -134,15 +129,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if "language_model" in data:
             self.language_model = Path(data["language_model"])
         self.opened_project_frame.apply_shortcuts(data.get("shortcuts", []))
-        self.shortcut_settings_dialog.load_buttons(
-            self.opened_project_frame.get_playback_buttons()
-        )
-        self.shortcut_settings_dialog.load_existing(self.menuEdit)
-        self.shortcut_settings_dialog.load_existing(self.menuFile)
 
     def save_settings(self, to: TextIO):
-        """
-        Saves the `recent_projects` list and keyboard shortcuts to a json file.
+        """Saves the `recent_projects` list and keyboard
+        shortcuts to a json file.
         """
         data: dict[str, str | list[str]] = {
             "recent_projects": list(map(str, self.recent_projects)),
@@ -194,10 +184,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print("opened done")
 
     def load_project_from_file(self, path: Path):
+        """Load an existing project from a JSON file.
+
+        If there are any issues with the project, report
+        them to the user.
+        """
         self.project_file = path
         self.project = Project()
         with open(path) as file:
-            if not self.project.load_json(file, self.project_file.parent):
+            try:
+                self.project.load_json(file, self.project_file.parent)
+            except (ValueError, JSONDecodeError):
                 message = QMessageBox()
                 message.setIcon(QMessageBox.Critical)
                 message.setWindowTitle(self.tr("Error"))
@@ -232,7 +229,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print("loaded audio folder")
 
     def save_current_project(self):
-        """Saves the annotations and project file of the current project."""
+        """Save the annotations and project file of the
+        current project.
+        """
         if not self.project_file:
             return self.save_project_as()
         self.last_saved_hash = hash(self.project)
@@ -398,7 +397,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def configure_shortcuts(self):
-        self.shortcut_settings_dialog.exec()
+        shortcut_settings_dialog = ShortcutSettingsDialog()
+        shortcut_settings_dialog.load_buttons(
+            self.opened_project_frame.get_playback_buttons()
+        )
+        shortcut_settings_dialog.load_existing(self.menuEdit)
+        shortcut_settings_dialog.load_existing(self.menuFile)
+        shortcut_settings_dialog.shortcuts_confirmed.connect(self.shortcuts_confirmed)
+        shortcut_settings_dialog.exec()
 
     @Slot()
     def shortcuts_confirmed(self, shortcuts):
