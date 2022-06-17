@@ -127,6 +127,7 @@
         <translation>&amp;Datei</translation>
     </message>
     <message>
+        <location filename="../ui/main.ui" line="235"/>
         <location filename="../ui/main_master.ui" line="220"/>
         <source>&amp;Auto-Generate Annotation Text</source>
         <translation>&amp;Auto-Generiere Annotations-Text</translation>
@@ -138,7 +139,7 @@
         <translation>&amp;Bearbeiten</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="66"/>
+        <location filename="../ui/main.ui" line="67"/>
         <location filename="../ui/main_master.ui" line="65"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
@@ -149,19 +150,19 @@
         <translation>Projekt &amp;Öffnen...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="81"/>
+        <location filename="../ui/main.ui" line="82"/>
         <location filename="../ui/main_master.ui" line="80"/>
         <source>Ctrl+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="86"/>
+        <location filename="../ui/main.ui" line="87"/>
         <location filename="../ui/main_master.ui" line="85"/>
         <source>&amp;Quit</source>
         <translation>&amp;Beenden</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="89"/>
+        <location filename="../ui/main.ui" line="90"/>
         <location filename="../ui/main_master.ui" line="88"/>
         <source>Ctrl+Q</source>
         <translation></translation>
@@ -172,7 +173,7 @@
         <translation>Projekt &amp;Speichern</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="100"/>
+        <location filename="../ui/main.ui" line="101"/>
         <location filename="../ui/main_master.ui" line="99"/>
         <source>Ctrl+S</source>
         <translation></translation>
@@ -183,7 +184,7 @@
         <translation>Projekt Speichern &amp;Unter...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="111"/>
+        <location filename="../ui/main.ui" line="112"/>
         <location filename="../ui/main_master.ui" line="110"/>
         <source>Ctrl+Shift+S</source>
         <translation></translation>
@@ -194,37 +195,37 @@
         <translation>&amp;Neues Projekt...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="119"/>
+        <location filename="../ui/main.ui" line="120"/>
         <location filename="../ui/main_master.ui" line="118"/>
         <source>Ctrl+N</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="124"/>
+        <location filename="../ui/main.ui" line="125"/>
         <location filename="../ui/main_master.ui" line="123"/>
         <source>Configure &amp;Shortcuts...</source>
         <translation>Tastenkürzel &amp;Konfigurieren...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="148"/>
+        <location filename="../ui/main.ui" line="149"/>
         <location filename="../ui/main_master.ui" line="147"/>
         <source>Import CS&amp;V</source>
         <translation>CS&amp;V Importieren</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="156"/>
+        <location filename="../ui/main.ui" line="157"/>
         <location filename="../ui/main_master.ui" line="155"/>
         <source>Import Js&amp;on</source>
         <translation>Js&amp;on Importieren</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="164"/>
+        <location filename="../ui/main.ui" line="165"/>
         <location filename="../ui/main_master.ui" line="163"/>
         <source>Export &amp;CSV</source>
         <translation>&amp;CSV Exportieren</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="172"/>
+        <location filename="../ui/main.ui" line="173"/>
         <location filename="../ui/main_master.ui" line="171"/>
         <source>Export &amp;Json</source>
         <translation>&amp;Json Exportieren</translation>
@@ -235,43 +236,43 @@
         <translation>Projekt &amp;Löschen...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="188"/>
+        <location filename="../ui/main.ui" line="189"/>
         <location filename="../ui/main_master.ui" line="187"/>
         <source>&amp;Delete Selected</source>
         <translation>Ausgewählte &amp;Löschen</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="191"/>
+        <location filename="../ui/main.ui" line="192"/>
         <location filename="../ui/main_master.ui" line="190"/>
         <source>Delete the selected annotations including the audio files.</source>
         <translation>Die ausgewählten Annotationen und die dazugehörigen Audiodateien löschen.</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="194"/>
+        <location filename="../ui/main.ui" line="195"/>
         <location filename="../ui/main_master.ui" line="193"/>
         <source>Del</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="202"/>
+        <location filename="../ui/main.ui" line="203"/>
         <location filename="../ui/main_master.ui" line="201"/>
         <source>&amp;Project Settings</source>
         <translation>&amp;Projekteinstellungen</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="207"/>
+        <location filename="../ui/main.ui" line="208"/>
         <location filename="../ui/main_master.ui" line="206"/>
         <source>Online &amp;Documentation</source>
         <translation>Online-&amp;Dokumentation</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="210"/>
+        <location filename="../ui/main.ui" line="211"/>
         <location filename="../ui/main_master.ui" line="209"/>
         <source>F1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="129"/>
+        <location filename="../ui/main.ui" line="130"/>
         <location filename="../ui/main_master.ui" line="128"/>
         <source>&amp;About</source>
         <translation>&amp;Über</translation>
@@ -282,48 +283,48 @@
         <translation>&amp;Projekt</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="78"/>
+        <location filename="../ui/main.ui" line="79"/>
         <source>&amp;Open...</source>
         <translation>&amp;Öffnen...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="97"/>
+        <location filename="../ui/main.ui" line="98"/>
         <source>&amp;Save</source>
         <translation>&amp;Speichern</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="108"/>
+        <location filename="../ui/main.ui" line="109"/>
         <source>Save &amp;As...</source>
         <translation>Speichern &amp;Unter...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="116"/>
+        <location filename="../ui/main.ui" line="117"/>
         <source>&amp;New...</source>
         <translation>&amp;Neu...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="137"/>
+        <location filename="../ui/main.ui" line="138"/>
         <location filename="../ui/main_master.ui" line="136"/>
         <source>About &amp;QT</source>
         <translation>Über &amp;QT</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="180"/>
+        <location filename="../ui/main.ui" line="181"/>
         <source>&amp;Delete...</source>
         <translation>&amp;Löschen...</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="218"/>
+        <location filename="../ui/main.ui" line="219"/>
         <source>Close</source>
         <translation>Schließen</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="221"/>
+        <location filename="../ui/main.ui" line="222"/>
         <source>Ctrl+W</source>
         <translation>Ctrl+W</translation>
     </message>
     <message>
-        <location filename="../ui/main.ui" line="226"/>
+        <location filename="../ui/main.ui" line="227"/>
         <location filename="../ui/main_master.ui" line="228"/>
         <source>Select &amp;Language Model...</source>
         <translation>&amp;Wähle Sprachmodel Aus...</translation>

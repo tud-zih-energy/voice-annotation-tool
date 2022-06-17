@@ -60,6 +60,7 @@
     <addaction name="actionExportJson"/>
     <addaction name="actionImportJson"/>
     <addaction name="actionDeleteSelected"/>
+    <addaction name="actionAutoGenerate"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -224,6 +225,14 @@
   <action name="actionSelectLanguageModel">
    <property name="text">
     <string>Select &amp;Language Model...</string>
+   </property>
+  </action>
+  <action name="actionAutoGenerate">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Auto-Generate Annotation Text</string>
    </property>
   </action>
  </widget>
