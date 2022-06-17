@@ -390,9 +390,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         shortcut_settings_dialog.load_existing(self.menuEdit)
         shortcut_settings_dialog.load_existing(self.menuFile)
-        shortcut_settings_dialog.shortcuts_confirmed.connect(
-            self.shortcuts_confirmed
-        )
+        shortcut_settings_dialog.shortcuts_confirmed.connect(self.shortcuts_confirmed)
         shortcut_settings_dialog.exec()
 
     @Slot()
