@@ -10,6 +10,8 @@ You can delete the selected samples under ``Edit > Delete Selected`` or pressing
 
 When you change the annotation of a sample it is highlighted in green. To remove this highlight select the samples and press the ``Mark Unchanged``.
 
+Samples can be renamed by double-clicking them or by pressing ``F2``.
+
 Metadata Section
 ----------------
 
