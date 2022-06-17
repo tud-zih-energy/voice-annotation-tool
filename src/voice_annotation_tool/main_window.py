@@ -1,10 +1,14 @@
 from json.decoder import JSONDecodeError
 import json
+import wave
+import numpy
+import ffmpeg
+from stt import Model
 from pathlib import Path
 from typing import Any, TextIO
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
-from PySide6.QtCore import Signal, Slot
+from PySide6.QtCore import QStandardPaths, Signal, Slot
 
 from voice_annotation_tool.project_settings_dialog import ProjectSettingsDialog
 from voice_annotation_tool.project import Project
@@ -34,37 +38,38 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.choose_project_frame = ChooseProjectFrame()
 
         self.original_title = self.windowTitle()
-        "The window title before it was changed to the project name."
-
+        """The window title before it was changed to the
+        project name.
+        """
         self.project: Project = Project()
         """The currently loaded project.
 
-        Even if the user didn't open a project, an empty unsaved project
-        is loaded.
+        Even if the user didn't open a project, an empty
+        unsaved project is loaded.
         """
-
         self.project_file: Path | None = None
         """The path the current project was saved to.
 
-        None if the project was never saved."""
-
+        None if the project was never saved.
+        """
         self.last_saved_hash: int = 0
         """The hash of the project when it was last saved.
 
-        Zero if no project is loaded."""
-
+        Zero if no project is loaded.
+        """
         self.recent_projects: list[Path] = []
         """List of recently opened projects.
 
         This list should only contain existing paths.
         """
 
+        self.language_model: Path | None = None
+
         # Layout
         self.verticalLayout.addWidget(self.opened_project_frame)
         self.verticalLayout.addWidget(self.choose_project_frame)
         self.opened_project_frame.hide()
 
-        # Connections
         self.choose_project_frame.project_opened.connect(self.recent_project_chosen)
         self.choose_project_frame.create_project_pressed.connect(self.new_project)
         self.actionNewProject.triggered.connect(self.new_project)
@@ -83,6 +88,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionDeleteSelected.triggered.connect(self.deleteSelected)
         self.actionConfigureShortcuts.triggered.connect(self.configure_shortcuts)
         self.actionDocumentation.triggered.connect(self.open_documentation)
+        self.actionSelectLanguageModel.triggered.connect(self.select_language_model)
+        self.actionAutoGenerate.triggered.connect(self.auto_generate_annotations)
 
         self.project_actions = [
             self.actionImportCSV,
@@ -95,12 +102,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionDeleteSelected,
             self.actionCloseProject,
             self.actionProjectSettings,
+            self.actionAutoGenerate,
         ]
         "Actions that can only be used with a project open."
 
     def load_settings(self, file: TextIO):
-        """Loads the recently used projects into the `recent_projects` list
-        and applies the shortcuts.
+        """Loads the recently used projects into the
+        `recent_projects` list and applies the shortcuts.
         """
         try:
             data = json.load(file)
@@ -120,15 +128,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.recent_projects.append(path)
         self.choose_project_frame.load_recent_projects(self.recent_projects)
 
+        if "language_model" in data:
+            self.language_model = Path(data["language_model"])
         self.opened_project_frame.apply_shortcuts(data.get("shortcuts", []))
 
     def save_settings(self, to: TextIO):
-        """
-        Saves the `recent_projects` list and keyboard shortcuts to a json file.
+        """Saves the `recent_projects` list and keyboard
+        shortcuts to a json file.
         """
         data: dict[str, str | list[str]] = {
             "recent_projects": list(map(str, self.recent_projects)),
             "shortcuts": self.opened_project_frame.get_shortcuts(),
+            "language_model": str(self.language_model),
         }
         json.dump(data, to)
 
@@ -175,6 +186,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print("opened done")
 
     def load_project_from_file(self, path: Path):
+        """Load an existing project from a JSON file.
+
+        If there are any issues with the project, report
+        them to the user.
+        """
         self.project_file = path
         self.project = Project()
         with open(path) as file:
@@ -215,7 +231,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print("loaded audio folder")
 
     def save_current_project(self):
-        """Saves the annotations and project file of the current project."""
+        """Save the annotations and project file of the
+        current project.
+        """
         if not self.project_file:
             return self.save_project_as()
         self.last_saved_hash = hash(self.project)
@@ -414,9 +432,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         shortcut_settings_dialog.load_existing(self.menuEdit)
         shortcut_settings_dialog.load_existing(self.menuFile)
-        shortcut_settings_dialog.shortcuts_confirmed.connect(
-            self.shortcuts_confirmed
-        )
+        shortcut_settings_dialog.shortcuts_confirmed.connect(self.shortcuts_confirmed)
         shortcut_settings_dialog.exec()
 
     @Slot()
@@ -428,4 +444,60 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def open_documentation(self):
         QDesktopServices.openUrl(
             self.tr("https://voice-annotation-tool.readthedocs.io/en/latest/")
+        )
+
+    @Slot()
+    def select_language_model(self):
+        path, _ = QFileDialog.getOpenFileName(
+            self,
+            self.tr("Open Language Model"),
+            "",
+            self.tr("TFLite Models (*.tflite)"),
+        )
+        if not path:
+            return
+        self.language_model = Path(path)
+        self.settings_changed.emit()
+
+    @Slot()
+    def auto_generate_annotations(self):
+        if not self.language_model or not self.language_model.is_file():
+            return QMessageBox.warning(
+                self,
+                self.tr("No model found"),
+                self.tr(
+                    "No language model specified. Choose a model under Edit>Select Language Model... Pretrained models can be downloaded from <a href='https://coqui.ai/models'>https://coqui.ai/models</a>."
+                ),
+            )
+        model = Model(str(self.language_model))
+        tmp_dir = Path(QStandardPaths.writableLocation(QStandardPaths.TempLocation))
+        for annotation in self.project.annotations:
+            if annotation.sentence or not annotation.path.is_file():
+                continue
+            temp_file = tmp_dir / "converted_sample.wav"
+            stream = ffmpeg.input(str(annotation.path))
+            output = ffmpeg.output(
+                stream, str(temp_file), **{"ar": str(model.sampleRate())}
+            )
+            try:
+                ffmpeg.run(output)
+            except FileNotFoundError:
+                return QMessageBox.warning(
+                    self,
+                    self.tr("No FFmpeg installation found"),
+                    self.tr(
+                        "No FFmpeg installation found. FFmpeg is required to process the audio files so they can be used by the speech to text module."
+                    ),
+                )
+            audio = wave.open(temp_file.open("rb"), "rb")
+            audio = numpy.frombuffer(audio.readframes(audio.getnframes()), numpy.int16)
+            annotation.sentence = model.stt(audio).capitalize() + "."
+            temp_file.unlink()
+        self.opened_project_frame.update_selected_annotation()
+        return QMessageBox.information(
+            self,
+            self.tr("Done"),
+            self.tr(
+                "Samples without an annotated sentence have been automatically annotated."
+            ),
         )

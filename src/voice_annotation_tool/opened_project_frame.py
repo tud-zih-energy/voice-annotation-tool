@@ -1,7 +1,6 @@
 from PySide6.QtCore import QModelIndex, Slot
 from PySide6.QtWidgets import QFrame, QFileDialog, QPushButton, QWidget
-
-from voice_annotation_tool.annotation_list_model import AnnotationListModel, ANNOTATION_ROLE
+from voice_annotation_tool.annotation_list_model import AnnotationListModel
 from voice_annotation_tool.opened_project_frame_ui import Ui_OpenedProjectFrame
 from voice_annotation_tool.project import Annotation, Project
 
@@ -128,7 +127,8 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def load_project(self, project: Project):
         """Loads the project's annotations into the GUI."""
         self.project = project
-        self.annotationList.setModel(AnnotationListModel(self.project))
+        model = AnnotationListModel(self.project)
+        self.annotationList.setModel(model)
         self.annotationList.selectionModel().selectionChanged.connect(
             self.selection_changed
         )
@@ -168,11 +168,32 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         self.update_metadata_widgets()
 
     def get_selected_annotations(self) -> list[Annotation]:
-        """Returns all the selected annotations in the annotation panel."""
+        """Returns all the selected annotations in the
+        annotation panel.
+        """
         annotations: list[Annotation] = []
         for selected_index in self.annotationList.selectionModel().selectedIndexes():
-            annotations.append(selected_index.data(ANNOTATION_ROLE))
+            annotations.append(selected_index.data(AnnotationListModel.ANNOTATION_ROLE))
         return annotations
+
+    def update_selected_annotation(self):
+        """Update the GUI with the data of the selected sample."""
+        self.update_metadata_header()
+        index: QModelIndex = self.annotationList.currentIndex()
+        self.audioPlaybackWidget.previousButton.setEnabled(index.row() > 0)
+        self.audioPlaybackWidget.nextButton.setEnabled(
+            index.row() < len(self.project.annotations) - 1
+        )
+        annotation: Annotation = index.data(AnnotationListModel.ANNOTATION_ROLE)
+        if not annotation:
+            return
+        self.annotationEdit.blockSignals(True)
+        self.annotationEdit.setText(annotation.sentence)
+        self.annotationEdit.blockSignals(False)
+        if annotation.path.is_file():
+            self.audioPlaybackWidget.load_file(annotation.path)
+        for buttons in self.get_playback_buttons():
+            buttons.setEnabled(annotation.path.is_file())
 
     @Slot()
     def previous_pressed(self):
@@ -192,8 +213,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def gender_selected(self, gender: int):
         if gender == len(GENDERS):
             return
-        for selected_item in self.annotationList.selectedIndexes():
-            annotation: Annotation = selected_item.data(ANNOTATION_ROLE)
+        for annotation in self.get_selected_annotations():
             annotation.gender = GENDERS[gender]
         self.update_metadata_header()
 
@@ -201,22 +221,19 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def age_selected(self, age: int):
         if age == len(AGES):
             return
-        for selected_item in self.annotationList.selectedIndexes():
-            annotation: Annotation = selected_item.data(ANNOTATION_ROLE)
+        for annotation in self.get_selected_annotations():
             annotation.age = AGES[age]
         self.update_metadata_header()
 
     @Slot()
     def accent_changed(self, accent: str):
-        for selected_item in self.annotationList.selectedIndexes():
-            annotation: Annotation = selected_item.data(ANNOTATION_ROLE)
+        for annotation in self.get_selected_annotations():
             annotation.accent = accent
         self.update_metadata_header()
 
     @Slot()
     def client_id_changed(self, client_id: str):
-        for selected_item in self.annotationList.selectedIndexes():
-            annotation: Annotation = selected_item.data(ANNOTATION_ROLE)
+        for annotation in self.get_selected_annotations():
             annotation.client_id = client_id
         self.update_metadata_header()
 
@@ -224,29 +241,14 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
     def text_changed(self):
         text: str = self.annotationEdit.toPlainText()
         selected_annotation: Annotation = self.annotationList.currentIndex().data(
-            ANNOTATION_ROLE
+            AnnotationListModel.ANNOTATION_ROLE
         )
         if selected_annotation:
             self.project.annotate(selected_annotation, text)
 
     @Slot()
     def selection_changed(self, selected, deselected):
-        self.update_metadata_header()
-        index: QModelIndex = self.annotationList.currentIndex()
-        self.audioPlaybackWidget.previousButton.setEnabled(index.row() > 0)
-        self.audioPlaybackWidget.nextButton.setEnabled(
-            index.row() < len(self.project.annotations) - 1
-        )
-        annotation: Annotation = index.data(ANNOTATION_ROLE)
-        if not annotation:
-            return
-        self.annotationEdit.blockSignals(True)
-        self.annotationEdit.setText(annotation.sentence)
-        self.annotationEdit.blockSignals(False)
-        if annotation.path.is_file():
-            self.audioPlaybackWidget.load_file(annotation.path)
-        for buttons in self.get_playback_buttons():
-            buttons.setEnabled(annotation.path.is_file())
+        self.update_selected_annotation()
 
     @Slot()
     def import_profile_pressed(self):

@@ -53,6 +53,7 @@
      <string>&amp;Edit</string>
     </property>
     <addaction name="actionConfigureShortcuts"/>
+    <addaction name="actionSelectLanguageModel"/>
     <addaction name="actionProjectSettings"/>
     <addaction name="actionExportCSV"/>
     <addaction name="actionImportCSV"/>
@@ -218,6 +219,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionSelectLanguageModel">
+   <property name="text">
+    <string>Select &amp;Language Model...</string>
    </property>
   </action>
  </widget>
