@@ -77,6 +77,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionSaveProject.triggered.connect(self.save_project)
         self.actionSaveProjectAs.triggered.connect(self.save_project_as)
         self.actionDeleteProject.triggered.connect(self.delete_project)
+        self.actionCloseProject.triggered.connect(self.close_project)
         self.actionQuit.triggered.connect(self.quit)
         self.actionAbout.triggered.connect(self.about)
         self.actionProjectSettings.triggered.connect(self.show_project_settings)
@@ -99,6 +100,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionSaveProjectAs,
             self.actionDeleteProject,
             self.actionDeleteSelected,
+            self.actionCloseProject,
             self.actionProjectSettings,
             self.actionAutoGenerate,
         ]
@@ -251,10 +253,53 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             message.setIcon(QMessageBox.Warning)
             message.exec()
 
+    def confirm_discard_unsaved_changes(self) -> bool:
+        """Check if there have been changes since the user
+        last saved, and if there have, ask if they want to
+        save or discard them.
+
+        Returns true if the user is ok with the status of
+        the project, false if they canceled the operation.
+        """
+        if hash(self.project) == self.last_saved_hash:
+            return True
+
+        message = QMessageBox(self)
+        message.setWindowTitle(self.tr("Warning"))
+        message.setIcon(QMessageBox.Warning)
+        message.setText(self.tr("You have unsaved changes."))
+        message.setStandardButtons(
+            QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel
+        )
+        match message.exec():
+            case QMessageBox.Save:
+                self.save_current_project()
+                if not self.project_file:
+                    return True
+            case QMessageBox.Discard:
+                return True
+            case QMessageBox.Cancel:
+                return False
+        # Unreachable.
+        return True 
+
+    def return_to_start_screen(self):
+        """Close the current project and set up the UI as
+        it was before opening a project.
+        """
+        self.last_saved_hash = 0
+        self.project_file = None
+        self.setWindowTitle(self.original_title)
+        self.opened_project_frame.hide()
+        self.choose_project_frame.show()
+        for action in self.project_actions:
+            action.setEnabled(False)
+
     @Slot()
     def new_project(self):
-        self.project_file = None
-        self.set_current_project(Project())
+        if self.confirm_discard_unsaved_changes():
+            self.project_file = None
+            self.set_current_project(Project())
 
     @Slot()
     def open(self):
@@ -294,35 +339,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         if result != QMessageBox.Ok:
             return
-        self.last_saved_hash = 0
         self.project.delete_tsv()
         if self.project_file:
             self.project_file.unlink()
-        self.project_file = None
-        self.setWindowTitle(self.original_title)
-        self.opened_project_frame.hide()
-        self.choose_project_frame.show()
-        for action in self.project_actions:
-            action.setEnabled(False)
+        self.return_to_start_screen()
+
+    @Slot()
+    def close_project(self):
+        if self.confirm_discard_unsaved_changes():
+            self.return_to_start_screen()
 
     @Slot()
     def quit(self):
-        if self.last_saved_hash and hash(self.project) != self.last_saved_hash:
-            message = QMessageBox(self)
-            message.setWindowTitle(self.tr("Warning"))
-            message.setIcon(QMessageBox.Warning)
-            message.setText(self.tr("You have unsaved changes."))
-            message.setStandardButtons(
-                QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel
-            )
-            result = message.exec()
-            if result == QMessageBox.Save:
-                self.save_current_project()
-                if not self.project_file:
-                    return
-            elif result == QMessageBox.Cancel:
-                return
-        exit()
+        if self.confirm_discard_unsaved_changes():
+            exit()
 
     @Slot()
     def about(self):
