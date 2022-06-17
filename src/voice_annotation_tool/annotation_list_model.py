@@ -4,11 +4,12 @@ from PySide6.QtGui import QBrush, Qt
 
 from voice_annotation_tool.project import Project, Annotation
 
-ANNOTATION_ROLE = Qt.UserRole + 1
 
 
 class AnnotationListModel(QAbstractListModel):
     """Model that shows the annotations of a project."""
+
+    ANNOTATION_ROLE = Qt.UserRole + 1
 
     def __init__(self, project: Project, parent=None):
         super().__init__(parent)
@@ -19,20 +20,19 @@ class AnnotationListModel(QAbstractListModel):
             return 0
         return len(self._data.annotations)
 
-    def data(
-        self, index: QModelIndex, role: int
-    ) -> Union[None, str, Annotation, QBrush]:
+    def data(self, index: QModelIndex, role: int):
         if not index.isValid():
             return None
         if index.row() >= len(self._data.annotations):
             return None
         annotation = self._data.annotations[index.row()]
-        if role == Qt.DisplayRole:
-            return annotation.path.name
-        elif role == Qt.BackgroundRole:
-            return QBrush(Qt.GlobalColor.green) if annotation.modified else QBrush()
-        elif role == ANNOTATION_ROLE:
-            return annotation
+        match role:
+            case Qt.DisplayRole:
+                return annotation.path.name
+            case Qt.BackgroundRole:
+                return QBrush(Qt.GlobalColor.green) if annotation.modified else QBrush()
+            case self.ANNOTATION_ROLE:
+                return annotation
         return None
 
     def removeRow(self, row: int, parent=QModelIndex()) -> bool:
@@ -46,13 +46,13 @@ class AnnotationListModel(QAbstractListModel):
 
     def roleNames(self) -> dict[int, str]:
         role_names = super.roleNames()
-        role_names[ANNOTATION_ROLE] = "annotation"
+        role_names[self.ANNOTATION_ROLE] = "annotation"
         return role_names
 
     def headerData(self, section: int, orientation: Qt.Orientation, role: int) -> Any:
         if orientation == Qt.Horizontal:
             if role == Qt.DisplayRole:
                 return "File Name"
-            elif role == ANNOTATION_ROLE:
+            elif role == self.ANNOTATION_ROLE:
                 return "Annotation"
         return None
