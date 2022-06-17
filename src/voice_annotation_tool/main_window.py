@@ -258,8 +258,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         last saved, and if there have, ask if they want to
         save or discard them.
 
-        Returns true if the user wants to discard unsaved
-        changes or if there are none.
+        Returns true if the user is ok with the status of
+        the project, false if they canceled the operation.
         """
         if hash(self.project) == self.last_saved_hash:
             return True
@@ -285,7 +285,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def return_to_start_screen(self):
         """Close the current project and set up the UI as
-        it where before opening a project.
+        it was before opening a project.
         """
         self.last_saved_hash = 0
         self.project_file = None
