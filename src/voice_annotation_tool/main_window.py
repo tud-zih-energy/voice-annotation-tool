@@ -281,7 +281,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             case QMessageBox.Cancel:
                 return False
         # Unreachable.
-        return True 
+        return True
 
     def return_to_start_screen(self):
         """Close the current project and set up the UI as

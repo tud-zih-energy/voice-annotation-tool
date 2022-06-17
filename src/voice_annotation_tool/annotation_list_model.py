@@ -5,7 +5,6 @@ from PySide6.QtGui import QBrush, Qt
 from voice_annotation_tool.project import Project, Annotation
 
 
-
 class AnnotationListModel(QAbstractListModel):
     """Model that shows the annotations of a project."""
 
@@ -62,7 +61,12 @@ class AnnotationListModel(QAbstractListModel):
                 return "Annotation"
         return None
 
-    def setData(self, index: Union[QModelIndex, QPersistentModelIndex], value: Any, role: int = ...) -> bool:
+    def setData(
+        self,
+        index: Union[QModelIndex, QPersistentModelIndex],
+        value: Any,
+        role: int = ...,
+    ) -> bool:
         if role == Qt.EditRole:
             annotation: Annotation = self.data(index, self.ANNOTATION_ROLE)
             annotation.path = annotation.path.rename(annotation.path.with_name(value))
