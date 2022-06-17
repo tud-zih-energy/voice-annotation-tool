@@ -313,9 +313,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
         if not self.project.audio_folder or not self.project.audio_folder.is_dir():
             return
         if self.recorder.recorderState() == QMediaRecorder.StoppedState:
-            name = "".join(
-                random.choices(string.ascii_lowercase + string.digits * 2, k=129)
-            )
+            name = "".join(random.choices(string.hexdigits, k=129))
             path = QUrl.fromLocalFile(os.fspath(self.project.audio_folder / name))
             self.recorder.setOutputLocation(path)
             self.recorder.record()
