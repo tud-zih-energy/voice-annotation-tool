@@ -346,7 +346,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def close_project(self):
-        self.return_to_start_screen()
+        if self.confirm_discard_unsaved_changes():
+            self.return_to_start_screen()
 
     @Slot()
     def quit(self):
