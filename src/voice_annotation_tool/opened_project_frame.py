@@ -176,6 +176,25 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
             annotations.append(selected_index.data(AnnotationListModel.ANNOTATION_ROLE))
         return annotations
 
+    def update_selected_annotation(self):
+        """Update the GUI with the data of the selected sample."""
+        self.update_metadata_header()
+        index: QModelIndex = self.annotationList.currentIndex()
+        self.audioPlaybackWidget.previousButton.setEnabled(index.row() > 0)
+        self.audioPlaybackWidget.nextButton.setEnabled(
+            index.row() < len(self.project.annotations) - 1
+        )
+        annotation: Annotation = index.data(AnnotationListModel.ANNOTATION_ROLE)
+        if not annotation:
+            return
+        self.annotationEdit.blockSignals(True)
+        self.annotationEdit.setText(annotation.sentence)
+        self.annotationEdit.blockSignals(False)
+        if annotation.path.is_file():
+            self.audioPlaybackWidget.load_file(annotation.path)
+        for buttons in self.get_playback_buttons():
+            buttons.setEnabled(annotation.path.is_file())
+
     @Slot()
     def previous_pressed(self):
         current = self.annotationList.currentIndex().row()
@@ -229,22 +248,7 @@ class OpenedProjectFrame(QFrame, Ui_OpenedProjectFrame):
 
     @Slot()
     def selection_changed(self, selected, deselected):
-        self.update_metadata_header()
-        index: QModelIndex = self.annotationList.currentIndex()
-        self.audioPlaybackWidget.previousButton.setEnabled(index.row() > 0)
-        self.audioPlaybackWidget.nextButton.setEnabled(
-            index.row() < len(self.project.annotations) - 1
-        )
-        annotation: Annotation = index.data(AnnotationListModel.ANNOTATION_ROLE)
-        if not annotation:
-            return
-        self.annotationEdit.blockSignals(True)
-        self.annotationEdit.setText(annotation.sentence)
-        self.annotationEdit.blockSignals(False)
-        if annotation.path.is_file():
-            self.audioPlaybackWidget.load_file(annotation.path)
-        for buttons in self.get_playback_buttons():
-            buttons.setEnabled(annotation.path.is_file())
+        self.update_selected_annotation()
 
     @Slot()
     def import_profile_pressed(self):

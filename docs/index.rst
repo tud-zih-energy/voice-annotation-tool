@@ -14,3 +14,4 @@ Contents
    tsv_format
    import_export
    api
+   generate_annotations
